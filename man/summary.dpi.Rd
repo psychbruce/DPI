@@ -2,7 +2,7 @@
 % Please edit documentation in R/DPI.R
 \name{summary.dpi}
 \alias{summary.dpi}
-\title{[S3 method] Summarize the results for DPI.}
+\title{[S3 method] Summarize DPI results.}
 \usage{
 \method{summary}{dpi}(object, ...)
 }
@@ -17,5 +17,5 @@ Return a list with new class \code{summary.dpi} of
 summarized results and raw DPI data.frame.
 }
 \description{
-[S3 method] Summarize the results for DPI.
+[S3 method] Summarize DPI results.
 }

@@ -2,7 +2,7 @@
 
 
 #' @import ggplot2
-#' @importFrom stats sd pnorm rnorm quantile na.omit
+#' @importFrom stats sd cor pt pnorm rnorm quantile na.omit
 #' @importFrom glue glue glue_col
 #' @importFrom crayon italic underline green blue magenta
 .onAttach = function(libname, pkgname) {
@@ -31,25 +31,179 @@
 
 #' Generate random data.
 #'
-#' @param n.var Number of variables.
-#' @param n.obs Number of observations (cases).
+#' @param k Number of variables.
+#' @param n Number of observations (cases).
 #' @param seed Random seed for replicable results.
 #' Defaults to `NULL`.
 #'
 #' @return Return a data.frame of random data.
 #'
+#' @examples
+#' d = data_random(k=5, n=100, seed=1)
+#' cor_network(d)
+#'
 #' @export
-random_data = function(n.var, n.obs, seed=NULL) {
+data_random = function(k, n, seed=NULL) {
   set.seed(seed)
   as.data.frame(
     do.call(
       "cbind",
       lapply(
-        seq_len(n.var),
-        function(var) rnorm(n.obs)
+        seq_len(k),
+        function(var) rnorm(n)
       )
     )
   )
+}
+
+
+#' Correlation network plot.
+#'
+#' @param data Data.
+#' @param index Type of graph: `"cor"` (raw correlation network)
+#' or `"pcor"` (partial correlation network).
+#' Defaults to `"cor"`.
+#' @param show.value Show correlation coefficients and their significance on edges.
+#' Defaults to `TRUE`.
+#' @param show.insig Show edges with insignificant correlations (*p* > 0.05).
+#' Defaults to `FALSE`.
+#' To change significance level, please set the
+#' `alpha` parameter (defaults to `alpha=0.05`).
+#' @param show.cutoff Show cut-off values of correlations.
+#' Defaults to `FALSE`.
+#' @param faded Transparency of edges according to the effect size of correlation.
+#' Defaults to `FALSE`.
+#' @param text.size Scalar on the font size of variable labels.
+#' Defaults to `1.2`.
+#' @param node.group A list that indicates which nodes belong together,
+#' with each element of list as a vector of integers identifying the
+#' column numbers of variables that belong together.
+#' @param node.color A vector with a color for each element in `node.group`, or a color for each node.
+#' @param edge.color.pos Color for (significant) positive correlations.
+#' Defaults to `"#0571B0"` (blue in ColorBrewer's RdBu palette).
+#' @param edge.color.neg Color for (significant) negative correlations.
+#' Defaults to `"#CA0020"` (red in ColorBrewer's RdBu palette).
+#' @param edge.color.insig Color for insignificant correlations.
+#' Defaults to `"#EEEEEEEE"` (transparent grey).
+#' @param title Plot title.
+#' @param file File name of saved plot (`".png"` or `".pdf"`).
+#' @param width,height Width and height (in inches) of the saved plot.
+#' Defaults to `8` and `6`.
+#' @param dpi Dots per inch (figure resolution). Defaults to `500`.
+#' @param ... Other parameters passed to \code{\link[qgraph:qgraph]{qgraph}}.
+#'
+#' @return Invisibly return a \code{\link[qgraph:qgraph]{qgraph}} object.
+#'
+#' @examples
+#' cor_network(airquality)
+#' cor_network(airquality, show.insig=TRUE)
+#'
+#' @export
+cor_network = function(
+    data,
+    index=c("cor", "pcor"),
+    show.value=TRUE,
+    show.insig=FALSE,
+    show.cutoff=FALSE,
+    faded=FALSE,
+    text.size=1.2,
+    node.group=NULL,
+    node.color=NULL,
+    edge.color.pos="#0571B0",
+    edge.color.neg="#CA0020",
+    edge.color.insig="#EEEEEEEE",
+    title=NULL,
+    file=NULL,
+    width=8,
+    height=6,
+    dpi=500,
+    ...
+) {
+  index = match.arg(index)
+  data = na.omit(data)
+  r = cor(data)
+  n = nrow(data)
+
+  p0 = qgraph::qgraph(
+    r,
+    sampleSize = n,
+    graph = index,
+    minimum = "sig",
+    DoNotPlot = TRUE
+  )
+  r.sig = p0[["graphAttributes"]][["Graph"]][["minimum"]]
+  r.max = max(abs(p0[["Edgelist"]][["weight"]]))
+  if(r.max < r.sig) show.insig = TRUE
+  if(show.insig==TRUE) {
+    edge.color.pos = c(edge.color.insig, edge.color.pos)
+    edge.color.neg = c(edge.color.insig, edge.color.neg)
+  }
+
+  p = qgraph::qgraph(
+    ## --- [data] --- ##
+    r,
+    sampleSize = n,
+    cut = ifelse(show.insig, r.sig, 0),
+    minimum = ifelse(show.insig, 0, "sig"),
+
+    ## --- [graph] --- ##
+    graph = index,
+    layout = "spring",
+    shape = "circle",
+    # maximum = max,
+    details = show.cutoff,
+    title = title,
+
+    ## --- [node] --- ##
+    groups = node.group,
+    color = node.color,
+    palette = "ggplot2",
+
+    ## --- [label] --- ##
+    labels = names(data),
+    label.cex = text.size,
+    label.scale.equal = TRUE,
+
+    ## --- [edge] --- ##
+    posCol = edge.color.pos,
+    negCol = edge.color.neg,
+    fade = faded,
+    edge.labels = show.value,
+    edge.label.margin = 0.01,
+
+    ## --- [plotting] --- ##
+    usePCH = TRUE,
+    DoNotPlot = TRUE,
+    ...)
+
+  if(show.value) {
+    cor.values = p[["Edgelist"]][["weight"]]
+    cor.labels = sprintf("%.2f", cor.values)
+    cor.labels = paste0(gsub("-", "\u2013", cor.labels),
+                        r_to_sig(cor.values, n))
+    p[["graphAttributes"]][["Edges"]][["labels"]] = cor.labels
+
+    edge.label.bg = p[["graphAttributes"]][["Edges"]][["label.bg"]]
+    edge.color = p[["graphAttributes"]][["Edges"]][["color"]]
+    edge.label.bg[edge.color==edge.color.insig] = NA
+    p[["graphAttributes"]][["Edges"]][["label.bg"]] = edge.label.bg
+  }
+
+  if(!is.null(file)) {
+    if(grepl("\\.png$", file))
+      png(file, width=width, height=height, units="in", res=dpi)
+    if(grepl("\\.pdf$", file))
+      pdf(file, width=width, height=height)
+  }
+
+  plot(p)
+
+  if(!is.null(file)) {
+    dev.off()
+    cli::cli_alert_success("Saved to {.path {paste0(getwd(), '/', file)}}")
+  }
+
+  invisible(p)
 }
 
 
@@ -77,6 +231,18 @@ sig.trans = function(p) {
                        ifelse(p < 0.05, "*  ",
                               ifelse(p < 0.10, ".  ", "   ")))))
 }
+
+
+r_to_sig = function(r, n) {
+  p = p.t(r/sqrt((1-r^2)/(n-2)), n-2)
+  ifelse(is.na(p) | p > 1 | p < 0, "",
+         ifelse(p < 0.001, "***",
+                ifelse(p < 0.01, "**",
+                       ifelse(p < 0.05, "*", ""))))
+}
+
+
+p.t = function(t, df) pt(abs(t), df, lower.tail=FALSE) * 2
 
 
 formula_paste = function(formula) {
@@ -194,6 +360,7 @@ DPI = function(
       "{cli::col_green(cli::symbol$tick)}",
       "{cli::pb_total} simulation samples estimated in {cli::pb_elapsed}")
   )
+  set.seed(seed)
   dpi = lapply(seq_len(n.sample), function(i) {
     ## Add random covariates
     if(n.cov==0) {
@@ -203,7 +370,7 @@ DPI = function(
       covs = ""
     } else {
       if(is.null(seed)) seed.i = NULL else seed.i = seed + i
-      data.r = random_data(n.cov, nrow(data), seed.i)
+      data.r = data_random(k=n.cov, n=nrow(data), seed=seed.i)
       covs = names(data.r)
       if(any(covs %in% names(data))) {
         covs = paste0("DPI_Random_Var_", covs)
@@ -256,7 +423,7 @@ DPI = function(
 }
 
 
-#' \[S3 method\] Summarize the results for DPI.
+#' \[S3 method\] Summarize DPI results.
 #'
 #' @param object A data.frame (of new class `dpi`)
 #' returned from [`DPI`].
@@ -320,6 +487,15 @@ summary.dpi = function(object, ...) {
 }
 
 
+#' \[S3 method\] Print DPI summary.
+#'
+#' @param x A data.frame (of new class `dpi`)
+#' returned from [`DPI`].
+#' @param digits Number of decimal places. Defaults to `3`.
+#' @param ... Other arguments (currently not used).
+#'
+#' @return No return value.
+#'
 #' @export
 print.summary.dpi = function(x, digits=3, ...) {
   fmt = paste0("%.", digits, "f")
@@ -367,21 +543,22 @@ print.summary.dpi = function(x, digits=3, ...) {
     n.sim = {cli::col_magenta({attr(x$dpi, 'n.sample')})},
     seed = {cli::col_magenta({attr(x$dpi, 'seed')})}
   ")
+  cat("\n")
   cli::cli_h2("
   {cli::col_cyan('(1) Partial Correlation (pr_XY)')}
   ")
-  cli::cli_text("
-  Mean r(partial) = {sprintf(fmt, x$r.partial.summ$Estimate)},
-  t({x$r.partial.summ$df}) =
-  {sprintf(fmt, x$r.partial.summ$t.value)},
-  p = {p.trans(x$r.partial.summ$p.t, 4)}
-  {sig.trans(x$r.partial.summ$p.t)}
-  ")
+  cat(glue(
+    "Estimated r(partial) = ",
+    "{sprintf(fmt, x$r.partial.summ$Estimate)}, ",
+    "t({x$r.partial.summ$df}) = ",
+    "{sprintf(fmt, x$r.partial.summ$t.value)}, ",
+    "p = {p.trans(x$r.partial.summ$p.t, 4)} ",
+    "{sig.trans(x$r.partial.summ$p.t)}"
+  ))
   cli::cli_h2("
   {cli::col_cyan('(2) Delta R^2 (= R^2_Y - R^2_X)')}
   ")
   print(res.dR2)
-  cat("\n")
   cli::cli_h2("
   {cli::col_cyan('(3) Directed Prediction Index (DPI)')}
   ")
@@ -390,6 +567,14 @@ print.summary.dpi = function(x, digits=3, ...) {
 }
 
 
+#' \[S3 method\] Plot DPI results.
+#'
+#' @param x A data.frame (of new class `dpi`)
+#' returned from [`DPI`].
+#' @param ... Other arguments (currently not used).
+#'
+#' @return Return a `ggplot` object.
+#'
 #' @export
 plot.dpi = function(x, ...) {
   DPI = scaled = ndensity = NULL
@@ -450,7 +635,7 @@ plot.dpi = function(x, ...) {
     )
   ")), envir=parent.frame())
 
-  ggplot(x, aes(x=DPI)) +
+  p = ggplot(x, aes(x=DPI)) +
     geom_histogram(
       aes(y=after_stat(ndensity)),
       bins=11, color="grey50", fill="grey", alpha=0.6) +
@@ -472,9 +657,20 @@ plot.dpi = function(x, ...) {
     theme_classic() +
     theme(plot.subtitle=element_text(color=color),
           plot.caption=element_text(color="darkred"))
+
+  return(p)
 }
 
 
+#' \[S3 method\] Print DPI summary and plot.
+#'
+#' @param x A data.frame (of new class `dpi`)
+#' returned from [`DPI`].
+#' @param digits Number of decimal places. Defaults to `3`.
+#' @param ... Other arguments (currently not used).
+#'
+#' @return No return value.
+#'
 #' @export
 print.dpi = function(x, digits=3, ...) {
   print(summary(x), digits=digits)
