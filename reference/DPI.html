@@ -3,7 +3,7 @@
 for quantifying endogeneity of outcome vs. predictor variables
 in linear regression models."><meta property="og:description" content="The Directed Prediction Index (DPI) is a simulation-based method
 for quantifying endogeneity of outcome vs. predictor variables
-in linear regression models."></head><body>
+in linear regression models."><meta property="og:image" content="https://psychbruce.github.io/DPI/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -31,8 +31,7 @@ in linear regression models."></head><body>
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-
-      <h1>The Directed Prediction Index (DPI).</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>The Directed Prediction Index (DPI).</h1>
       <small class="dont-index">Source: <a href="https://github.com/psychbruce/DPI/blob/main/R/DPI.R" class="external-link"><code>R/DPI.R</code></a></small>
       <div class="d-none name"><code>DPI.Rd</code></div>
     </div>
@@ -171,15 +170,15 @@ Defaults to <code>6</code> and <code>4</code>.</p></dd>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="color: #00BBBB; font-weight: bold;">(1) Partial Correlation (pr_XY)</span> ──</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Estimated r(partial) = 0.140, t(105) = 1.469, p = 0.1449    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Estimated r(partial) = 0.141, t(105) = 1.482, p = 0.1415    </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="color: #00BBBB; font-weight: bold;">(2) Delta R^2 (= R^2_Y - R^2_X)</span> ──</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  Sim.SE z.value   p.z sig Sim.Conf.Interval</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ΔR²    0.418 (0.079)   5.313 1e-07 ***    [0.266, 0.560]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ΔR²    0.419 (0.078)   5.362 8e-08 ***    [0.267, 0.565]</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="color: #00BBBB; font-weight: bold;">(3) Directed Prediction Index (DPI)</span> ──</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  Sim.SE z.value    p.z sig Sim.Conf.Interval</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> DPI    1.313 (1.400)   0.938 0.3483        [0.004, 4.973]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> DPI    1.267 (1.264)   1.002 0.3162        [0.004, 4.675]</span>
 <span class="r-plt img"><img src="DPI-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu">DPI</span><span class="op">(</span><span class="va">model</span>, y<span class="op">=</span><span class="st">"Temp"</span>, x<span class="op">=</span><span class="st">"Solar.R"</span>, k.cov<span class="op">=</span><span class="fl">1</span>, seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span>  <span class="co"># raw sample</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Sample size:</span> N.valid = 111</span>
