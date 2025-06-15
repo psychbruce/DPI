@@ -15,6 +15,7 @@
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="The Directed Prediction Index">
 <meta name="description" content="The Directed Prediction Index (DPI) is a simulation-based method for quantifying relative endogeneity of outcome versus predictor variables in multiple linear regression models.">
 <meta property="og:description" content="The Directed Prediction Index (DPI) is a simulation-based method for quantifying relative endogeneity of outcome versus predictor variables in multiple linear regression models.">
+<meta property="og:image" content="https://psychbruce.github.io/DPI/logo.png">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -49,10 +50,20 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9"><div class="section level1">
-<div class="page-header"><h1 id="dpi-">DPI <img src="reference/figures/logo.png" align="right" height="160"><a class="anchor" aria-label="anchor" href="#dpi-"></a>
-</h1></div>
-<p>😷 The Directed Prediction Index (DPI).</p>
+<div class="page-header">
+<img src="logo.png" class="logo" alt=""><h1 id="dpi-">DPI <a class="anchor" aria-label="anchor" href="#dpi-"></a>
+</h1>
+</div>
+<p>↔︎️ The Directed Prediction Index (DPI).</p>
 <p>The <em>Directed Prediction Index</em> (DPI) is a simulation-based method for quantifying <em>relative endogeneity</em> of outcome versus predictor variables in multiple linear regression models.</p>
+<p>Computation of DPI with simulation samples:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msub><mtext mathvariant="normal">DPI</mtext><mrow><mi>X</mi><mo>→</mo><mi>Y</mi></mrow></msub></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msup><mi>t</mi><mn>2</mn></msup><mo>⋅</mo><mi>Δ</mi><msup><mi>R</mi><mn>2</mn></msup></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msubsup><mi>t</mi><msub><mi>β</mi><mrow><mi>X</mi><mi>Y</mi><mo stretchy="false" form="prefix">|</mo><mi>C</mi><mi>o</mi><mi>v</mi><mi>s</mi></mrow></msub><mn>2</mn></msubsup><mo>⋅</mo><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>R</mi><mrow><mi>Y</mi><mo>∼</mo><mi>X</mi><mo>+</mo><mi>C</mi><mi>o</mi><mi>v</mi><mi>s</mi></mrow><mn>2</mn></msubsup><mo>−</mo><msubsup><mi>R</mi><mrow><mi>X</mi><mo>∼</mo><mi>Y</mi><mo>+</mo><mi>C</mi><mi>o</mi><mi>v</mi><mi>s</mi></mrow><mn>2</mn></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msubsup><mi>t</mi><mrow><mi>p</mi><mi>a</mi><mi>r</mi><mi>t</mi><mi>i</mi><mi>a</mi><mi>l</mi><mi>.</mi><msub><mi>r</mi><mrow><mi>X</mi><mi>Y</mi><mo stretchy="false" form="prefix">|</mo><mi>C</mi><mi>o</mi><mi>v</mi><mi>s</mi></mrow></msub></mrow><mn>2</mn></msubsup><mo>⋅</mo><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>R</mi><mrow><mi>Y</mi><mo>∼</mo><mi>X</mi><mo>+</mo><mi>C</mi><mi>o</mi><mi>v</mi><mi>s</mi></mrow><mn>2</mn></msubsup><mo>−</mo><msubsup><mi>R</mi><mrow><mi>X</mi><mo>∼</mo><mi>Y</mi><mo>+</mo><mi>C</mi><mi>o</mi><mi>v</mi><mi>s</mi></mrow><mn>2</mn></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">
+\begin{aligned}
+\text{DPI}_{X \rightarrow Y} &amp; = t^2 \cdot \Delta R^2 \\
+&amp; = t_{\beta_{XY|Covs}}^2 \cdot (R_{Y \sim X + Covs}^2 - R_{X \sim Y + Covs}^2) \\
+&amp; = t_{partial.r_{XY|Covs}}^2 \cdot (R_{Y \sim X + Covs}^2 - R_{X \sim Y + Covs}^2)
+\end{aligned}
+</annotation></semantics></math></p>
 <!-- badges: start -->
 
 <!-- badges: end -->
@@ -121,7 +132,7 @@
 <div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://CRAN.R-project.org/package=DPI" class="external-link"><img src="https://www.r-pkg.org/badges/version/FMAT?color=red" alt="CRAN-Version"></a></li>
+<li><a href="https://CRAN.R-project.org/package=DPI" class="external-link"><img src="https://www.r-pkg.org/badges/version/DPI?color=red" alt="CRAN-Version"></a></li>
 <li><a href="https://github.com/psychbruce/DPI" class="external-link"><img src="https://img.shields.io/github/r-package/v/psychbruce/DPI?label=GitHub&amp;color=orange" alt="GitHub-Version"></a></li>
 <li><a href="https://github.com/psychbruce/DPI/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/psychbruce/DPI/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
 <li><a href="https://CRAN.R-project.org/package=DPI" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/grand-total/DPI" alt="CRAN-Downloads"></a></li>
