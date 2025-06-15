@@ -3,4 +3,4 @@
 # DPI 2025.6
 
 -   Initial public release on [GitHub](https://github.com/psychbruce/DPI).
--   Developed basic functions.
+-   Developed core functions and package logo.
