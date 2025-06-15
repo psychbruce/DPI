@@ -9,10 +9,14 @@ DPI(
   y,
   x,
   data = NULL,
-  n.cov = 0,
-  n.sample = 1000,
+  k.cov = 0,
+  n.sim = 1000,
   seed = NULL,
-  progress
+  progress,
+  file = NULL,
+  width = 6,
+  height = 4,
+  dpi = 500
 )
 }
 \arguments{
@@ -27,26 +31,34 @@ If \code{data} is specified, then \code{model} will be ignored and
 a linear model \code{lm({y} ~ {x} + .)} will be fitted inside.
 This is helpful for exploring all variables in a dataset.}
 
-\item{n.cov}{Number of random covariates
+\item{k.cov}{Number of random covariates
 (simulating potential omitted variables)
 added to each simulation sample.
 \itemize{
 \item Defaults to \code{0}: in such case, bootstrap samples
 (resampling with replacement) are used for simulation.
-\item If \code{n.cov > 0}, then the raw data (without bootstrapping)
-are used, with \code{n.cov} random variables appended,
+\item If \code{k.cov > 0}, then the raw data (without bootstrapping)
+are used, with \code{k.cov} random variables appended,
 for simulation.
-\item Test different \code{n.cov} values as robustness checks.
+\item Test different \code{k.cov} values as robustness checks
+(see \code{\link{DPI_curve}}).
 }}
 
-\item{n.sample}{Number of simulation samples.
+\item{n.sim}{Number of simulation samples.
 Defaults to \code{1000}.}
 
 \item{seed}{Random seed for replicable results.
 Defaults to \code{NULL}.}
 
 \item{progress}{Show progress bar.
-Defaults to \code{FALSE} (if \code{n.sample < 5000}).}
+Defaults to \code{FALSE} (if \code{n.sim < 5000}).}
+
+\item{file}{File name of saved plot (\code{".png"} or \code{".pdf"}).}
+
+\item{width, height}{Width and height (in inches) of saved plot.
+Defaults to \code{6} and \code{4}.}
+
+\item{dpi}{Dots per inch (figure resolution). Defaults to \code{500}.}
 }
 \value{
 Return a data.frame of simulation results:
@@ -104,9 +116,9 @@ Since \eqn{t_{\beta} = t_{partial.r}} and when all variables are standardized:
 }
 \examples{
 \donttest{model = lm(Temp ~ ., data=airquality)
-DPI(model, y="Temp", x="Solar.R")  # bootstrap sample if n.cov=0
-DPI(model, y="Temp", x="Solar.R", n.cov=1, seed=1)  # raw sample
+DPI(model, y="Temp", x="Solar.R")  # bootstrap sample if k.cov=0
+DPI(model, y="Temp", x="Solar.R", k.cov=1, seed=1)  # raw sample
 
-DPI(data=airquality, y="Temp", x="Solar.R", n.cov=10, seed=1)
+DPI(data=airquality, y="Temp", x="Solar.R", k.cov=10, seed=1)
 }
 }

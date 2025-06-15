@@ -19,8 +19,8 @@ cor_network(
   edge.color.insig = "#EEEEEEEE",
   title = NULL,
   file = NULL,
-  width = 8,
-  height = 6,
+  width = 6,
+  height = 4,
   dpi = 500,
   ...
 )
@@ -68,8 +68,8 @@ Defaults to \code{"#EEEEEEEE"} (transparent grey).}
 
 \item{file}{File name of saved plot (\code{".png"} or \code{".pdf"}).}
 
-\item{width, height}{Width and height (in inches) of the saved plot.
-Defaults to \code{8} and \code{6}.}
+\item{width, height}{Width and height (in inches) of saved plot.
+Defaults to \code{6} and \code{4}.}
 
 \item{dpi}{Dots per inch (figure resolution). Defaults to \code{500}.}
 

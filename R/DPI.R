@@ -2,9 +2,11 @@
 
 
 #' @import ggplot2
-#' @importFrom stats sd cor pt pnorm rnorm quantile na.omit
+#' @importFrom stats sd cor lm model.frame update coef
+#' @importFrom stats pt pnorm rnorm quantile na.omit df.residual
 #' @importFrom glue glue glue_col
 #' @importFrom crayon italic underline green blue magenta
+#' @importFrom grDevices png pdf dev.off
 .onAttach = function(libname, pkgname) {
   inst.ver = as.character(utils::packageVersion("DPI"))
   pkg.date = substr(utils::packageDate("DPI"), 1, 4)
@@ -87,8 +89,8 @@ data_random = function(k, n, seed=NULL) {
 #' Defaults to `"#EEEEEEEE"` (transparent grey).
 #' @param title Plot title.
 #' @param file File name of saved plot (`".png"` or `".pdf"`).
-#' @param width,height Width and height (in inches) of the saved plot.
-#' Defaults to `8` and `6`.
+#' @param width,height Width and height (in inches) of saved plot.
+#' Defaults to `6` and `4`.
 #' @param dpi Dots per inch (figure resolution). Defaults to `500`.
 #' @param ... Other parameters passed to \code{\link[qgraph:qgraph]{qgraph}}.
 #'
@@ -114,8 +116,8 @@ cor_network = function(
     edge.color.insig="#EEEEEEEE",
     title=NULL,
     file=NULL,
-    width=8,
-    height=6,
+    width=6,
+    height=4,
     dpi=500,
     ...
 ) {
@@ -200,7 +202,7 @@ cor_network = function(
 
   if(!is.null(file)) {
     dev.off()
-    cli::cli_alert_success("Saved to {.path {paste0(getwd(), '/', file)}}")
+    cli::cli_alert_success("Plot saved to {.path {paste0(getwd(), '/', file)}}")
   }
 
   invisible(p)
@@ -233,12 +235,17 @@ sig.trans = function(p) {
 }
 
 
-r_to_sig = function(r, n) {
-  p = p.t(r/sqrt((1-r^2)/(n-2)), n-2)
+p_to_sig = function(p) {
   ifelse(is.na(p) | p > 1 | p < 0, "",
          ifelse(p < 0.001, "***",
                 ifelse(p < 0.01, "**",
                        ifelse(p < 0.05, "*", ""))))
+}
+
+
+r_to_sig = function(r, n) {
+  p = p.t(r/sqrt((1-r^2)/(n-2)), n-2)
+  p_to_sig(p)
 }
 
 
@@ -281,22 +288,24 @@ formula_paste = function(formula) {
 #' If `data` is specified, then `model` will be ignored and
 #' a linear model `lm({y} ~ {x} + .)` will be fitted inside.
 #' This is helpful for exploring all variables in a dataset.
-#' @param n.cov Number of random covariates
+#' @param k.cov Number of random covariates
 #' (simulating potential omitted variables)
 #' added to each simulation sample.
 #'
 #' - Defaults to `0`: in such case, bootstrap samples
 #' (resampling with replacement) are used for simulation.
-#' - If `n.cov > 0`, then the raw data (without bootstrapping)
-#' are used, with `n.cov` random variables appended,
+#' - If `k.cov > 0`, then the raw data (without bootstrapping)
+#' are used, with `k.cov` random variables appended,
 #' for simulation.
-#' - Test different `n.cov` values as robustness checks.
-#' @param n.sample Number of simulation samples.
+#' - Test different `k.cov` values as robustness checks
+#' (see [`DPI_curve`]).
+#' @param n.sim Number of simulation samples.
 #' Defaults to `1000`.
 #' @param seed Random seed for replicable results.
 #' Defaults to `NULL`.
 #' @param progress Show progress bar.
-#' Defaults to `FALSE` (if `n.sample < 5000`).
+#' Defaults to `FALSE` (if `n.sim < 5000`).
+#' @inheritParams cor_network
 #'
 #' @return Return a data.frame of simulation results:
 #' - `DPI`
@@ -316,22 +325,26 @@ formula_paste = function(formula) {
 #'
 #' @examples
 #' \donttest{model = lm(Temp ~ ., data=airquality)
-#' DPI(model, y="Temp", x="Solar.R")  # bootstrap sample if n.cov=0
-#' DPI(model, y="Temp", x="Solar.R", n.cov=1, seed=1)  # raw sample
+#' DPI(model, y="Temp", x="Solar.R")  # bootstrap sample if k.cov=0
+#' DPI(model, y="Temp", x="Solar.R", k.cov=1, seed=1)  # raw sample
 #'
-#' DPI(data=airquality, y="Temp", x="Solar.R", n.cov=10, seed=1)
+#' DPI(data=airquality, y="Temp", x="Solar.R", k.cov=10, seed=1)
 #' }
 #' @export
 DPI = function(
     model, y, x,
     data = NULL,
-    n.cov = 0,
-    n.sample = 1000,
+    k.cov = 0,
+    n.sim = 1000,
     seed = NULL,
-    progress
+    progress,
+    file = NULL,
+    width = 6,
+    height = 4,
+    dpi = 500
 ) {
   if(missing(progress)) {
-    if(n.sample < 5000)
+    if(n.sim < 5000)
       progress = FALSE
     else
       progress = TRUE
@@ -350,7 +363,7 @@ DPI = function(
   options(cli.progress_bar_style="bar")
   cli::cli_progress_bar(
     clear = FALSE,
-    total = n.sample,
+    total = n.sim,
     format = paste(
       "{cli::pb_spin} Simulation",
       "{cli::pb_current}/{cli::pb_total}",
@@ -360,17 +373,24 @@ DPI = function(
       "{cli::col_green(cli::symbol$tick)}",
       "{cli::pb_total} simulation samples estimated in {cli::pb_elapsed}")
   )
+  if(!is.null(seed)) {
+    set.seed(seed)
+    seeds = sample(seq_len(10^8), n.sim)
+  }
   set.seed(seed)
-  dpi = lapply(seq_len(n.sample), function(i) {
+  dpi = lapply(seq_len(n.sim), function(i) {
     ## Add random covariates
-    if(n.cov==0) {
+    if(k.cov==0) {
       # data.i = data
       # bootstrap sample (resampling with replacement)
       data.i = data[sample(seq_len(nrow(data)), replace=TRUE),]
       covs = ""
     } else {
-      if(is.null(seed)) seed.i = NULL else seed.i = seed + i
-      data.r = data_random(k=n.cov, n=nrow(data), seed=seed.i)
+      if(is.null(seed))
+        seed.i = NULL
+      else
+        seed.i = seeds[i]
+      data.r = data_random(k=k.cov, n=nrow(data), seed=seed.i)
       covs = names(data.r)
       if(any(covs %in% names(data))) {
         covs = paste0("DPI_Random_Var_", covs)
@@ -415,10 +435,11 @@ DPI = function(
   attr(dpi, "formula") = formula
   attr(dpi, "X") = x
   attr(dpi, "Y") = y
-  attr(dpi, "n.cov") = n.cov
-  attr(dpi, "n.sample") = n.sample
+  attr(dpi, "k.cov") = k.cov
+  attr(dpi, "n.sim") = n.sim
   attr(dpi, "df") = dpi$df.beta.xy[1]
   attr(dpi, "seed") = ifelse(is.null(seed), "NULL", seed)
+  attr(dpi, "plot.params") = list(file, width, height, dpi)
   return(dpi)
 }
 
@@ -436,21 +457,21 @@ DPI = function(
 summary.dpi = function(object, ...) {
   ## DPI
   dpi = object$DPI
-  mean = mean(dpi)
-  se = sd(dpi)
+  mean = mean(dpi, na.rm=TRUE)
+  se = sd(dpi, na.rm=TRUE)
   z = mean / se
   p.z = pnorm(abs(z), lower.tail=FALSE) * 2
-  CIs = quantile(dpi, probs=c(0.025, 0.975))
+  CIs = quantile(dpi, probs=c(0.025, 0.975), na.rm=TRUE)
   ## Delta R^2
   delta.R2 = object$delta.R2
-  dR2.mean = mean(delta.R2)
-  dR2.se = sd(delta.R2)
+  dR2.mean = mean(delta.R2, na.rm=TRUE)
+  dR2.se = sd(delta.R2, na.rm=TRUE)
   dR2.z = dR2.mean / dR2.se
   dR2.p.z = pnorm(abs(dR2.z), lower.tail=FALSE) * 2
-  dR2.CIs = quantile(delta.R2, probs=c(0.025, 0.975))
+  dR2.CIs = quantile(delta.R2, probs=c(0.025, 0.975), na.rm=TRUE)
   ## partial r & t test (test with raw sample size!)
-  r.partial = mean(object$r.partial.xy)
-  t.r = mean(object$t.beta.xy)
+  r.partial = mean(object$r.partial.xy, na.rm=TRUE)
+  t.r = mean(object$t.beta.xy, na.rm=TRUE)
   t.df = attr(object, "df")
   p.t = pt(abs(t.r), t.df, lower.tail=FALSE) * 2
   ## Combine
@@ -539,8 +560,8 @@ print.summary.dpi = function(x, digits=3, ...) {
   ")
   cli::cli_text("
   {cli::col_cyan('Simulation sample settings:')}
-    k.random.covs = {cli::col_magenta({attr(x$dpi, 'n.cov')})},
-    n.sim = {cli::col_magenta({attr(x$dpi, 'n.sample')})},
+    k.random.covs = {cli::col_magenta({attr(x$dpi, 'k.cov')})},
+    n.sim = {cli::col_magenta({attr(x$dpi, 'n.sim')})},
     seed = {cli::col_magenta({attr(x$dpi, 'seed')})}
   ")
   cat("\n")
@@ -569,6 +590,7 @@ print.summary.dpi = function(x, digits=3, ...) {
 
 #' \[S3 method\] Plot DPI results.
 #'
+#' @inheritParams cor_network
 #' @param x A data.frame (of new class `dpi`)
 #' returned from [`DPI`].
 #' @param ... Other arguments (currently not used).
@@ -576,13 +598,20 @@ print.summary.dpi = function(x, digits=3, ...) {
 #' @return Return a `ggplot` object.
 #'
 #' @export
-plot.dpi = function(x, ...) {
+plot.dpi = function(x, file=NULL, width=6, height=4, dpi=500, ...) {
   DPI = scaled = ndensity = NULL
   color = "#2B579A"
   x.summ = summary(x)
   summ = x.summ$dpi.summ
   summ.r = x.summ$r.partial.summ
   r.sig = summ.r$p.t < 0.05
+  if(is.null(file)) {
+    plot.params = attr(x, "plot.params")
+    file = plot.params$file
+    width = plot.params$width
+    height = plot.params$height
+    dpi = plot.params$dpi
+  }
 
   expr.x = eval(parse(text=glue("
     expression(
@@ -599,9 +628,9 @@ plot.dpi = function(x, ...) {
     expression(
       paste(
         'Histogram of DPI (',
-        italic(k)[random.covs] == {attr(x, 'n.cov')},
+        italic(k)[random.covs] == {attr(x, 'k.cov')},
         ', ',
-        italic(n)[sim.samples] == {attr(x, 'n.sample')},
+        italic(n)[sim.samples] == {attr(x, 'n.sim')},
         ')'
       )
     )
@@ -656,7 +685,15 @@ plot.dpi = function(x, ...) {
          caption=expr.caption) +
     theme_classic() +
     theme(plot.subtitle=element_text(color=color),
-          plot.caption=element_text(color="darkred"))
+          plot.caption=element_text(color="darkred"),
+          axis.text=element_text(color="black"),
+          axis.line=element_line(color="black"),
+          axis.ticks=element_line(color="black"))
+
+  if(!is.null(file)) {
+    ggsave(p, filename=file, width=width, height=height, dpi=dpi)
+    cli::cli_alert_success("Plot saved to {.path {paste0(getwd(), '/', file)}}")
+  }
 
   return(p)
 }
@@ -675,5 +712,149 @@ plot.dpi = function(x, ...) {
 print.dpi = function(x, digits=3, ...) {
   print(summary(x), digits=digits)
   print(plot(x))
+}
+
+
+#' The DPI curve analysis.
+#'
+#' @inheritParams DPI
+#' @param k.covs An integer vector of number of random covariates
+#' (simulating potential omitted variables)
+#' added to each simulation sample.
+#' Defaults to `1:10` (producing DPI results for `k.cov`=1~10).
+#' For details, see [`DPI`].
+#'
+#' @return Return a data.frame of DPI curve results.
+#'
+#' @examples
+#' \donttest{model = lm(Temp ~ ., data=airquality)
+#' DPIs = DPI_curve(model, y="Temp", x="Solar.R", seed=1)
+#' plot(DPIs)  # ggplot object
+#' }
+#' @export
+DPI_curve = function(
+    model, y, x,
+    data = NULL,
+    k.covs = 1:10,
+    n.sim = 1000,
+    seed = NULL,
+    file = NULL,
+    width = 6,
+    height = 4,
+    dpi = 500
+) {
+  op = options()
+  options(cli.progress_bar_style="bar")
+  cli::cli_progress_bar(
+    clear = FALSE,
+    total = length(k.covs),
+    format = paste(
+      "{cli::pb_spin} Simulation",
+      "k.covs: {cli::pb_current}/{cli::pb_total}",
+      "{cli::pb_bar} {cli::pb_percent}",
+      "[{cli::pb_elapsed_clock}]"),
+    format_done = paste(
+      "{cli::col_green(cli::symbol$tick)}",
+      "{cli::pb_total} * {n.sim}",
+      "simulation samples estimated in {cli::pb_elapsed}")
+  )
+  dpi.curve = lapply(k.covs, function(k.cov) {
+    dpi = DPI(model, y, x, data, k.cov, n.sim, seed, progress=FALSE)
+    CIs.99 = quantile(dpi$DPI, probs=c(0.005, 0.995), na.rm=TRUE)
+    dpi.summ = cbind(
+      data.frame(k.cov),
+      summary(dpi)[["dpi.summ"]],
+      data.frame(Sim.LLCI.99 = CIs.99[1],
+                 Sim.ULCI.99 = CIs.99[2])
+    )
+    row.names(dpi.summ) = k.cov
+    cli::cli_progress_update(.envir=parent.frame(2))
+    return(dpi.summ)
+  })
+  cli::cli_progress_done()
+  options(op)
+  dpi.curve = do.call("rbind", dpi.curve)
+  class(dpi.curve) = c("dpi.curve", "data.frame")
+  attr(dpi.curve, "X") = x
+  attr(dpi.curve, "Y") = y
+  attr(dpi.curve, "k.covs") = k.covs
+  attr(dpi.curve, "n.sim") = n.sim
+  attr(dpi.curve, "plot.params") = list(file, width, height, dpi)
+  return(dpi.curve)
+}
+
+
+#' \[S3 method\] Plot DPI curve analysis results.
+#'
+#' @inheritParams cor_network
+#' @param x A data.frame (of new class `dpi.curve`)
+#' returned from [`DPI_curve`].
+#' @param ... Other arguments (currently not used).
+#'
+#' @return Return a `ggplot` object.
+#'
+#' @export
+plot.dpi.curve = function(x, file=NULL, width=6, height=4, dpi=500, ...) {
+  k.cov = Estimate = Sim.LLCI = Sim.ULCI = Sim.LLCI.99 = Sim.ULCI.99 = NULL
+  color = "#2B579A"
+  if(is.null(file)) {
+    plot.params = attr(x, "plot.params")
+    file = plot.params$file
+    width = plot.params$width
+    height = plot.params$height
+    dpi = plot.params$dpi
+  }
+  # dp = rbind(
+  #   data.frame(
+  #     k.cov = 0,
+  #     Estimate = lm(Estimate ~ k.cov, x)$coefficients[1],
+  #     Sim.LLCI = lm(Sim.LLCI ~ k.cov, x)$coefficients[1],
+  #     Sim.ULCI = lm(Sim.ULCI ~ k.cov, x)$coefficients[1]
+  #   ),
+  #   x[c("k.cov", "Estimate", "Sim.LLCI", "Sim.ULCI")]
+  # )
+  expr.subtitle = eval(parse(text=glue("
+    expression(
+      paste(
+        bar(DPI)[{attr(x, 'X')} %->% {attr(x, 'Y')}],
+        ' with ',
+        CI['95%']^Sim,
+        ' (dashed) and ',
+        CI['99%']^Sim,
+        ' (dotted)'
+      )
+    )
+  ")), envir=parent.frame())
+  p = ggplot(x, aes(x=k.cov, y=Estimate)) +
+    geom_ribbon(aes(ymin=Sim.LLCI.99, ymax=Sim.ULCI.99),
+                color=color, fill=color, alpha=0.1,
+                linetype="dotted") +
+    geom_ribbon(aes(ymin=Sim.LLCI, ymax=Sim.ULCI),
+                color=color, fill=color, alpha=0.15,
+                linetype="dashed") +
+    geom_path(linewidth=1, color=color) +
+    geom_point(color=color, size=2) +
+    geom_hline(yintercept=0, color="darkred", linetype="dashed") +
+    scale_x_continuous(breaks=x$k.cov) +
+    labs(
+      x=paste0(
+        "Number of Random Covariates (Simulation Samples = ",
+        attr(x, "n.sim"),
+        ")"),
+      y="DPI",
+      title="Directed Prediction Index (DPI) Curve Analysis",
+      subtitle=expr.subtitle) +
+    theme_classic() +
+    theme(plot.subtitle=element_text(color=color),
+          axis.text=element_text(color="black"),
+          axis.line=element_line(color="black"),
+          axis.ticks=element_line(color="black"))
+
+  if(!is.null(file)) {
+    ggsave(p, filename=file, width=width, height=height, dpi=dpi)
+    cli::cli_alert_success("Plot saved to {.path {paste0(getwd(), '/', file)}}")
+  }
+
+  return(p)
 }
 

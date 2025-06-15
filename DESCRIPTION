@@ -1,7 +1,7 @@
 Package: DPI
 Title: The Directed Prediction Index
-Version: 0.2.0
-Date: 2025-06-03
+Version: 2025.6
+Date: 2025-06-11
 Authors@R:
     c(person(given = "Han-Wu-Shuang",
              family = "Bao",
@@ -10,9 +10,9 @@ Authors@R:
              comment = c(ORCID = "0000-0003-3043-710X")))
 Maintainer: Han-Wu-Shuang Bao <baohws@foxmail.com>
 Description:
-    The Directed Prediction Index ('DPI') is a simulation-based method
-    for quantifying endogeneity of outcome versus predictor variables
-    in linear regression models.
+    The Directed Prediction Index ('DPI') is a simulation-based method for
+    quantifying 'relative endogeneity' of outcome versus predictor variables
+    in multiple linear regression models.
 License: GPL-3
 Encoding: UTF-8
 URL: https://psychbruce.github.io/DPI/

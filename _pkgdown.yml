@@ -1,0 +1,9 @@
+url: https://psychbruce.github.io/DPI
+template:
+  bootstrap: 5
+  bootswatch: simplex
+  bslib:
+    base_font:
+      google: "Roboto"
+    heading_font:
+      google: "Lexend"  # Anton, Oswald, Ubuntu, Lexend, Fjalla One
