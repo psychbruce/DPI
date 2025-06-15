@@ -1,6 +1,6 @@
-# DPI <img src="man/figures/logo.png" align="right" height="160"/>
+# DPI <img src="man/figures/logonew.png" align="right" height="160"/>
 
-↔️ The Directed Prediction Index (DPI).
+🛸 The Directed Prediction Index (DPI).
 
 The *Directed Prediction Index* (DPI) is a simulation-based method for quantifying *relative endogeneity* of outcome versus predictor variables in multiple linear regression models.
 
