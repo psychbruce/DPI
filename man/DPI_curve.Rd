@@ -56,8 +56,8 @@ Return a data.frame of DPI curve results.
 The DPI curve analysis.
 }
 \examples{
-\donttest{model = lm(Temp ~ ., data=airquality)
-DPIs = DPI_curve(model, y="Temp", x="Solar.R", seed=1)
+\donttest{model = lm(Ozone ~ ., data=airquality)
+DPIs = DPI_curve(model, y="Ozone", x="Solar.R", seed=1)
 plot(DPIs)  # ggplot object
 }
 }

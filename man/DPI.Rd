@@ -9,7 +9,7 @@ DPI(
   y,
   x,
   data = NULL,
-  k.cov = 0,
+  k.cov = 1,
   n.sim = 1000,
   seed = NULL,
   progress,
@@ -35,13 +35,14 @@ This is helpful for exploring all variables in a dataset.}
 (simulating potential omitted variables)
 added to each simulation sample.
 \itemize{
-\item Defaults to \code{0}: in such case, bootstrap samples
-(resampling with replacement) are used for simulation.
-\item If \code{k.cov > 0}, then the raw data (without bootstrapping)
+\item Defaults to \code{1}.
+Please also test different \code{k.cov} values
+as robustness checks (see \code{\link{DPI_curve}}).
+\item If \code{k.cov > 0}, the raw data (without bootstrapping)
 are used, with \code{k.cov} random variables appended,
 for simulation.
-\item Test different \code{k.cov} values as robustness checks
-(see \code{\link{DPI_curve}}).
+\item If \code{k.cov = 0} (not suggested), bootstrap samples
+(resampling with replacement) are used for simulation.
 }}
 
 \item{n.sim}{Number of simulation samples.
@@ -94,31 +95,24 @@ Return a data.frame of simulation results:
 }
 }
 \description{
-The Directed Prediction Index (DPI) is a simulation-based method
-for quantifying \emph{endogeneity} of outcome vs. predictor variables
-in linear regression models.
-}
-\details{
-\eqn{
-\begin{aligned}
-\text{DPI}_{X \rightarrow Y} & = t^2 \cdot \Delta R^2 \\
-& = t_{\beta_{XY|Covs}}^2 \cdot (R_{Y \sim X + Covs}^2 - R_{X \sim Y + Covs}^2)
-\end{aligned}
-}
-
-Since \eqn{t_{\beta} = t_{partial.r}} and when all variables are standardized:
-\eqn{
-\begin{aligned}
-\text{DPI}_{X \rightarrow Y} & = t_{partial.r_{XY|Covs}}^2 \cdot \left( \frac{\sum_{i=1}^n (\hat{Y}_i - \bar{Y})^2}{\sum_{i=1}^n (Y_i - \bar{Y})^2} - \frac{\sum_{i=1}^n (\hat{X}_i - \bar{X})^2}{\sum_{i=1}^n (X_i - \bar{X})^2} \right) \\
-& = \frac{pr_{XY|Covs}^2 \cdot (n - k_{Covs} - 2)}{1 - pr_{XY|Covs}^2} \cdot \left( \frac{\sum_{i=1}^n \hat{Y}_i^2}{\sum_{i=1}^n Y_i^2} - \frac{\sum_{i=1}^n \hat{X}_i^2}{\sum_{i=1}^n X_i^2} \right)
-\end{aligned}
-}
+The Directed Prediction Index (DPI) is
+a simulation-based and conservative method
+for quantifying the \emph{relative endogeneity} (relative dependence)
+of outcome (\emph{Y}) vs. predictor (\emph{X}) variables
+in multiple linear regression models.
+By comparing the proportion of variance explained (\emph{R}-squared)
+between the \emph{Y}-as-outcome model and the \emph{X}-as-outcome model
+while controlling for a sufficient number
+of potential confounding variables,
+it suggests a more plausible influence direction
+from a more exogenous variable (\emph{X})
+to a more endogenous variable (\emph{Y}).
+Methodological details are provided at
+\link{https://psychbruce.github.io/DPI/}.
 }
 \examples{
-\donttest{model = lm(Temp ~ ., data=airquality)
-DPI(model, y="Temp", x="Solar.R")  # bootstrap sample if k.cov=0
-DPI(model, y="Temp", x="Solar.R", k.cov=1, seed=1)  # raw sample
-
-DPI(data=airquality, y="Temp", x="Solar.R", k.cov=10, seed=1)
+\donttest{model = lm(Ozone ~ ., data=airquality)
+DPI(model, y="Ozone", x="Solar.R", seed=1)
+DPI(data=airquality, y="Ozone", x="Solar.R", k.cov=10, seed=1)
 }
 }

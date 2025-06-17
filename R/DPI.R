@@ -262,24 +262,20 @@ formula_paste = function(formula) {
 
 #' The Directed Prediction Index (DPI).
 #'
-#' The Directed Prediction Index (DPI) is a simulation-based method
-#' for quantifying *endogeneity* of outcome vs. predictor variables
-#' in linear regression models.
-#'
-#' \eqn{
-#' \begin{aligned}
-#' \text{DPI}_{X \rightarrow Y} & = t^2 \cdot \Delta R^2 \\
-#' & = t_{\beta_{XY|Covs}}^2 \cdot (R_{Y \sim X + Covs}^2 - R_{X \sim Y + Covs}^2)
-#' \end{aligned}
-#' }
-#'
-#' Since \eqn{t_{\beta} = t_{partial.r}} and when all variables are standardized:
-#' \eqn{
-#' \begin{aligned}
-#' \text{DPI}_{X \rightarrow Y} & = t_{partial.r_{XY|Covs}}^2 \cdot \left( \frac{\sum_{i=1}^n (\hat{Y}_i - \bar{Y})^2}{\sum_{i=1}^n (Y_i - \bar{Y})^2} - \frac{\sum_{i=1}^n (\hat{X}_i - \bar{X})^2}{\sum_{i=1}^n (X_i - \bar{X})^2} \right) \\
-#' & = \frac{pr_{XY|Covs}^2 \cdot (n - k_{Covs} - 2)}{1 - pr_{XY|Covs}^2} \cdot \left( \frac{\sum_{i=1}^n \hat{Y}_i^2}{\sum_{i=1}^n Y_i^2} - \frac{\sum_{i=1}^n \hat{X}_i^2}{\sum_{i=1}^n X_i^2} \right)
-#' \end{aligned}
-#' }
+#' The Directed Prediction Index (DPI) is
+#' a simulation-based and conservative method
+#' for quantifying the *relative endogeneity* (relative dependence)
+#' of outcome (*Y*) vs. predictor (*X*) variables
+#' in multiple linear regression models.
+#' By comparing the proportion of variance explained (*R*-squared)
+#' between the *Y*-as-outcome model and the *X*-as-outcome model
+#' while controlling for a sufficient number
+#' of potential confounding variables,
+#' it suggests a more plausible influence direction
+#' from a more exogenous variable (*X*)
+#' to a more endogenous variable (*Y*).
+#' Methodological details are provided at
+#' \link{https://psychbruce.github.io/DPI/}.
 #'
 #' @param model Model object (`lm`).
 #' @param y Dependent (outcome) variable.
@@ -292,13 +288,14 @@ formula_paste = function(formula) {
 #' (simulating potential omitted variables)
 #' added to each simulation sample.
 #'
-#' - Defaults to `0`: in such case, bootstrap samples
-#' (resampling with replacement) are used for simulation.
-#' - If `k.cov > 0`, then the raw data (without bootstrapping)
+#' - Defaults to `1`.
+#' Please also test different `k.cov` values
+#' as robustness checks (see [`DPI_curve`]).
+#' - If `k.cov > 0`, the raw data (without bootstrapping)
 #' are used, with `k.cov` random variables appended,
 #' for simulation.
-#' - Test different `k.cov` values as robustness checks
-#' (see [`DPI_curve`]).
+#' - If `k.cov = 0` (not suggested), bootstrap samples
+#' (resampling with replacement) are used for simulation.
 #' @param n.sim Number of simulation samples.
 #' Defaults to `1000`.
 #' @param seed Random seed for replicable results.
@@ -324,17 +321,15 @@ formula_paste = function(formula) {
 #'   - \eqn{R^2} of regression model predicting X using Y and all other covariates
 #'
 #' @examples
-#' \donttest{model = lm(Temp ~ ., data=airquality)
-#' DPI(model, y="Temp", x="Solar.R")  # bootstrap sample if k.cov=0
-#' DPI(model, y="Temp", x="Solar.R", k.cov=1, seed=1)  # raw sample
-#'
-#' DPI(data=airquality, y="Temp", x="Solar.R", k.cov=10, seed=1)
+#' \donttest{model = lm(Ozone ~ ., data=airquality)
+#' DPI(model, y="Ozone", x="Solar.R", seed=1)
+#' DPI(data=airquality, y="Ozone", x="Solar.R", k.cov=10, seed=1)
 #' }
 #' @export
 DPI = function(
     model, y, x,
     data = NULL,
-    k.cov = 0,
+    k.cov = 1,
     n.sim = 1000,
     seed = NULL,
     progress,
@@ -727,8 +722,8 @@ print.dpi = function(x, digits=3, ...) {
 #' @return Return a data.frame of DPI curve results.
 #'
 #' @examples
-#' \donttest{model = lm(Temp ~ ., data=airquality)
-#' DPIs = DPI_curve(model, y="Temp", x="Solar.R", seed=1)
+#' \donttest{model = lm(Ozone ~ ., data=airquality)
+#' DPIs = DPI_curve(model, y="Ozone", x="Solar.R", seed=1)
 #' plot(DPIs)  # ggplot object
 #' }
 #' @export

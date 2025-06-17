@@ -1,6 +1,8 @@
-## News
+## Notes
 
-Initial submission to CRAN.
+Initial submission (resubmission) to CRAN.
+The word 'endogeneity' is correct and not misspelled.
+There are currently no publications about the method in this package.
 
 ## Test environments
 
