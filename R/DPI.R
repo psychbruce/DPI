@@ -275,7 +275,7 @@ formula_paste = function(formula) {
 #' from a more exogenous variable (*X*)
 #' to a more endogenous variable (*Y*).
 #' Methodological details are provided at
-#' \link{https://psychbruce.github.io/DPI/}.
+#' <https://psychbruce.github.io/DPI/>.
 #'
 #' @param model Model object (`lm`).
 #' @param y Dependent (outcome) variable.

@@ -108,7 +108,7 @@ it suggests a more plausible influence direction
 from a more exogenous variable (\emph{X})
 to a more endogenous variable (\emph{Y}).
 Methodological details are provided at
-\link{https://psychbruce.github.io/DPI/}.
+\url{https://psychbruce.github.io/DPI/}.
 }
 \examples{
 \donttest{model = lm(Ozone ~ ., data=airquality)
