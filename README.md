@@ -14,7 +14,7 @@ The *Directed Prediction Index* (DPI) is a simulation-based method for quantifyi
 
 ## Author
 
-Han-Wu-Shuang (Bruce) Bao 包寒吴霜
+Bruce H. W. S. Bao 包寒吴霜
 
 📬 [baohws\@foxmail.com](mailto:baohws@foxmail.com)
 
@@ -22,7 +22,7 @@ Han-Wu-Shuang (Bruce) Bao 包寒吴霜
 
 ## Citation
 
--   Bao, H.-W.-S. (2025). *DPI: The Directed Prediction Index*. <https://CRAN.R-project.org/package=DPI>
+-   Bao, H. W. S. (2025). *DPI: The Directed Prediction Index*. <https://CRAN.R-project.org/package=DPI>
     -   *Note*: This is the original citation. Please refer to the information when you `library(DPI)` for the APA-7 format of the version you installed.
 
 ## Installation

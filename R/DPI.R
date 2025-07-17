@@ -20,7 +20,7 @@
     {underline https://psychbruce.github.io/DPI}
 
     {magenta To use this package in publications, please cite:}
-    Bao, H.-W.-S. ({pkg.date}). "),
+    Bao, H. W. S. ({pkg.date}). "),
     glue_col("{italic DPI: The Directed Prediction Index}"),
     glue_col(" (Version {inst.ver}) [Computer software]. "),
     glue_col("{underline https://CRAN.R-project.org/package=DPI}"),
