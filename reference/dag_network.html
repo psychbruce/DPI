@@ -77,36 +77,30 @@ Finally, for each chosen algorithm, it returns the stable Bayesian network as th
 
 
 <dt id="arg-algorithm">algorithm<a class="anchor" aria-label="anchor" href="#arg-algorithm"></a></dt>
-<dd><p>Structure learning algorithms
-for building Bayesian networks (BNs).
-Should be function name(s) from the
-<code><a href="https://rdrr.io/pkg/bnlearn/man/bnlearn-package.html" class="external-link">bnlearn</a></code> package.</p>
-<p>Better to perform BNs with all three classes of algorithms
+<dd><p><a href="https://rdrr.io/pkg/bnlearn/man/structure.learning.html" class="external-link">Structure learning algorithms</a> for building Bayesian networks (BNs). Should be function name(s) from the <code><a href="https://rdrr.io/pkg/bnlearn/man/bnlearn-package.html" class="external-link">bnlearn</a></code> package. Better to perform BNs with all three classes of algorithms
 to check the robustness of results (Briganti et al., 2023).</p>
-<p>Defaults to the most common algorithms:
-<code>"pc.stable"</code> (PC), <code>"hc"</code> (HC), and <code>"rsmax2"</code> (RS),
-for the three classes, respectively.</p><ul><li><p>(1) Constraint-based Algorithms</p><ul><li><p>PC:
-<code>"</code><code>pc.stable</code><code>"</code>
+<p>Defaults to the most common algorithms: <code>"pc.stable"</code> (PC), <code>"hc"</code> (HC), and <code>"rsmax2"</code> (RS), for the three classes, respectively.</p><ul><li><p>(1) <a href="https://rdrr.io/pkg/bnlearn/man/constraint.html" class="external-link">Constraint-based Algorithms</a></p><ul><li><p>PC:
+<code>"<a href="https://rdrr.io/pkg/bnlearn/man/constraint.html" class="external-link">pc.stable</a>"</code>
 (<em>the first practical constraint-based causal structure learning algorithm by Peter &amp; Clark</em>)</p></li>
 <li><p>Others:
-<code>"</code><code>gs</code><code>"</code>,
-<code>"</code><code>iamb</code><code>"</code>,
-<code>"</code><code>fast.iamb</code><code>"</code>,
-<code>"</code><code>inter.iamb</code><code>"</code>,
-<code>"</code><code>iamb.fdr</code><code>"</code></p></li>
+<code>"<a href="https://rdrr.io/pkg/bnlearn/man/constraint.html" class="external-link">gs</a>"</code>,
+<code>"<a href="https://rdrr.io/pkg/bnlearn/man/constraint.html" class="external-link">iamb</a>"</code>,
+<code>"<a href="https://rdrr.io/pkg/bnlearn/man/constraint.html" class="external-link">fast.iamb</a>"</code>,
+<code>"<a href="https://rdrr.io/pkg/bnlearn/man/constraint.html" class="external-link">inter.iamb</a>"</code>,
+<code>"<a href="https://rdrr.io/pkg/bnlearn/man/constraint.html" class="external-link">iamb.fdr</a>"</code></p></li>
 </ul></li>
 <li><p>(2) <a href="https://rdrr.io/pkg/bnlearn/man/hc.html" class="external-link">Score-based Algorithms</a></p><ul><li><p>Hill-Climbing:
-<code>"</code><code><a href="https://rdrr.io/pkg/bnlearn/man/hc.html" class="external-link">hc</a></code><code>"</code>
+<code>"<a href="https://rdrr.io/pkg/bnlearn/man/hc.html" class="external-link">hc</a>"</code>
 (<em>the hill-climbing greedy search algorithm, exploring DAGs by single-edge additions, removals, and reversals, with random restarts to avoid local optima</em>)</p></li>
 <li><p>Others:
-<code>"</code><code><a href="https://rdrr.io/pkg/bnlearn/man/hc.html" class="external-link">tabu</a></code><code>"</code></p></li>
+<code>"<a href="https://rdrr.io/pkg/bnlearn/man/hc.html" class="external-link">tabu</a>"</code></p></li>
 </ul></li>
-<li><p>(3) Hybrid Algorithms (combination of constraint-based and score-based algorithms)</p><ul><li><p>Restricted Maximization:
-<code>"</code><code>rsmax2</code><code>"</code>
+<li><p>(3) <a href="https://rdrr.io/pkg/bnlearn/man/hybrid.html" class="external-link">Hybrid Algorithms</a> (combination of constraint-based and score-based algorithms)</p><ul><li><p>Restricted Maximization:
+<code>"<a href="https://rdrr.io/pkg/bnlearn/man/hybrid.html" class="external-link">rsmax2</a>"</code>
 (<em>the general 2-phase restricted maximization algorithm, first restricting the search space and then finding the optimal [maximizing the score of] network structure in the restricted space</em>)</p></li>
 <li><p>Others:
-<code>"</code><code>mmhc</code><code>"</code>,
-<code>"</code><code>h2pc</code><code>"</code></p></li>
+<code>"<a href="https://rdrr.io/pkg/bnlearn/man/hybrid.html" class="external-link">mmhc</a>"</code>,
+<code>"<a href="https://rdrr.io/pkg/bnlearn/man/hybrid.html" class="external-link">h2pc</a>"</code></p></li>
 </ul></li>
 </ul></dd>
 
