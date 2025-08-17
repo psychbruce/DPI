@@ -34,7 +34,7 @@ This is helpful for exploring all variables in a dataset.}
 (simulating potential omitted variables)
 added to each simulation sample.
 Defaults to \code{1:10} (producing DPI results for \code{k.cov}=1~10).
-For details, see \code{\link{DPI}}.}
+For details, see \code{\link[=DPI]{DPI()}}.}
 
 \item{n.sim}{Number of simulation samples.
 Defaults to \code{1000}.}
@@ -47,7 +47,8 @@ Defaults to \code{NULL}.}
 \item{width, height}{Width and height (in inches) of saved plot.
 Defaults to \code{6} and \code{4}.}
 
-\item{dpi}{Dots per inch (figure resolution). Defaults to \code{500}.}
+\item{dpi}{Dots per inch (figure resolution).
+Defaults to \code{500}.}
 }
 \value{
 Return a data.frame of DPI curve results.
@@ -60,4 +61,13 @@ The DPI curve analysis.
 DPIs = DPI_curve(model, y="Ozone", x="Solar.R", seed=1)
 plot(DPIs)  # ggplot object
 }
+}
+\seealso{
+\link{S3method.dpi}
+
+\code{\link[=DPI]{DPI()}}
+
+\code{\link[=cor_network]{cor_network()}}
+
+\code{\link[=dag_network]{dag_network()}}
 }

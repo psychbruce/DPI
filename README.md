@@ -2,7 +2,7 @@
 
 🛸 The Directed Prediction Index (DPI).
 
-The *Directed Prediction Index* (DPI) is a simulation-based method for quantifying the *relative endogeneity* of outcome versus predictor variables in multiple linear regression models.
+The *Directed Prediction Index* (DPI) is a simulation-based method for quantifying the *relative endogeneity* (relative dependence) of outcome (*Y*) versus predictor (*X*) variables in multiple linear regression models.
 
 <!-- badges: start -->
 
@@ -22,8 +22,7 @@ Bruce H. W. S. Bao 包寒吴霜
 
 ## Citation
 
--   Bao, H. W. S. (2025). *DPI: The Directed Prediction Index*. <https://CRAN.R-project.org/package=DPI>
-    -   *Note*: This is the original citation. Please refer to the information when you `library(DPI)` for the APA-7 format of the version you installed.
+-   Bao, H. W. S. (2025). *DPI: The Directed Prediction Index*. <https://doi.org/10.32614/CRAN.package.DPI>
 
 ## Installation
 

@@ -37,7 +37,7 @@ added to each simulation sample.
 \itemize{
 \item Defaults to \code{1}.
 Please also test different \code{k.cov} values
-as robustness checks (see \code{\link{DPI_curve}}).
+as robustness checks (see \code{\link[=DPI_curve]{DPI_curve()}}).
 \item If \code{k.cov > 0}, the raw data (without bootstrapping)
 are used, with \code{k.cov} random variables appended,
 for simulation.
@@ -59,7 +59,8 @@ Defaults to \code{FALSE} (if \code{n.sim < 5000}).}
 \item{width, height}{Width and height (in inches) of saved plot.
 Defaults to \code{6} and \code{4}.}
 
-\item{dpi}{Dots per inch (figure resolution). Defaults to \code{500}.}
+\item{dpi}{Dots per inch (figure resolution).
+Defaults to \code{500}.}
 }
 \value{
 Return a data.frame of simulation results:
@@ -95,24 +96,22 @@ Return a data.frame of simulation results:
 }
 }
 \description{
-The Directed Prediction Index (DPI) is
-a simulation-based and conservative method
-for quantifying the \emph{relative endogeneity} (relative dependence)
-of outcome (\emph{Y}) vs. predictor (\emph{X}) variables
-in multiple linear regression models.
-By comparing the proportion of variance explained (\emph{R}-squared)
-between the \emph{Y}-as-outcome model and the \emph{X}-as-outcome model
-while controlling for a sufficient number
-of potential confounding variables,
-it suggests a more plausible influence direction
-from a more exogenous variable (\emph{X})
-to a more endogenous variable (\emph{Y}).
-Methodological details are provided at
-\url{https://psychbruce.github.io/DPI/}.
+The Directed Prediction Index (DPI) is a simulation-based method for quantifying the \emph{relative endogeneity} (relative dependence) of outcome (\emph{Y}) vs. predictor (\emph{X}) variables in multiple linear regression models.
+By comparing the proportion of variance explained (\emph{R}-squared) between the \emph{Y}-as-outcome model and the \emph{X}-as-outcome model while controlling for a sufficient number of potential confounding variables, it suggests a more plausible influence direction from a more exogenous variable (\emph{X}) to a more endogenous variable (\emph{Y}).
+Methodological details are provided at \url{https://psychbruce.github.io/DPI/}.
 }
 \examples{
 \donttest{model = lm(Ozone ~ ., data=airquality)
 DPI(model, y="Ozone", x="Solar.R", seed=1)
 DPI(data=airquality, y="Ozone", x="Solar.R", k.cov=10, seed=1)
 }
+}
+\seealso{
+\link{S3method.dpi}
+
+\code{\link[=DPI_curve]{DPI_curve()}}
+
+\code{\link[=cor_network]{cor_network()}}
+
+\code{\link[=dag_network]{dag_network()}}
 }
