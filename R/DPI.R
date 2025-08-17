@@ -945,41 +945,34 @@ print.cor.net = function(
 #'
 #' @inheritParams cor_network
 #' @inheritParams DPI
-#' @param algorithm [Structure learning algorithms][bnlearn::structure-learning]
-#' for building Bayesian networks (BNs).
-#' Should be function name(s) from the
-#' [`bnlearn`][bnlearn::bnlearn-package] package.
-#'
-#' Better to perform BNs with all three classes of algorithms
+#' @param algorithm \link[bnlearn:structure-learning]{Structure learning algorithms} for building Bayesian networks (BNs). Should be function name(s) from the [`bnlearn`][bnlearn::bnlearn-package] package. Better to perform BNs with all three classes of algorithms
 #' to check the robustness of results (Briganti et al., 2023).
 #'
-#' Defaults to the most common algorithms:
-#' `"pc.stable"` (PC), `"hc"` (HC), and `"rsmax2"` (RS),
-#' for the three classes, respectively.
+#' Defaults to the most common algorithms: `"pc.stable"` (PC), `"hc"` (HC), and `"rsmax2"` (RS), for the three classes, respectively.
 #'
-#' - (1) [Constraint-based Algorithms][bnlearn::constraint-based algorithms]
+#' - (1) \link[bnlearn:constraint-based algorithms]{Constraint-based Algorithms}
 #'   - PC:
-#'     `"`[`pc.stable`][bnlearn::pc.stable]`"`
+#'     \code{"\link[bnlearn:pc.stable]{pc.stable}"}
 #'     (*the first practical constraint-based causal structure learning algorithm by Peter & Clark*)
 #'   - Others:
-#'     `"`[`gs`][bnlearn::gs]`"`,
-#'     `"`[`iamb`][bnlearn::iamb]`"`,
-#'     `"`[`fast.iamb`][bnlearn::fast.iamb]`"`,
-#'     `"`[`inter.iamb`][bnlearn::inter.iamb]`"`,
-#'     `"`[`iamb.fdr`][bnlearn::iamb.fdr]`"`
-#' - (2) [Score-based Algorithms][bnlearn::score-based algorithms]
+#'     \code{"\link[bnlearn:gs]{gs}"},
+#'     \code{"\link[bnlearn:iamb]{iamb}"},
+#'     \code{"\link[bnlearn:fast.iamb]{fast.iamb}"},
+#'     \code{"\link[bnlearn:inter.iamb]{inter.iamb}"},
+#'     \code{"\link[bnlearn:iamb.fdr]{iamb.fdr}"}
+#' - (2) \link[bnlearn:score-based algorithms]{Score-based Algorithms}
 #'   - Hill-Climbing:
-#'     `"`[`hc`][bnlearn::hc]`"`
+#'     \code{"\link[bnlearn:hc]{hc}"}
 #'     (*the hill-climbing greedy search algorithm, exploring DAGs by single-edge additions, removals, and reversals, with random restarts to avoid local optima*)
 #'   - Others:
-#'     `"`[`tabu`][bnlearn::tabu]`"`
-#' - (3) [Hybrid Algorithms][bnlearn::hybrid algorithms] (combination of constraint-based and score-based algorithms)
+#'     \code{"\link[bnlearn:tabu]{tabu}"}
+#' - (3) \link[bnlearn:hybrid algorithms]{Hybrid Algorithms} (combination of constraint-based and score-based algorithms)
 #'   - Restricted Maximization:
-#'     `"`[`rsmax2`][bnlearn::rsmax2]`"`
+#'     \code{"\link[bnlearn:rsmax2]{rsmax2}"}
 #'     (*the general 2-phase restricted maximization algorithm, first restricting the search space and then finding the optimal \[maximizing the score of\] network structure in the restricted space*)
 #'   - Others:
-#'     `"`[`mmhc`][bnlearn::mmhc]`"`,
-#'     `"`[`h2pc`][bnlearn::h2pc]`"`
+#'     \code{"\link[bnlearn:mmhc]{mmhc}"},
+#'     \code{"\link[bnlearn:h2pc]{h2pc}"}
 #' @param algorithm.args An optional list of extra arguments passed to the algorithm.
 #' @param n.boot Number of bootstrap samples (for learning a more "stable" network structure).
 #' Defaults to `1000`.

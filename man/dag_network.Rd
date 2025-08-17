@@ -24,46 +24,39 @@ dag_network(
 \arguments{
 \item{data}{Data.}
 
-\item{algorithm}{\link[bnlearn:structure.learning]{Structure learning algorithms}
-for building Bayesian networks (BNs).
-Should be function name(s) from the
-\code{\link[bnlearn:bnlearn-package]{bnlearn}} package.
-
-Better to perform BNs with all three classes of algorithms
+\item{algorithm}{\link[bnlearn:structure-learning]{Structure learning algorithms} for building Bayesian networks (BNs). Should be function name(s) from the \code{\link[bnlearn:bnlearn-package]{bnlearn}} package. Better to perform BNs with all three classes of algorithms
 to check the robustness of results (Briganti et al., 2023).
 
-Defaults to the most common algorithms:
-\code{"pc.stable"} (PC), \code{"hc"} (HC), and \code{"rsmax2"} (RS),
-for the three classes, respectively.
+Defaults to the most common algorithms: \code{"pc.stable"} (PC), \code{"hc"} (HC), and \code{"rsmax2"} (RS), for the three classes, respectively.
 \itemize{
-\item (1) \link[bnlearn:constraint]{Constraint-based Algorithms}
+\item (1) \link[bnlearn:constraint-based algorithms]{Constraint-based Algorithms}
 \itemize{
 \item PC:
-\verb{"}\code{\link[bnlearn:constraint]{pc.stable}}\verb{"}
+\code{"\link[bnlearn:pc.stable]{pc.stable}"}
 (\emph{the first practical constraint-based causal structure learning algorithm by Peter & Clark})
 \item Others:
-\verb{"}\code{\link[bnlearn:constraint]{gs}}\verb{"},
-\verb{"}\code{\link[bnlearn:constraint]{iamb}}\verb{"},
-\verb{"}\code{\link[bnlearn:constraint]{fast.iamb}}\verb{"},
-\verb{"}\code{\link[bnlearn:constraint]{inter.iamb}}\verb{"},
-\verb{"}\code{\link[bnlearn:constraint]{iamb.fdr}}\verb{"}
+\code{"\link[bnlearn:gs]{gs}"},
+\code{"\link[bnlearn:iamb]{iamb}"},
+\code{"\link[bnlearn:fast.iamb]{fast.iamb}"},
+\code{"\link[bnlearn:inter.iamb]{inter.iamb}"},
+\code{"\link[bnlearn:iamb.fdr]{iamb.fdr}"}
 }
-\item (2) \link[bnlearn:hc]{Score-based Algorithms}
+\item (2) \link[bnlearn:score-based algorithms]{Score-based Algorithms}
 \itemize{
 \item Hill-Climbing:
-\verb{"}\code{\link[bnlearn:hc]{hc}}\verb{"}
+\code{"\link[bnlearn:hc]{hc}"}
 (\emph{the hill-climbing greedy search algorithm, exploring DAGs by single-edge additions, removals, and reversals, with random restarts to avoid local optima})
 \item Others:
-\verb{"}\code{\link[bnlearn:hc]{tabu}}\verb{"}
+\code{"\link[bnlearn:tabu]{tabu}"}
 }
-\item (3) \link[bnlearn:hybrid]{Hybrid Algorithms} (combination of constraint-based and score-based algorithms)
+\item (3) \link[bnlearn:hybrid algorithms]{Hybrid Algorithms} (combination of constraint-based and score-based algorithms)
 \itemize{
 \item Restricted Maximization:
-\verb{"}\code{\link[bnlearn:hybrid]{rsmax2}}\verb{"}
+\code{"\link[bnlearn:rsmax2]{rsmax2}"}
 (\emph{the general 2-phase restricted maximization algorithm, first restricting the search space and then finding the optimal [maximizing the score of] network structure in the restricted space})
 \item Others:
-\verb{"}\code{\link[bnlearn:hybrid]{mmhc}}\verb{"},
-\verb{"}\code{\link[bnlearn:hybrid]{h2pc}}\verb{"}
+\code{"\link[bnlearn:mmhc]{mmhc}"},
+\code{"\link[bnlearn:h2pc]{h2pc}"}
 }
 }}
 
