@@ -16,7 +16,8 @@ cor_network(
   node.color = NULL,
   edge.color.pos = "#0571B0",
   edge.color.neg = "#CA0020",
-  edge.color.insig = "#EEEEEEEE",
+  edge.color.non = "#EEEEEEEE",
+  edge.label.mrg = 0.01,
   title = NULL,
   file = NULL,
   width = 6,
@@ -51,14 +52,13 @@ Defaults to \code{1.2}.}
 
 \item{node.color}{A vector with a color for each element in \code{node.group}, or a color for each node.}
 
-\item{edge.color.pos}{Color for (significant) positive values.
-Defaults to \code{"#0571B0"} (blue in ColorBrewer's RdBu palette).}
+\item{edge.color.pos}{Color for (significant) positive values. Defaults to \code{"#0571B0"} (blue in ColorBrewer's RdBu palette).}
 
-\item{edge.color.neg}{Color for (significant) negative values.
-Defaults to \code{"#CA0020"} (red in ColorBrewer's RdBu palette).}
+\item{edge.color.neg}{Color for (significant) negative values. Defaults to \code{"#CA0020"} (red in ColorBrewer's RdBu palette).}
 
-\item{edge.color.insig}{Color for insignificant values.
-Defaults to \code{"#EEEEEEEE"} (transparent grey).}
+\item{edge.color.non}{Color for insignificant values. Defaults to \code{"#EEEEEEEE"} (transparent grey).}
+
+\item{edge.label.mrg}{Margin of the background box around the edge label. Defaults to \code{0.01}.}
 
 \item{title}{Plot title.}
 
@@ -72,7 +72,7 @@ Defaults to \code{6} and \code{4}.}
 \item{...}{Other parameters passed to \code{\link[qgraph:qgraph]{qgraph()}}.}
 }
 \value{
-Return a list of (partial) correlation results and \code{\link[qgraph:qgraph]{qgraph}} object.
+Return a list (class \code{cor.net}) of (partial) correlation results and \code{\link[qgraph:qgraph]{qgraph}} object.
 }
 \description{
 Correlation and partial correlation networks (also called Gaussian graphical models, GGMs).

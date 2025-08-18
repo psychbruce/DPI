@@ -765,12 +765,10 @@ NULL
 #' Defaults to `1.2`.
 #' @param node.group A list that indicates which nodes belong together, with each element of list as a vector of integers identifying the column numbers of variables that belong together.
 #' @param node.color A vector with a color for each element in `node.group`, or a color for each node.
-#' @param edge.color.pos Color for (significant) positive values.
-#' Defaults to `"#0571B0"` (blue in ColorBrewer's RdBu palette).
-#' @param edge.color.neg Color for (significant) negative values.
-#' Defaults to `"#CA0020"` (red in ColorBrewer's RdBu palette).
-#' @param edge.color.insig Color for insignificant values.
-#' Defaults to `"#EEEEEEEE"` (transparent grey).
+#' @param edge.color.pos Color for (significant) positive values. Defaults to `"#0571B0"` (blue in ColorBrewer's RdBu palette).
+#' @param edge.color.neg Color for (significant) negative values. Defaults to `"#CA0020"` (red in ColorBrewer's RdBu palette).
+#' @param edge.color.non Color for insignificant values. Defaults to `"#EEEEEEEE"` (transparent grey).
+#' @param edge.label.mrg Margin of the background box around the edge label. Defaults to `0.01`.
 #' @param title Plot title.
 #' @param file File name of saved plot (`".png"` or `".pdf"`).
 #' @param width,height Width and height (in inches) of saved plot.
@@ -779,7 +777,7 @@ NULL
 #' @param ... Other parameters passed to [`qgraph()`][qgraph::qgraph].
 #'
 #' @return
-#' Return a list of (partial) correlation results and [`qgraph`][qgraph::qgraph] object.
+#' Return a list (class `cor.net`) of (partial) correlation results and [`qgraph`][qgraph::qgraph] object.
 #'
 #' @seealso
 #' [S3method.network]
@@ -808,7 +806,8 @@ cor_network = function(
     node.color = NULL,
     edge.color.pos = "#0571B0",
     edge.color.neg = "#CA0020",
-    edge.color.insig = "#EEEEEEEE",
+    edge.color.non = "#EEEEEEEE",
+    edge.label.mrg = 0.01,
     title = NULL,
     file = NULL,
     width = 6,
@@ -832,8 +831,8 @@ cor_network = function(
   r.max = max(abs(p0[["Edgelist"]][["weight"]]))
   if(r.max < r.sig) show.insig = TRUE
   if(show.insig==TRUE) {
-    edge.color.pos = c(edge.color.insig, edge.color.pos)
-    edge.color.neg = c(edge.color.insig, edge.color.neg)
+    edge.color.pos = c(edge.color.non, edge.color.pos)
+    edge.color.neg = c(edge.color.non, edge.color.neg)
   }
 
   p = qgraph::qgraph(
@@ -866,7 +865,7 @@ cor_network = function(
     negCol = edge.color.neg,
     fade = faded,
     edge.labels = show.value,
-    edge.label.margin = 0.01,
+    edge.label.margin = edge.label.mrg,
 
     ## --- [plotting] --- ##
     usePCH = TRUE,
@@ -891,7 +890,7 @@ cor_network = function(
   if(show.value) {
     edge.label.bg = p[["graphAttributes"]][["Edges"]][["label.bg"]]
     edge.color = p[["graphAttributes"]][["Edges"]][["color"]]
-    edge.label.bg[edge.color==edge.color.insig] = NA
+    edge.label.bg[edge.color==edge.color.non] = NA
     p[["graphAttributes"]][["Edges"]][["labels"]] = cor.labels
     p[["graphAttributes"]][["Edges"]][["label.bg"]] = edge.label.bg
   }
@@ -920,6 +919,12 @@ print.cor.net = function(
   }
 
   if(!is.null(file)) {
+    index = names(x$cor)[3]  # "cor" or "pcor"
+    file.index = ifelse(
+      index=="cor", "_COR.NET_correlation.network",
+      ifelse(
+        index=="pcor", "_COR.NET_partial.cor.network", "_COR.NET"))
+    file = file_insert_name(file, file.index)
     if(grepl("\\.png$", file))
       png(file, width=width, height=height, units="in", res=dpi)
     if(grepl("\\.pdf$", file))
@@ -937,11 +942,7 @@ print.cor.net = function(
 
 #' Directed acyclic graphs (DAGs) via Bayesian networks (BNs).
 #'
-#' Directed acyclic graphs (DAGs) via causal Bayesian networks (BNs).
-#' It uses [`boot.strength()`][bnlearn::boot.strength] to estimate the strength of each edge as its *empirical frequency* over a set of networks learned from bootstrap samples.
-#' It computes (1) the probability of each edge (modulo its direction) and (2) the probabilities of each edge's directions conditional on the edge being present in the graph (in either direction).
-#' The stability thresholds are usually set as `0.85` for *strength* (i.e., an edge appearing in more than 85% of BNs bootstrap samples) and `0.50` for *direction* (i.e., a direction appearing in more than 50% of BNs bootstrap samples) (Briganti et al., 2023).
-#' Finally, for each chosen algorithm, it returns the stable Bayesian network as the final DAG.
+#' Directed acyclic graphs (DAGs) via causal Bayesian networks (BNs). It uses [bnlearn::boot.strength()] to estimate the strength of each edge as its *empirical frequency* over a set of networks learned from bootstrap samples. It computes (1) the probability of each edge (modulo its direction) and (2) the probabilities of each edge's directions conditional on the edge being present in the graph (in either direction). Stability thresholds are usually set as `0.85` for *strength* (i.e., an edge appearing in more than 85% of BNs bootstrap samples) and `0.50` for *direction* (i.e., a direction appearing in more than 50% of BNs bootstrap samples) (Briganti et al., 2023). Finally, for each chosen algorithm, it returns the stable Bayesian network as the final DAG.
 #'
 #' @inheritParams cor_network
 #' @inheritParams DPI
@@ -974,23 +975,19 @@ print.cor.net = function(
 #'     \code{"\link[bnlearn:mmhc]{mmhc}"},
 #'     \code{"\link[bnlearn:h2pc]{h2pc}"}
 #' @param algorithm.args An optional list of extra arguments passed to the algorithm.
-#' @param n.boot Number of bootstrap samples (for learning a more "stable" network structure).
-#' Defaults to `1000`.
+#' @param n.boot Number of bootstrap samples (for learning a more "stable" network structure). Defaults to `1000`.
 #' @param strength Stability threshold of edge *strength*: the minimum proportion (probability) of BNs (among the `n.boot` bootstrap samples) in which each edge appears.
-#'
-#' Defaults to `0.85` (85%). Two reverse directions share the same edge strength.
-#'
-#' - Note that the empirical frequency (?~100%) will be mapped onto edge *width/thickness* in the final integrated `DAG`, with wider (thicker) edges showing stronger links, though they usually look similar since the default range has been limited to 0.85~1.
+#' - Defaults to `0.85` (85%).
+#' - Two reverse directions share the same edge strength.
+#' - Empirical frequency (?~100%) will be mapped onto edge *width/thickness* in the final integrated `DAG`, with wider (thicker) edges showing stronger links, though they usually look similar since the default range has been limited to 0.85~1.
 #' @param direction Stability threshold of edge *direction*: the minimum proportion (probability) of BNs (among the `n.boot` bootstrap samples) in which a direction of each edge appears.
-#'
-#' Defaults to `0.50` (50%). The proportions of two reverse directions add up to 100%.
-#'
-#' - Note that the empirical frequency (?~100%) will be mapped onto edge *greyscale/transparency* in the final integrated `DAG`, with its value shown as edge text label.
-#' @param edge.width.max Maximum value of edge strength to scale all edge widths.
-#' Defaults to `1.5` for better display of arrow.
+#' - Defaults to `0.50` (50%).
+#' - The proportions of two reverse directions add up to 100%.
+#' - Empirical frequency (?~100%) will be mapped onto edge *greyscale/transparency* in the final integrated `DAG`, with its value shown as edge text label.
+#' @param edge.width.max Maximum value of edge strength to scale all edge widths. Defaults to `1.5` for better display of arrow.
 #'
 #' @return
-#' Return a list of Bayesian network results and [`qgraph`][qgraph::qgraph] object.
+#' Return a list (class `dag.net`) of Bayesian network results and [`qgraph`][qgraph::qgraph] object.
 #'
 #' @references
 #' Briganti, G., Scutari, M., & McNally, R. J. (2023). A tutorial on Bayesian networks for psychopathology researchers. *Psychological Methods, 28*(4), 947--961. \doi{10.1037/met0000479}
@@ -1007,12 +1004,27 @@ print.cor.net = function(
 #' [cor_network()]
 #'
 #' @examples
-#' \donttest{dag_network(airquality, seed=1)
+#' \donttest{bns = dag_network(airquality, seed=1)
+#' bns
+#' # bns$pc.stable
+#' # bns$hc
+#' # bns$rsmax2
 #'
-#' \dontrun{
-#' dag_network(airquality, seed=1, file="airquality.png")
-#' # will save three figures with auto-modified file names}
+#' ## All DAG objects can be directly plotted
+#' ## or saved with print(..., file="xxx.png")
+#' # bns$pc.stable$DAG.edge
+#' # bns$pc.stable$DAG.strength
+#' # bns$pc.stable$DAG.direction
+#' # bns$pc.stable$DAG
+#' # ...
 #' }
+#' \dontrun{
+#' print(bns, file="airquality.png")
+#' # will save three plots with auto-modified file names:
+#' - "airquality_DAG.NET_BNs.01_pc.stable.png"
+#' - "airquality_DAG.NET_BNs.02_hc.png"
+#' - "airquality_DAG.NET_BNs.03_rsmax2.png"}
+#'
 #' @export
 dag_network = function(
     data,
@@ -1024,6 +1036,7 @@ dag_network = function(
     direction = 0.50,
     node.text.size = 1.2,
     edge.width.max = 1.5,
+    edge.label.mrg = 0.01,
     file = NULL,
     width = 6,
     height = 4,
@@ -1083,7 +1096,7 @@ dag_network = function(
         negCol = "red",  # warning (all strength values are in 0~1)
         fade = TRUE,
         edge.labels = ifelse(type=="edge", FALSE, TRUE),
-        edge.label.margin = 0.01,
+        edge.label.margin = edge.label.mrg,
 
         ## --- [plotting] --- ##
         usePCH = TRUE,
@@ -1095,6 +1108,8 @@ dag_network = function(
         edge.labels = paste0(100 * as.numeric(edge.labels), "%")
         p[["graphAttributes"]][["Edges"]][["labels"]] = edge.labels
       }
+      class(p) = c("dag.net", class(p))
+      attr(p, "algo") = algo
       return(p)
     })
     names(dags) = paste0("dag.", types)
@@ -1112,7 +1127,7 @@ dag_network = function(
     DAG[["graphAttributes"]][["Edges"]][["width"]] =
       DAG.strength[["graphAttributes"]][["Edges"]][["width"]]
     DAG[["plotOptions"]][["title"]] =
-      paste0("BN algorithm: \"", algo, "\"")
+      paste0("BN algorithm:\n\"", algo, "\"")
     list(
       BN.bootstrap = bn,
       BN = bn[bn$strength > strength & bn$direction > direction,],
@@ -1139,6 +1154,8 @@ print.dag.net = function(
     file=NULL, width=6, height=4, dpi=500,
     ...
 ) {
+  if(inherits(x, "qgraph")) algorithm = attr(x, "algo")
+
   if(is.null(file)) {
     plot.params = attr(x, "plot.params")
     file = plot.params$file
@@ -1149,7 +1166,13 @@ print.dag.net = function(
 
   for(algo in algorithm) {
     if(!is.null(file)) {
-      file.i = file_add_algo(file, algo, algorithm)
+      if(length(algorithm)==1) {
+        file.i = file_insert_name(file, sprintf(
+          "_DAG.NET_BNs_%s", algo))
+      } else {
+        file.i = file_insert_name(file, sprintf(
+          "_DAG.NET_BNs.%02d_%s", which(algo==algorithm), algo))
+      }
       if(grepl("\\.png$", file))
         png(file.i, width=width, height=height, units="in", res=dpi)
       if(grepl("\\.pdf$", file))
@@ -1157,7 +1180,11 @@ print.dag.net = function(
     }
 
     cli::cli_text("Displaying DAG with BN algorithm {.val {algo}}")
-    plot(x[[algo]][["DAG"]])
+    if(inherits(x, "qgraph")) {
+      plot(x)
+    } else {
+      plot(x[[algo]][["DAG"]])
+    }
 
     if(!is.null(file)) {
       dev.off()
@@ -1185,17 +1212,24 @@ bn_to_matrix = function(bn, strength=0.85, direction=0.50) {
 }
 
 
-file_add_algo = function(file, algo, algo.all) {
+file_insert_name = function(file, name) {
   file = strsplit(file, "/")[[1]]
   file[length(file)] = paste0(
-    "DAG_BNs_",
-    sprintf("%02d", which(algo==algo.all)),
-    "_",
-    algo,
-    "_",
-    file[length(file)]
+    file_ext(file[length(file)], "txt"),
+    name,
+    file_ext(file[length(file)], "ext")
   )
   file = paste(file, collapse="/")
   return(file)
+}
+
+
+file_ext = function(file, return=c("ext", "txt")) {
+  return = match.arg(return)
+  pos = regexpr("\\.([[:alnum:]]+)$", file)
+  if(return=="ext")
+    return(ifelse(pos > -1L, tolower(substring(file, pos)), ""))
+  if(return=="txt")
+    return(substring(file, 1L, last=pos-1L))
 }
 

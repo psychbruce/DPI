@@ -14,6 +14,7 @@ dag_network(
   direction = 0.5,
   node.text.size = 1.2,
   edge.width.max = 1.5,
+  edge.label.mrg = 0.01,
   file = NULL,
   width = 6,
   height = 4,
@@ -62,31 +63,31 @@ Defaults to the most common algorithms: \code{"pc.stable"} (PC), \code{"hc"} (HC
 
 \item{algorithm.args}{An optional list of extra arguments passed to the algorithm.}
 
-\item{n.boot}{Number of bootstrap samples (for learning a more "stable" network structure).
-Defaults to \code{1000}.}
+\item{n.boot}{Number of bootstrap samples (for learning a more "stable" network structure). Defaults to \code{1000}.}
 
 \item{seed}{Random seed for replicable results.
 Defaults to \code{NULL}.}
 
 \item{strength}{Stability threshold of edge \emph{strength}: the minimum proportion (probability) of BNs (among the \code{n.boot} bootstrap samples) in which each edge appears.
-
-Defaults to \code{0.85} (85\%). Two reverse directions share the same edge strength.
 \itemize{
-\item Note that the empirical frequency (?~100\%) will be mapped onto edge \emph{width/thickness} in the final integrated \code{DAG}, with wider (thicker) edges showing stronger links, though they usually look similar since the default range has been limited to 0.85~1.
+\item Defaults to \code{0.85} (85\%).
+\item Two reverse directions share the same edge strength.
+\item Empirical frequency (?~100\%) will be mapped onto edge \emph{width/thickness} in the final integrated \code{DAG}, with wider (thicker) edges showing stronger links, though they usually look similar since the default range has been limited to 0.85~1.
 }}
 
 \item{direction}{Stability threshold of edge \emph{direction}: the minimum proportion (probability) of BNs (among the \code{n.boot} bootstrap samples) in which a direction of each edge appears.
-
-Defaults to \code{0.50} (50\%). The proportions of two reverse directions add up to 100\%.
 \itemize{
-\item Note that the empirical frequency (?~100\%) will be mapped onto edge \emph{greyscale/transparency} in the final integrated \code{DAG}, with its value shown as edge text label.
+\item Defaults to \code{0.50} (50\%).
+\item The proportions of two reverse directions add up to 100\%.
+\item Empirical frequency (?~100\%) will be mapped onto edge \emph{greyscale/transparency} in the final integrated \code{DAG}, with its value shown as edge text label.
 }}
 
 \item{node.text.size}{Scalar on the font size of node (variable) labels.
 Defaults to \code{1.2}.}
 
-\item{edge.width.max}{Maximum value of edge strength to scale all edge widths.
-Defaults to \code{1.5} for better display of arrow.}
+\item{edge.width.max}{Maximum value of edge strength to scale all edge widths. Defaults to \code{1.5} for better display of arrow.}
+
+\item{edge.label.mrg}{Margin of the background box around the edge label. Defaults to \code{0.01}.}
 
 \item{file}{File name of saved plot (\code{".png"} or \code{".pdf"}).}
 
@@ -98,22 +99,33 @@ Defaults to \code{6} and \code{4}.}
 \item{...}{Other parameters passed to \code{\link[qgraph:qgraph]{qgraph()}}.}
 }
 \value{
-Return a list of Bayesian network results and \code{\link[qgraph:qgraph]{qgraph}} object.
+Return a list (class \code{dag.net}) of Bayesian network results and \code{\link[qgraph:qgraph]{qgraph}} object.
 }
 \description{
-Directed acyclic graphs (DAGs) via causal Bayesian networks (BNs).
-It uses \code{\link[bnlearn:arc.strength]{boot.strength()}} to estimate the strength of each edge as its \emph{empirical frequency} over a set of networks learned from bootstrap samples.
-It computes (1) the probability of each edge (modulo its direction) and (2) the probabilities of each edge's directions conditional on the edge being present in the graph (in either direction).
-The stability thresholds are usually set as \code{0.85} for \emph{strength} (i.e., an edge appearing in more than 85\% of BNs bootstrap samples) and \code{0.50} for \emph{direction} (i.e., a direction appearing in more than 50\% of BNs bootstrap samples) (Briganti et al., 2023).
-Finally, for each chosen algorithm, it returns the stable Bayesian network as the final DAG.
+Directed acyclic graphs (DAGs) via causal Bayesian networks (BNs). It uses \code{\link[bnlearn:arc.strength]{bnlearn::boot.strength()}} to estimate the strength of each edge as its \emph{empirical frequency} over a set of networks learned from bootstrap samples. It computes (1) the probability of each edge (modulo its direction) and (2) the probabilities of each edge's directions conditional on the edge being present in the graph (in either direction). Stability thresholds are usually set as \code{0.85} for \emph{strength} (i.e., an edge appearing in more than 85\% of BNs bootstrap samples) and \code{0.50} for \emph{direction} (i.e., a direction appearing in more than 50\% of BNs bootstrap samples) (Briganti et al., 2023). Finally, for each chosen algorithm, it returns the stable Bayesian network as the final DAG.
 }
 \examples{
-\donttest{dag_network(airquality, seed=1)
+\donttest{bns = dag_network(airquality, seed=1)
+bns
+# bns$pc.stable
+# bns$hc
+# bns$rsmax2
 
-\dontrun{
-dag_network(airquality, seed=1, file="airquality.png")
-# will save three figures with auto-modified file names}
+## All DAG objects can be directly plotted
+## or saved with print(..., file="xxx.png")
+# bns$pc.stable$DAG.edge
+# bns$pc.stable$DAG.strength
+# bns$pc.stable$DAG.direction
+# bns$pc.stable$DAG
+# ...
 }
+\dontrun{
+print(bns, file="airquality.png")
+# will save three plots with auto-modified file names:
+- "airquality_DAG.NET_BNs.01_pc.stable.png"
+- "airquality_DAG.NET_BNs.02_hc.png"
+- "airquality_DAG.NET_BNs.03_rsmax2.png"}
+
 }
 \references{
 Briganti, G., Scutari, M., & McNally, R. J. (2023). A tutorial on Bayesian networks for psychopathology researchers. \emph{Psychological Methods, 28}(4), 947--961. \doi{10.1037/met0000479}
