@@ -50,7 +50,8 @@
 <span>  node.color <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  edge.color.pos <span class="op">=</span> <span class="st">"#0571B0"</span>,</span>
 <span>  edge.color.neg <span class="op">=</span> <span class="st">"#CA0020"</span>,</span>
-<span>  edge.color.insig <span class="op">=</span> <span class="st">"#EEEEEEEE"</span>,</span>
+<span>  edge.color.non <span class="op">=</span> <span class="st">"#EEEEEEEE"</span>,</span>
+<span>  edge.label.mrg <span class="op">=</span> <span class="fl">0.01</span>,</span>
 <span>  title <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  file <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  width <span class="op">=</span> <span class="fl">6</span>,</span>
@@ -108,18 +109,19 @@ Defaults to <code>1.2</code>.</p></dd>
 
 
 <dt id="arg-edge-color-pos">edge.color.pos<a class="anchor" aria-label="anchor" href="#arg-edge-color-pos"></a></dt>
-<dd><p>Color for (significant) positive values.
-Defaults to <code>"#0571B0"</code> (blue in ColorBrewer's RdBu palette).</p></dd>
+<dd><p>Color for (significant) positive values. Defaults to <code>"#0571B0"</code> (blue in ColorBrewer's RdBu palette).</p></dd>
 
 
 <dt id="arg-edge-color-neg">edge.color.neg<a class="anchor" aria-label="anchor" href="#arg-edge-color-neg"></a></dt>
-<dd><p>Color for (significant) negative values.
-Defaults to <code>"#CA0020"</code> (red in ColorBrewer's RdBu palette).</p></dd>
+<dd><p>Color for (significant) negative values. Defaults to <code>"#CA0020"</code> (red in ColorBrewer's RdBu palette).</p></dd>
 
 
-<dt id="arg-edge-color-insig">edge.color.insig<a class="anchor" aria-label="anchor" href="#arg-edge-color-insig"></a></dt>
-<dd><p>Color for insignificant values.
-Defaults to <code>"#EEEEEEEE"</code> (transparent grey).</p></dd>
+<dt id="arg-edge-color-non">edge.color.non<a class="anchor" aria-label="anchor" href="#arg-edge-color-non"></a></dt>
+<dd><p>Color for insignificant values. Defaults to <code>"#EEEEEEEE"</code> (transparent grey).</p></dd>
+
+
+<dt id="arg-edge-label-mrg">edge.label.mrg<a class="anchor" aria-label="anchor" href="#arg-edge-label-mrg"></a></dt>
+<dd><p>Margin of the background box around the edge label. Defaults to <code>0.01</code>.</p></dd>
 
 
 <dt id="arg-title">title<a class="anchor" aria-label="anchor" href="#arg-title"></a></dt>
@@ -145,7 +147,7 @@ Defaults to <code>6</code> and <code>4</code>.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Return a list of (partial) correlation results and <code><a href="https://rdrr.io/pkg/qgraph/man/qgraph.html" class="external-link">qgraph</a></code> object.</p>
+    <p>Return a list (class <code>cor.net</code>) of (partial) correlation results and <code><a href="https://rdrr.io/pkg/qgraph/man/qgraph.html" class="external-link">qgraph</a></code> object.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
