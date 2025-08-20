@@ -142,12 +142,12 @@ Defaults to <code>6</code> and <code>4</code>.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Other parameters passed to <code><a href="https://rdrr.io/pkg/qgraph/man/qgraph.html" class="external-link">qgraph()</a></code>.</p></dd>
+<dd><p>Arguments passed on to <code><a href="https://rdrr.io/pkg/qgraph/man/qgraph.html" class="external-link">qgraph()</a></code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Return a list (class <code>cor.net</code>) of (partial) correlation results and <code><a href="https://rdrr.io/pkg/qgraph/man/qgraph.html" class="external-link">qgraph</a></code> object.</p>
+    <p>Return a list (class <code>cor.net</code>) of (partial) correlation results and <code><a href="https://rdrr.io/pkg/qgraph/man/qgraph.html" class="external-link">qgraph</a></code> object with its <code><a href="https://wilkelab.org/cowplot/reference/as_grob.html" class="external-link">grob</a></code> (Grid Graphical Object).</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -159,14 +159,26 @@ Defaults to <code>6</code> and <code>4</code>.</p></dd>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># correlation network</span></span></span>
 <span class="r-in"><span><span class="fu">cor_network</span><span class="op">(</span><span class="va">airquality</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Package `gridGraphics` is required to handle base-R plots. Substituting empty plot.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Package `gridGraphics` is required to handle base-R plots. Substituting empty plot.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Displaying <span style="color: #0000BB;">Correlation Network</span></span>
 <span class="r-plt img"><img src="cor_network-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu">cor_network</span><span class="op">(</span><span class="va">airquality</span>, show.insig<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Package `gridGraphics` is required to handle base-R plots. Substituting empty plot.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Package `gridGraphics` is required to handle base-R plots. Substituting empty plot.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Displaying <span style="color: #0000BB;">Correlation Network</span></span>
 <span class="r-plt img"><img src="cor_network-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># partial correlation network</span></span></span>
 <span class="r-in"><span><span class="fu">cor_network</span><span class="op">(</span><span class="va">airquality</span>, <span class="st">"pcor"</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Package `gridGraphics` is required to handle base-R plots. Substituting empty plot.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Package `gridGraphics` is required to handle base-R plots. Substituting empty plot.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Displaying <span style="color: #0000BB;">Partial Correlation Network</span></span>
 <span class="r-plt img"><img src="cor_network-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu">cor_network</span><span class="op">(</span><span class="va">airquality</span>, <span class="st">"pcor"</span>, show.insig<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Package `gridGraphics` is required to handle base-R plots. Substituting empty plot.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Package `gridGraphics` is required to handle base-R plots. Substituting empty plot.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Displaying <span style="color: #0000BB;">Partial Correlation Network</span></span>
 <span class="r-plt img"><img src="cor_network-4.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
