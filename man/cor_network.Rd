@@ -69,23 +69,23 @@ Defaults to \code{6} and \code{4}.}
 
 \item{dpi}{Dots per inch (figure resolution). Defaults to \code{500}.}
 
-\item{...}{Other parameters passed to \code{\link[qgraph:qgraph]{qgraph()}}.}
+\item{...}{Arguments passed on to \code{\link[qgraph:qgraph]{qgraph()}}.}
 }
 \value{
-Return a list (class \code{cor.net}) of (partial) correlation results and \code{\link[qgraph:qgraph]{qgraph}} object.
+Return a list (class \code{cor.net}) of (partial) correlation results and \code{\link[qgraph:qgraph]{qgraph}} object with its \code{\link[cowplot:as_grob]{grob}} (Grid Graphical Object).
 }
 \description{
 Correlation and partial correlation networks (also called Gaussian graphical models, GGMs).
 }
 \examples{
-\donttest{# correlation network
+# correlation network
 cor_network(airquality)
 cor_network(airquality, show.insig=TRUE)
 
 # partial correlation network
 cor_network(airquality, "pcor")
 cor_network(airquality, "pcor", show.insig=TRUE)
-}
+
 }
 \seealso{
 \link{S3method.network}

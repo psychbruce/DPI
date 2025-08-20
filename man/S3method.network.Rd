@@ -10,11 +10,11 @@
 
 \method{print}{dag.net}(
   x,
-  algorithm = names(x),
   file = NULL,
   width = 6,
   height = 4,
   dpi = 500,
+  algorithm = names(x),
   ...
 )
 }
@@ -32,6 +32,9 @@ Defaults to \code{6} and \code{4}.}
 
 \item{algorithm}{[For \code{dag.net}] Algorithm(s) to display.
 Defaults to plot the final integrated DAG from BN results for each algorithm in \code{x}.}
+}
+\value{
+Invisibly return a \code{\link[cowplot:as_grob]{grob}} object ("Grid Graphical Object", or a list of them) that can be further reused in \code{\link[ggplot2:ggsave]{ggplot2::ggsave()}} and \code{\link[cowplot:plot_grid]{cowplot::plot_grid()}}.
 }
 \description{
 \describe{

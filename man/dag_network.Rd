@@ -96,35 +96,50 @@ Defaults to \code{6} and \code{4}.}
 
 \item{dpi}{Dots per inch (figure resolution). Defaults to \code{500}.}
 
-\item{...}{Other parameters passed to \code{\link[qgraph:qgraph]{qgraph()}}.}
+\item{...}{Arguments passed on to \code{\link[qgraph:qgraph]{qgraph()}}.}
 }
 \value{
-Return a list (class \code{dag.net}) of Bayesian network results and \code{\link[qgraph:qgraph]{qgraph}} object.
+Return a list (class \code{dag.net}) of Bayesian network results and \code{\link[qgraph:qgraph]{qgraph}} object with its \code{\link[cowplot:as_grob]{grob}} (Grid Graphical Object).
 }
 \description{
-Directed acyclic graphs (DAGs) via causal Bayesian networks (BNs). It uses \code{\link[bnlearn:arc.strength]{bnlearn::boot.strength()}} to estimate the strength of each edge as its \emph{empirical frequency} over a set of networks learned from bootstrap samples. It computes (1) the probability of each edge (modulo its direction) and (2) the probabilities of each edge's directions conditional on the edge being present in the graph (in either direction). Stability thresholds are usually set as \code{0.85} for \emph{strength} (i.e., an edge appearing in more than 85\% of BNs bootstrap samples) and \code{0.50} for \emph{direction} (i.e., a direction appearing in more than 50\% of BNs bootstrap samples) (Briganti et al., 2023). Finally, for each chosen algorithm, it returns the stable Bayesian network as the final DAG.
+Directed acyclic graphs (DAGs) via Bayesian networks (BNs). It uses \code{\link[bnlearn:arc.strength]{bnlearn::boot.strength()}} to estimate the strength of each edge as its \emph{empirical frequency} over a set of networks learned from bootstrap samples. It computes (1) the probability of each edge (modulo its direction) and (2) the probabilities of each edge's directions conditional on the edge being present in the graph (in either direction). Stability thresholds are usually set as \code{0.85} for \emph{strength} (i.e., an edge appearing in more than 85\% of BNs bootstrap samples) and \code{0.50} for \emph{direction} (i.e., a direction appearing in more than 50\% of BNs bootstrap samples) (Briganti et al., 2023). Finally, for each chosen algorithm, it returns the stable Bayesian network as the final DAG.
 }
 \examples{
-\donttest{bns = dag_network(airquality, seed=1)
-bns
-# bns$pc.stable
-# bns$hc
-# bns$rsmax2
+\donttest{bn = dag_network(airquality, seed=1)
+bn
+# bn$pc.stable
+# bn$hc
+# bn$rsmax2
 
 ## All DAG objects can be directly plotted
 ## or saved with print(..., file="xxx.png")
-# bns$pc.stable$DAG.edge
-# bns$pc.stable$DAG.strength
-# bns$pc.stable$DAG.direction
-# bns$pc.stable$DAG
+# bn$pc.stable$DAG.edge
+# bn$pc.stable$DAG.strength
+# bn$pc.stable$DAG.direction
+# bn$pc.stable$DAG
 # ...
 }
 \dontrun{
-print(bns, file="airquality.png")
+
+print(bn, file="airquality.png")
 # will save three plots with auto-modified file names:
 - "airquality_DAG.NET_BNs.01_pc.stable.png"
 - "airquality_DAG.NET_BNs.02_hc.png"
-- "airquality_DAG.NET_BNs.03_rsmax2.png"}
+- "airquality_DAG.NET_BNs.03_rsmax2.png"
+
+# arrange multiple plots using cowplot::plot_grid()
+# but still with unknown issue on incomplete figure
+c1 = cor_network(airquality, "cor")
+c2 = cor_network(airquality, "pcor")
+bn = dag_network(airquality, seed=1)
+plot_grid(
+  ~print(c1),
+  ~print(c2),
+  ~print(bn$hc$DAG),
+  ~print(bn$rsmax2$DAG),
+  labels="AUTO"
+)
+}
 
 }
 \references{

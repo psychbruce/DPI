@@ -28,7 +28,7 @@ Encoding: UTF-8
 URL: https://psychbruce.github.io/DPI/
 BugReports: https://github.com/psychbruce/DPI/issues
 Depends: R (>= 4.0.0)
-Imports: glue, crayon, cli, ggplot2, qgraph, bnlearn
+Imports: glue, crayon, cli, ggplot2, cowplot, qgraph, bnlearn
 Suggests: bruceR
 RoxygenNote: 7.3.2
 Roxygen: list(markdown = TRUE)

@@ -10,15 +10,22 @@
 #' @importFrom stats pt pnorm rnorm quantile na.omit df.residual
 #' @importFrom glue glue glue_col
 #' @importFrom crayon italic underline green blue magenta
-#' @importFrom grDevices png pdf dev.off
 .onAttach = function(libname, pkgname) {
   inst.ver = as.character(utils::packageVersion("DPI"))
-  # pkg.date = substr(utils::packageDate("DPI"), 1, 4)
+  pkgs = c("ggplot2", "cowplot")
+  suppressMessages({
+    suppressWarnings({
+      loaded = sapply(pkgs, require, character.only=TRUE)
+    })
+  })
   packageStartupMessage(
     glue::glue_col("
 
     {magenta DPI (v{inst.ver})}
     {blue The Directed Prediction Index}
+
+    {magenta Packages also loaded:}
+    {green \u2714 ggplot2, cowplot}
 
     {magenta Online documentation:}
     {underline https://psychbruce.github.io/DPI}
@@ -418,28 +425,22 @@ print.summary.dpi = function(x, digits=3, ...) {
       "]"),
     row.names = paste0("\u0394R", cli::symbol$sup_2)
   )
-  cli::cli_text("
-  {cli::col_cyan('Sample size:')}
-    N.valid = {attr(x$dpi, 'N.valid')}
-  ")
-  cli::cli_text("
-  {cli::col_cyan('Model formula:')}
-    {formula_paste(attr(x$dpi, 'formula'))}
-  ")
-  cli::cli_text("
-  {cli::col_cyan('Directed prediction tested:')}
-    {.val {attr(x$dpi, 'X')}} (X) -> {.val {attr(x$dpi, 'Y')}} (Y)
-  ")
-  cli::cli_text("
-  {cli::col_cyan('Simulation sample settings:')}
-    k.random.covs = {cli::col_magenta({attr(x$dpi, 'k.cov')})},
-    n.sim = {cli::col_magenta({attr(x$dpi, 'n.sim')})},
-    seed = {cli::col_magenta({attr(x$dpi, 'seed')})}
-  ")
-  cat("\n")
-  cli::cli_h2("
-  {cli::col_cyan('(1) Partial Correlation (pr_XY)')}
-  ")
+  cli::cli_text(
+    cli::col_cyan("Sample size: "),
+    "N.valid = {attr(x$dpi, 'N.valid')}")
+  cli::cli_text(
+    cli::col_cyan("Model formula: "),
+    "{formula_paste(attr(x$dpi, 'formula'))}")
+  cli::cli_text(
+    cli::col_cyan("Directed prediction tested: "),
+    "{.val {attr(x$dpi, 'X')}} (X) -> {.val {attr(x$dpi, 'Y')}} (Y)")
+  cli::cli_text(
+    cli::col_cyan("Simulation sample settings: "),
+    "k.random.covs = {cli::col_magenta({attr(x$dpi, 'k.cov')})},
+     n.sim = {cli::col_magenta({attr(x$dpi, 'n.sim')})},
+     seed = {cli::col_magenta({attr(x$dpi, 'seed')})}")
+  cli::cli_h2(
+    cli::col_cyan("(1) Strength: Partial Correlation (pr_XY)"))
   cat(glue(
     "Estimated r(partial) = ",
     "{sprintf(fmt, x$r.partial.summ$Estimate)}, ",
@@ -448,13 +449,11 @@ print.summary.dpi = function(x, digits=3, ...) {
     "p = {p.trans(x$r.partial.summ$p.t, 4)} ",
     "{sig.trans(x$r.partial.summ$p.t)}"
   ))
-  cli::cli_h2("
-  {cli::col_cyan('(2) Delta R^2 (= R^2_Y - R^2_X)')}
-  ")
+  cli::cli_h2(
+    cli::col_cyan("(2) Direction: \u0394R\u00b2 (= R\u00b2Y - R\u00b2X)"))
   print(res.dR2)
-  cli::cli_h2("
-  {cli::col_cyan('(3) Directed Prediction Index (DPI)')}
-  ")
+  cli::cli_h2(
+    cli::col_cyan("(3) DPI: The Directed Prediction Index"))
   print(res.dpi)
   invisible(NULL)
 }
@@ -742,6 +741,8 @@ plot.dpi.curve = function(x, file=NULL, width=6, height=4, dpi=500, ...) {
 #' @param algorithm \[For `dag.net`\] Algorithm(s) to display.
 #' Defaults to plot the final integrated DAG from BN results for each algorithm in `x`.
 #' @param ... Other arguments (currently not used).
+#' @return
+#' Invisibly return a [`grob`][cowplot::as_grob] object ("Grid Graphical Object", or a list of them) that can be further reused in [ggplot2::ggsave()] and [cowplot::plot_grid()].
 NULL
 
 
@@ -774,10 +775,10 @@ NULL
 #' @param width,height Width and height (in inches) of saved plot.
 #' Defaults to `6` and `4`.
 #' @param dpi Dots per inch (figure resolution). Defaults to `500`.
-#' @param ... Other parameters passed to [`qgraph()`][qgraph::qgraph].
+#' @param ... Arguments passed on to [`qgraph()`][qgraph::qgraph].
 #'
 #' @return
-#' Return a list (class `cor.net`) of (partial) correlation results and [`qgraph`][qgraph::qgraph] object.
+#' Return a list (class `cor.net`) of (partial) correlation results and [`qgraph`][qgraph::qgraph] object with its [`grob`][cowplot::as_grob] (Grid Graphical Object).
 #'
 #' @seealso
 #' [S3method.network]
@@ -785,14 +786,14 @@ NULL
 #' [dag_network()]
 #'
 #' @examples
-#' \donttest{# correlation network
+#' # correlation network
 #' cor_network(airquality)
 #' cor_network(airquality, show.insig=TRUE)
 #'
 #' # partial correlation network
 #' cor_network(airquality, "pcor")
 #' cor_network(airquality, "pcor", show.insig=TRUE)
-#' }
+#'
 #' @export
 cor_network = function(
     data,
@@ -895,7 +896,7 @@ cor_network = function(
     p[["graphAttributes"]][["Edges"]][["label.bg"]] = edge.label.bg
   }
 
-  cor.net = list(cor=cor, plot=p)
+  cor.net = list(cor=cor, plot=p, grob=cowplot::as_grob(~plot(p)))
   class(cor.net) = "cor.net"
   attr(cor.net, "plot.params") = list(file = file,
                                       width = width,
@@ -918,31 +919,37 @@ print.cor.net = function(
     dpi = plot.params$dpi
   }
 
-  if(!is.null(file)) {
-    index = names(x$cor)[3]  # "cor" or "pcor"
-    file.index = ifelse(
-      index=="cor", "_COR.NET_correlation.network",
-      ifelse(
-        index=="pcor", "_COR.NET_partial.cor.network", "_COR.NET"))
-    file = file_insert_name(file, file.index)
-    if(grepl("\\.png$", file))
-      png(file, width=width, height=height, units="in", res=dpi)
-    if(grepl("\\.pdf$", file))
-      pdf(file, width=width, height=height)
+  p = cowplot::as_grob(~plot(x$plot))
+
+  index = names(x$cor)[3]  # "cor" or "pcor"
+  if(index=="cor") {
+    algo.text = "Correlation Network"
+    file.index = "_COR.NET_correlation.network"
+  } else if(index=="pcor") {
+    algo.text = "Partial Correlation Network"
+    file.index = "_COR.NET_partial.cor.network"
+  } else {
+    algo.text = "(Unknown) Correlation Network"
+    file.index = "_COR.NET"
   }
+  cli::cli_text("Displaying {.pkg {algo.text}}")
 
-  plot(x$plot)
-
-  if(!is.null(file)) {
-    dev.off()
+  if(is.null(file)) {
+    plot(x$plot)
+    # cowplot::ggdraw(p)  # slower
+  } else {
+    file = file_insert_name(file, file.index)
+    ggsave(p, filename=file, width=width, height=height, dpi=dpi)
     cli::cli_alert_success("Plot saved to {.path {file}}")
   }
+
+  invisible(p)
 }
 
 
 #' Directed acyclic graphs (DAGs) via Bayesian networks (BNs).
 #'
-#' Directed acyclic graphs (DAGs) via causal Bayesian networks (BNs). It uses [bnlearn::boot.strength()] to estimate the strength of each edge as its *empirical frequency* over a set of networks learned from bootstrap samples. It computes (1) the probability of each edge (modulo its direction) and (2) the probabilities of each edge's directions conditional on the edge being present in the graph (in either direction). Stability thresholds are usually set as `0.85` for *strength* (i.e., an edge appearing in more than 85% of BNs bootstrap samples) and `0.50` for *direction* (i.e., a direction appearing in more than 50% of BNs bootstrap samples) (Briganti et al., 2023). Finally, for each chosen algorithm, it returns the stable Bayesian network as the final DAG.
+#' Directed acyclic graphs (DAGs) via Bayesian networks (BNs). It uses [bnlearn::boot.strength()] to estimate the strength of each edge as its *empirical frequency* over a set of networks learned from bootstrap samples. It computes (1) the probability of each edge (modulo its direction) and (2) the probabilities of each edge's directions conditional on the edge being present in the graph (in either direction). Stability thresholds are usually set as `0.85` for *strength* (i.e., an edge appearing in more than 85% of BNs bootstrap samples) and `0.50` for *direction* (i.e., a direction appearing in more than 50% of BNs bootstrap samples) (Briganti et al., 2023). Finally, for each chosen algorithm, it returns the stable Bayesian network as the final DAG.
 #'
 #' @inheritParams cor_network
 #' @inheritParams DPI
@@ -987,7 +994,7 @@ print.cor.net = function(
 #' @param edge.width.max Maximum value of edge strength to scale all edge widths. Defaults to `1.5` for better display of arrow.
 #'
 #' @return
-#' Return a list (class `dag.net`) of Bayesian network results and [`qgraph`][qgraph::qgraph] object.
+#' Return a list (class `dag.net`) of Bayesian network results and [`qgraph`][qgraph::qgraph] object with its [`grob`][cowplot::as_grob] (Grid Graphical Object).
 #'
 #' @references
 #' Briganti, G., Scutari, M., & McNally, R. J. (2023). A tutorial on Bayesian networks for psychopathology researchers. *Psychological Methods, 28*(4), 947--961. \doi{10.1037/met0000479}
@@ -1004,26 +1011,41 @@ print.cor.net = function(
 #' [cor_network()]
 #'
 #' @examples
-#' \donttest{bns = dag_network(airquality, seed=1)
-#' bns
-#' # bns$pc.stable
-#' # bns$hc
-#' # bns$rsmax2
+#' \donttest{bn = dag_network(airquality, seed=1)
+#' bn
+#' # bn$pc.stable
+#' # bn$hc
+#' # bn$rsmax2
 #'
 #' ## All DAG objects can be directly plotted
 #' ## or saved with print(..., file="xxx.png")
-#' # bns$pc.stable$DAG.edge
-#' # bns$pc.stable$DAG.strength
-#' # bns$pc.stable$DAG.direction
-#' # bns$pc.stable$DAG
+#' # bn$pc.stable$DAG.edge
+#' # bn$pc.stable$DAG.strength
+#' # bn$pc.stable$DAG.direction
+#' # bn$pc.stable$DAG
 #' # ...
 #' }
 #' \dontrun{
-#' print(bns, file="airquality.png")
+#'
+#' print(bn, file="airquality.png")
 #' # will save three plots with auto-modified file names:
 #' - "airquality_DAG.NET_BNs.01_pc.stable.png"
 #' - "airquality_DAG.NET_BNs.02_hc.png"
-#' - "airquality_DAG.NET_BNs.03_rsmax2.png"}
+#' - "airquality_DAG.NET_BNs.03_rsmax2.png"
+#'
+#' # arrange multiple plots using cowplot::plot_grid()
+#' # but still with unknown issue on incomplete figure
+#' c1 = cor_network(airquality, "cor")
+#' c2 = cor_network(airquality, "pcor")
+#' bn = dag_network(airquality, seed=1)
+#' plot_grid(
+#'   ~print(c1),
+#'   ~print(c2),
+#'   ~print(bn$hc$DAG),
+#'   ~print(bn$rsmax2$DAG),
+#'   labels="AUTO"
+#' )
+#' }
 #'
 #' @export
 dag_network = function(
@@ -1128,6 +1150,10 @@ dag_network = function(
       DAG.strength[["graphAttributes"]][["Edges"]][["width"]]
     DAG[["plotOptions"]][["title"]] =
       paste0("BN algorithm:\n\"", algo, "\"")
+    DAG$grob = cowplot::as_grob(~plot(DAG))
+    DAG.edge$grob = cowplot::as_grob(~plot(DAG.edge))
+    DAG.strength$grob = cowplot::as_grob(~plot(DAG.strength))
+    DAG.direction$grob = cowplot::as_grob(~plot(DAG.direction))
     list(
       BN.bootstrap = bn,
       BN = bn[bn$strength > strength & bn$direction > direction,],
@@ -1150,8 +1176,9 @@ dag_network = function(
 #' @rdname S3method.network
 #' @export
 print.dag.net = function(
-    x, algorithm=names(x),
+    x,
     file=NULL, width=6, height=4, dpi=500,
+    algorithm=names(x),
     ...
 ) {
   if(inherits(x, "qgraph")) algorithm = attr(x, "algo")
@@ -1164,8 +1191,25 @@ print.dag.net = function(
     dpi = plot.params$dpi
   }
 
+  p.list = list()
+
   for(algo in algorithm) {
-    if(!is.null(file)) {
+    if(inherits(x, "qgraph")) {
+      p = cowplot::as_grob(~plot(x))
+    } else {
+      p = cowplot::as_grob(~plot(x[[algo]][["DAG"]]))
+    }
+    p.list = c(p.list, list(p))
+
+    cli::cli_text("Displaying DAG with BN algorithm {.val {algo}}")
+
+    if(is.null(file)) {
+      if(inherits(x, "qgraph")) {
+        plot(x)
+      } else {
+        plot(x[[algo]][["DAG"]])
+      }
+    } else {
       if(length(algorithm)==1) {
         file.i = file_insert_name(file, sprintf(
           "_DAG.NET_BNs_%s", algo))
@@ -1173,24 +1217,13 @@ print.dag.net = function(
         file.i = file_insert_name(file, sprintf(
           "_DAG.NET_BNs.%02d_%s", which(algo==algorithm), algo))
       }
-      if(grepl("\\.png$", file))
-        png(file.i, width=width, height=height, units="in", res=dpi)
-      if(grepl("\\.pdf$", file))
-        pdf(file.i, width=width, height=height)
-    }
-
-    cli::cli_text("Displaying DAG with BN algorithm {.val {algo}}")
-    if(inherits(x, "qgraph")) {
-      plot(x)
-    } else {
-      plot(x[[algo]][["DAG"]])
-    }
-
-    if(!is.null(file)) {
-      dev.off()
+      ggsave(p, filename=file.i, width=width, height=height, dpi=dpi)
       cli::cli_alert_success("Plot saved to {.path {file.i}}")
     }
   }
+
+  names(p.list) = algorithm
+  invisible(p.list)
 }
 
 
