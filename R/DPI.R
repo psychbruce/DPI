@@ -896,7 +896,10 @@ cor_network = function(
     p[["graphAttributes"]][["Edges"]][["label.bg"]] = edge.label.bg
   }
 
-  cor.net = list(cor=cor, plot=p, grob=cowplot::as_grob(~plot(p)))
+  suppressWarnings({
+    grob = cowplot::as_grob(~plot(p))
+  })
+  cor.net = list(cor=cor, plot=p, grob=grob)
   class(cor.net) = "cor.net"
   attr(cor.net, "plot.params") = list(file = file,
                                       width = width,
@@ -919,7 +922,9 @@ print.cor.net = function(
     dpi = plot.params$dpi
   }
 
-  p = cowplot::as_grob(~plot(x$plot))
+  suppressWarnings({
+    p = cowplot::as_grob(~plot(x$plot))
+  })
 
   index = names(x$cor)[3]  # "cor" or "pcor"
   if(index=="cor") {
@@ -1150,10 +1155,12 @@ dag_network = function(
       DAG.strength[["graphAttributes"]][["Edges"]][["width"]]
     DAG[["plotOptions"]][["title"]] =
       paste0("BN algorithm:\n\"", algo, "\"")
-    DAG$grob = cowplot::as_grob(~plot(DAG))
-    DAG.edge$grob = cowplot::as_grob(~plot(DAG.edge))
-    DAG.strength$grob = cowplot::as_grob(~plot(DAG.strength))
-    DAG.direction$grob = cowplot::as_grob(~plot(DAG.direction))
+    suppressWarnings({
+      DAG$grob = cowplot::as_grob(~plot(DAG))
+      DAG.edge$grob = cowplot::as_grob(~plot(DAG.edge))
+      DAG.strength$grob = cowplot::as_grob(~plot(DAG.strength))
+      DAG.direction$grob = cowplot::as_grob(~plot(DAG.direction))
+    })
     list(
       BN.bootstrap = bn,
       BN = bn[bn$strength > strength & bn$direction > direction,],
@@ -1194,11 +1201,13 @@ print.dag.net = function(
   p.list = list()
 
   for(algo in algorithm) {
-    if(inherits(x, "qgraph")) {
-      p = cowplot::as_grob(~plot(x))
-    } else {
-      p = cowplot::as_grob(~plot(x[[algo]][["DAG"]]))
-    }
+    suppressWarnings({
+      if(inherits(x, "qgraph")) {
+        p = cowplot::as_grob(~plot(x))
+      } else {
+        p = cowplot::as_grob(~plot(x[[algo]][["DAG"]]))
+      }
+    })
     p.list = c(p.list, list(p))
 
     cli::cli_text("Displaying DAG with BN algorithm {.val {algo}}")
