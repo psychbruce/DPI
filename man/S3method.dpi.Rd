@@ -30,11 +30,9 @@
 
 \item{file}{File name of saved plot (\code{".png"} or \code{".pdf"}).}
 
-\item{width, height}{Width and height (in inches) of saved plot.
-Defaults to \code{6} and \code{4}.}
+\item{width, height}{Width and height (in inches) of saved plot. Defaults to \code{6} and \code{4}.}
 
-\item{dpi}{Dots per inch (figure resolution).
-Defaults to \code{500}.}
+\item{dpi}{Dots per inch (figure resolution). Defaults to \code{500}.}
 }
 \description{
 \describe{

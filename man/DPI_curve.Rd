@@ -11,6 +11,7 @@ DPI_curve(
   data = NULL,
   k.covs = 1:10,
   n.sim = 1000,
+  alpha = 0.05,
   seed = NULL,
   file = NULL,
   width = 6,
@@ -25,10 +26,7 @@ DPI_curve(
 
 \item{x}{Independent (predictor) variable.}
 
-\item{data}{[Optional] Defaults to \code{NULL}.
-If \code{data} is specified, then \code{model} will be ignored and
-a linear model \code{lm({y} ~ {x} + .)} will be fitted inside.
-This is helpful for exploring all variables in a dataset.}
+\item{data}{[Optional] Defaults to \code{NULL}. If \code{data} is specified, then \code{model} will be ignored and a linear model \code{lm({y} ~ {x} + .)} will be fitted inside. This is helpful for exploring all variables in a dataset.}
 
 \item{k.covs}{An integer vector of number of random covariates
 (simulating potential omitted variables)
@@ -36,19 +34,21 @@ added to each simulation sample.
 Defaults to \code{1:10} (producing DPI results for \code{k.cov}=1~10).
 For details, see \code{\link[=DPI]{DPI()}}.}
 
-\item{n.sim}{Number of simulation samples.
-Defaults to \code{1000}.}
+\item{n.sim}{Number of simulation samples. Defaults to \code{1000}.}
 
-\item{seed}{Random seed for replicable results.
-Defaults to \code{NULL}.}
+\item{alpha}{Significance level for computing the \code{Strength} score (0~1) based on \emph{p} value of partial correlation between \code{X} and \code{Y}. Defaults to \code{0.05}.
+\itemize{
+\item \code{Direction = R2.Y - R2.X}
+\item \code{Strength = 1 - tanh(p.beta.xy/alpha/2)}
+}}
+
+\item{seed}{Random seed for replicable results. Defaults to \code{NULL}.}
 
 \item{file}{File name of saved plot (\code{".png"} or \code{".pdf"}).}
 
-\item{width, height}{Width and height (in inches) of saved plot.
-Defaults to \code{6} and \code{4}.}
+\item{width, height}{Width and height (in inches) of saved plot. Defaults to \code{6} and \code{4}.}
 
-\item{dpi}{Dots per inch (figure resolution).
-Defaults to \code{500}.}
+\item{dpi}{Dots per inch (figure resolution). Defaults to \code{500}.}
 }
 \value{
 Return a data.frame of DPI curve results.

@@ -11,6 +11,7 @@ DPI(
   data = NULL,
   k.cov = 1,
   n.sim = 1000,
+  alpha = 0.05,
   seed = NULL,
   progress,
   file = NULL,
@@ -26,60 +27,40 @@ DPI(
 
 \item{x}{Independent (predictor) variable.}
 
-\item{data}{[Optional] Defaults to \code{NULL}.
-If \code{data} is specified, then \code{model} will be ignored and
-a linear model \code{lm({y} ~ {x} + .)} will be fitted inside.
-This is helpful for exploring all variables in a dataset.}
+\item{data}{[Optional] Defaults to \code{NULL}. If \code{data} is specified, then \code{model} will be ignored and a linear model \code{lm({y} ~ {x} + .)} will be fitted inside. This is helpful for exploring all variables in a dataset.}
 
-\item{k.cov}{Number of random covariates
-(simulating potential omitted variables)
-added to each simulation sample.
+\item{k.cov}{Number of random covariates (simulating potential omitted variables) added to each simulation sample.
 \itemize{
-\item Defaults to \code{1}.
-Please also test different \code{k.cov} values
-as robustness checks (see \code{\link[=DPI_curve]{DPI_curve()}}).
-\item If \code{k.cov > 0}, the raw data (without bootstrapping)
-are used, with \code{k.cov} random variables appended,
-for simulation.
-\item If \code{k.cov = 0} (not suggested), bootstrap samples
-(resampling with replacement) are used for simulation.
+\item Defaults to \code{1}. Please also test different \code{k.cov} values as robustness checks (see \code{\link[=DPI_curve]{DPI_curve()}}).
+\item If \code{k.cov > 0}, the raw data (without bootstrapping) are used, with \code{k.cov} random variables appended, for simulation.
+\item If \code{k.cov = 0} (not suggested), bootstrap samples (resampling with replacement) are used for simulation.
 }}
 
-\item{n.sim}{Number of simulation samples.
-Defaults to \code{1000}.}
+\item{n.sim}{Number of simulation samples. Defaults to \code{1000}.}
 
-\item{seed}{Random seed for replicable results.
-Defaults to \code{NULL}.}
+\item{alpha}{Significance level for computing the \code{Strength} score (0~1) based on \emph{p} value of partial correlation between \code{X} and \code{Y}. Defaults to \code{0.05}.
+\itemize{
+\item \code{Direction = R2.Y - R2.X}
+\item \code{Strength = 1 - tanh(p.beta.xy/alpha/2)}
+}}
 
-\item{progress}{Show progress bar.
-Defaults to \code{FALSE} (if \code{n.sim < 5000}).}
+\item{seed}{Random seed for replicable results. Defaults to \code{NULL}.}
+
+\item{progress}{Show progress bar. Defaults to \code{FALSE} (if \code{n.sim < 5000}).}
 
 \item{file}{File name of saved plot (\code{".png"} or \code{".pdf"}).}
 
-\item{width, height}{Width and height (in inches) of saved plot.
-Defaults to \code{6} and \code{4}.}
+\item{width, height}{Width and height (in inches) of saved plot. Defaults to \code{6} and \code{4}.}
 
-\item{dpi}{Dots per inch (figure resolution).
-Defaults to \code{500}.}
+\item{dpi}{Dots per inch (figure resolution). Defaults to \code{500}.}
 }
 \value{
 Return a data.frame of simulation results:
 \itemize{
 \item \code{DPI}
 \itemize{
-\item \code{t.beta.xy^2 * (R2.Y - R2.X)}
-}
-\item \code{t.beta.xy}
-\itemize{
-\item \emph{t} value for coefficient of X predicting Y (always equal to \emph{t} value for coefficient of Y predicting X) when controlling for all other covariates
-}
-\item \code{df.beta.xy}
-\itemize{
-\item residual degree of freedom (df) of \code{t.beta.xy}
-}
-\item \code{r.partial.xy}
-\itemize{
-\item partial correlation (always with the same \emph{t} value as \code{t.beta.xy}) between X and Y when controlling for all other covariates
+\item \verb{= Direction * Strength}
+\item \verb{= (R2.Y - R2.X) * (1 - tanh(p.beta.xy/alpha/2))}
 }
 \item \code{delta.R2}
 \itemize{
@@ -93,17 +74,38 @@ Return a data.frame of simulation results:
 \itemize{
 \item \eqn{R^2} of regression model predicting X using Y and all other covariates
 }
+\item \code{t.beta.xy}
+\itemize{
+\item \emph{t} value for coefficient of X predicting Y (always equal to \emph{t} value for coefficient of Y predicting X) when controlling for all other covariates
+}
+\item \code{p.beta.xy}
+\itemize{
+\item \emph{p} value for coefficient of X predicting Y (always equal to \emph{p} value for coefficient of Y predicting X) when controlling for all other covariates
+}
+\item \code{df.beta.xy}
+\itemize{
+\item residual degree of freedom (df) of \code{t.beta.xy}
+}
+\item \code{r.partial.xy}
+\itemize{
+\item partial correlation (always with the same \emph{t} value as \code{t.beta.xy}) between X and Y when controlling for all other covariates
+}
 }
 }
 \description{
-The Directed Prediction Index (DPI) is a simulation-based method for quantifying the \emph{relative endogeneity} (relative dependence) of outcome (\emph{Y}) vs. predictor (\emph{X}) variables in multiple linear regression models.
-By comparing the proportion of variance explained (\emph{R}-squared) between the \emph{Y}-as-outcome model and the \emph{X}-as-outcome model while controlling for a sufficient number of potential confounding variables, it suggests a more plausible influence direction from a more exogenous variable (\emph{X}) to a more endogenous variable (\emph{Y}).
-Methodological details are provided at \url{https://psychbruce.github.io/DPI/}.
+The Directed Prediction Index (DPI) is a quasi-causal inference method for cross-sectional data designed to quantify the \emph{relative endogeneity} (relative dependence) of outcome (\emph{Y}) vs. predictor (\emph{X}) variables in regression models. By comparing the proportion of variance explained (\emph{R}-squared) between the \emph{Y}-as-outcome model and the \emph{X}-as-outcome model while controlling for a sufficient number of possible confounders, it suggests a plausible (admissible) direction of influence from a more exogenous variable (\emph{X}) to a more endogenous variable (\emph{Y}). Methodological details are provided at \url{https://psychbruce.github.io/DPI/}.
 }
 \examples{
-\donttest{model = lm(Ozone ~ ., data=airquality)
-DPI(model, y="Ozone", x="Solar.R", seed=1)
+\donttest{# input a fitted model
+model = lm(Ozone ~ ., data=airquality)
+DPI(model, y="Ozone", x="Solar.R", seed=1)  # DPI > 0
+DPI(model, y="Ozone", x="Wind", seed=1)     # DPI > 0
+DPI(model, y="Wind", x="Solar.R", seed=1)   # unrelated
+
+# input raw data, test with more random covs
 DPI(data=airquality, y="Ozone", x="Solar.R", k.cov=10, seed=1)
+DPI(data=airquality, y="Ozone", x="Wind", k.cov=10, seed=1)
+DPI(data=airquality, y="Wind", x="Solar.R", k.cov=10, seed=1)
 }
 }
 \seealso{

@@ -6,8 +6,9 @@
 
 
 #' @import ggplot2
-#' @importFrom stats sd cor lm model.frame update coef
-#' @importFrom stats pt pnorm rnorm quantile na.omit df.residual
+#' @importFrom stats var sd cor na.omit
+#' @importFrom stats pt pnorm rnorm rbinom quantile qnorm
+#' @importFrom stats lm model.frame update coef df.residual
 #' @importFrom glue glue glue_col
 #' @importFrom crayon italic underline green blue magenta
 .onAttach = function(libname, pkgname) {
@@ -31,7 +32,7 @@
     {underline https://psychbruce.github.io/DPI}
 
     {magenta To use this package in publications, please cite:}
-    Bao, H. W. S. (2025). {italic DPI: The Directed Prediction Index} (Version {inst.ver}) [Computer software]. {underline https://doi.org/10.32614/CRAN.package.DPI}
+    Bao, H. W. S. (2025). {italic DPI: The Directed Prediction Index for quasi-causal inference with cross-sectional data} (Version {inst.ver}) [Computer software]. {underline https://doi.org/10.32614/CRAN.package.DPI}
 
     "))
 }
@@ -40,34 +41,178 @@
 #### Utils ####
 
 
-#' Generate random data.
+#' Simulate data from a multivariate normal distribution.
 #'
-#' @param k Number of variables.
 #' @param n Number of observations (cases).
-#' @param seed Random seed for replicable results.
-#' Defaults to `NULL`.
+#' @param k Number of variables. Will be ignored if `cor` specifies a correlation matrix.
+#' @param cor A correlation value or correlation matrix of the variables. Defaults to `NULL` that generates completely random data regardless of their empirical correlations.
+#' @param exact Ensure the sample correlation matrix to be exact as specified in `cor`. This argument is passed on to `empirical` in [`mvrnorm()`][MASS::mvrnorm]. Defaults to `TRUE`.
+#' @param seed Random seed for replicable results. Defaults to `NULL`.
 #'
 #' @return
-#' Return a data.frame of random data.
+#' Return a data.frame of simulated data.
+#'
+#' @seealso
+#' [matrix_cor()]
+#'
+#' [sim_data_exp()]
 #'
 #' @examples
-#' d = data_random(k=5, n=100, seed=1)
-#' cor_network(d)
+#' d1 = sim_data(n=100, k=5, seed=1)
+#' cor_network(d1)
+#'
+#' d2 = sim_data(n=100, k=5, cor=0.2, seed=1)
+#' cor_network(d2)
+#'
+#' cor.mat = matrix_cor(
+#'   1.0, 0.7, 0.3,
+#'   0.7, 1.0, 0.5,
+#'   0.3, 0.5, 1.0
+#' )
+#' d3 = sim_data(n=100, cor=cor.mat, seed=1)
+#' cor_network(d3)
 #'
 #' @export
-data_random = function(k, n, seed=NULL) {
-  set.seed(seed)
-  as.data.frame(
-    do.call(
-      "cbind",
-      lapply(
-        seq_len(k),
-        function(var) rnorm(n)
+sim_data = function(n, k, cor=NULL, exact=TRUE, seed=NULL) {
+  if(is.null(cor)) {
+    set.seed(seed)
+    data = as.data.frame(
+      do.call(
+        "cbind",
+        lapply(
+          seq_len(k),
+          function(var) rnorm(n)
+        )
       )
     )
-  )
+  } else {
+    if(is.matrix(cor)) {
+      k = ncol(cor)
+    } else {
+      if(length(cor)!=1)
+        stop("`cor` must be a single correlation value or a correlation matrix.", call.=FALSE)
+      cor = matrix(rep(cor, k^2), nrow=k, byrow=TRUE)
+      diag(cor) = 1
+    }
+    set.seed(seed)
+    data = as.data.frame(
+      MASS::mvrnorm(
+        n = n,
+        mu = rep(0, k),
+        Sigma = cor,
+        empirical = exact
+      )
+    )
+  }
+  return(data)
 }
 
+
+#' Produce a symmetric correlation matrix from values.
+#'
+#' @param ... Correlation values to transform into the symmetric correlation matrix (by row).
+#'
+#' @return
+#' Return a symmetric correlation matrix.
+#'
+#' @examples
+#' matrix_cor(
+#'   1.0, 0.7, 0.3,
+#'   0.7, 1.0, 0.5,
+#'   0.3, 0.5, 1.0
+#' )
+#'
+#' @export
+matrix_cor = function(...) {
+  cor.vec = as.numeric(unlist(list(...)))
+  matrix(cor.vec, nrow=sqrt(length(cor.vec)), byrow=TRUE)
+}
+
+
+#' Simulate experiment-like data with *independent* binary Xs.
+#'
+#' @inheritParams sim_data
+#' @param r.xy A vector of expected correlations of each X (binary independent variable: 0 or 1) with Y.
+#' @param approx Make the sample correlation matrix approximate more to values as specified in `r.xy`, using the method of orthogonal decomposition of residuals (i.e., making residuals more independent of Xs). Defaults to `TRUE`.
+#' @param tol Tolerance of absolute difference between specified and empirical correlations. Defaults to `0.01`.
+#' @param max.iter Maximum iterations for approximation. More iterations produce more approximate correlations, but the absolute differences will be convergent after about 30 iterations. Defaults to `30`.
+#' @param verbose Print information about iterations that satisfy tolerance. Defaults to `FALSE`.
+#'
+#' @return
+#' Return a data.frame of simulated data.
+#'
+#' @seealso
+#' [sim_data()]
+#'
+#' @examples
+#' \donttest{data = sim_data_exp(n=1000, r.xy=c(0.5, 0.3), seed=1)
+#' cor(data)  # tol = 0.01
+#'
+#' data = sim_data_exp(n=1000, r.xy=c(0.5, 0.3), seed=1,
+#'                     verbose=TRUE)
+#' cor(data)  # print iteration information
+#'
+#' data = sim_data_exp(n=1000, r.xy=c(0.5, 0.3), seed=1,
+#'                     verbose=TRUE, tol=0.001)
+#' cor(data)  # more approximate, though not exact
+#'
+#' data = sim_data_exp(n=1000, r.xy=c(0.5, 0.3), seed=1,
+#'                     approx=FALSE)
+#' cor(data)  # far less exact
+#' }
+#' @export
+sim_data_exp = function(n, r.xy, approx=TRUE, tol=0.01, max.iter=30, verbose=FALSE, seed=NULL) {
+  ids = seq_along(r.xy)  # 1, 2, 3, ...
+
+  set.seed(seed)
+  Xs = do.call(cbind, lapply(ids, function(i) {
+    # completely independent binary Xs
+    rbinom(n, size=1, prob=0.5)  # random (50%): 0 or 1
+  }))
+  colnames(Xs) = paste0("X", ids)
+  X = cbind(Intercept=1, Xs)
+
+  B = sapply(ids, function(i) {
+    # var.y = 1
+    # r.xy = B * SD.x / SD.y = (M1 - M0) * sqrt(p*(1-p)) / SD.y
+    # p = mean(Xs[,i])
+    # SD.x = sqrt(p*(1-p))
+    SD.x = sd(Xs[,i])
+    SD.y = 1
+    B = r.xy[i] * SD.y / SD.x
+    names(B) = paste0("b", i)
+    return(B)
+  })
+  B = c(b0=0, B)
+
+  Y.pred = X %*% B
+  # var.y = 1 = var.pred + var.residual
+  sd.residual = drop(sqrt(1 - var(Y.pred)))
+  if(is.na(sd.residual))
+    stop("Invalid specification producing NaN in outcome. Perhaps r.xy is too large?", call.=FALSE)
+  res = rnorm(n, mean=0, sd=sd.residual)
+  if(approx) {
+    # orthogonal decomposition:
+    # make residuals more independent of Xs
+    proj = Xs %*% solve(t(Xs) %*% Xs) %*% t(Xs)
+    for(iter in seq_len(max.iter)) {
+      res = res - proj %*% res
+      res = scale(res) * sd.residual
+      cor = cor(cbind(Xs, Y.pred + res))
+      diff.cor.abs = abs(cor[nrow(cor), -ncol(cor)] - r.xy)
+      if(all(diff.cor.abs < tol)) {
+        if(verbose)
+          cli::cli_text("{.val {iter}} iterations satisfied tolerance of {.val {tol}}")
+        break
+      }
+      if(verbose)
+        cli::cli_text("{.val {iter}} iterations done: abs(cor.diff.) = {.val {round(diff.cor.abs, 3-log10(tol))}}")
+    }
+  }
+  Y = Y.pred + res
+  data = data.frame(Xs, Y)
+  return(data)
+}
 
 
 p.trans = function(p, digits.p=3, p.min=1e-99) {
@@ -155,58 +300,46 @@ NULL
 
 #' The Directed Prediction Index (DPI).
 #'
-#' The Directed Prediction Index (DPI) is a simulation-based method for quantifying the *relative endogeneity* (relative dependence) of outcome (*Y*) vs. predictor (*X*) variables in multiple linear regression models.
-#' By comparing the proportion of variance explained (*R*-squared) between the *Y*-as-outcome model and the *X*-as-outcome model while controlling for a sufficient number of potential confounding variables, it suggests a more plausible influence direction from a more exogenous variable (*X*) to a more endogenous variable (*Y*).
-#' Methodological details are provided at <https://psychbruce.github.io/DPI/>.
+#' The Directed Prediction Index (DPI) is a quasi-causal inference method for cross-sectional data designed to quantify the *relative endogeneity* (relative dependence) of outcome (*Y*) vs. predictor (*X*) variables in regression models. By comparing the proportion of variance explained (*R*-squared) between the *Y*-as-outcome model and the *X*-as-outcome model while controlling for a sufficient number of possible confounders, it suggests a plausible (admissible) direction of influence from a more exogenous variable (*X*) to a more endogenous variable (*Y*). Methodological details are provided at <https://psychbruce.github.io/DPI/>.
 #'
 #' @param model Model object (`lm`).
 #' @param y Dependent (outcome) variable.
 #' @param x Independent (predictor) variable.
-#' @param data \[Optional\] Defaults to `NULL`.
-#' If `data` is specified, then `model` will be ignored and
-#' a linear model `lm({y} ~ {x} + .)` will be fitted inside.
-#' This is helpful for exploring all variables in a dataset.
-#' @param k.cov Number of random covariates
-#' (simulating potential omitted variables)
-#' added to each simulation sample.
+#' @param data \[Optional\] Defaults to `NULL`. If `data` is specified, then `model` will be ignored and a linear model `lm({y} ~ {x} + .)` will be fitted inside. This is helpful for exploring all variables in a dataset.
+#' @param k.cov Number of random covariates (simulating potential omitted variables) added to each simulation sample.
 #'
-#' - Defaults to `1`.
-#' Please also test different `k.cov` values
-#' as robustness checks (see [DPI_curve()]).
-#' - If `k.cov > 0`, the raw data (without bootstrapping)
-#' are used, with `k.cov` random variables appended,
-#' for simulation.
-#' - If `k.cov = 0` (not suggested), bootstrap samples
-#' (resampling with replacement) are used for simulation.
-#' @param n.sim Number of simulation samples.
-#' Defaults to `1000`.
-#' @param seed Random seed for replicable results.
-#' Defaults to `NULL`.
-#' @param progress Show progress bar.
-#' Defaults to `FALSE` (if `n.sim < 5000`).
+#' - Defaults to `1`. Please also test different `k.cov` values as robustness checks (see [DPI_curve()]).
+#' - If `k.cov > 0`, the raw data (without bootstrapping) are used, with `k.cov` random variables appended, for simulation.
+#' - If `k.cov = 0` (not suggested), bootstrap samples (resampling with replacement) are used for simulation.
+#' @param n.sim Number of simulation samples. Defaults to `1000`.
+#' @param alpha Significance level for computing the `Strength` score (0~1) based on *p* value of partial correlation between `X` and `Y`. Defaults to `0.05`.
+#' - `Direction = R2.Y - R2.X`
+#' - `Strength = 1 - tanh(p.beta.xy/alpha/2)`
+#' @param seed Random seed for replicable results. Defaults to `NULL`.
+#' @param progress Show progress bar. Defaults to `FALSE` (if `n.sim < 5000`).
 #' @param file File name of saved plot (`".png"` or `".pdf"`).
-#' @param width,height Width and height (in inches) of saved plot.
-#' Defaults to `6` and `4`.
-#' @param dpi Dots per inch (figure resolution).
-#' Defaults to `500`.
+#' @param width,height Width and height (in inches) of saved plot. Defaults to `6` and `4`.
+#' @param dpi Dots per inch (figure resolution). Defaults to `500`.
 #'
 #' @return
 #' Return a data.frame of simulation results:
 #' - `DPI`
-#'   - `t.beta.xy^2 * (R2.Y - R2.X)`
-#' - `t.beta.xy`
-#'   - *t* value for coefficient of X predicting Y (always equal to *t* value for coefficient of Y predicting X) when controlling for all other covariates
-#' - `df.beta.xy`
-#'   - residual degree of freedom (df) of `t.beta.xy`
-#' - `r.partial.xy`
-#'   - partial correlation (always with the same *t* value as `t.beta.xy`) between X and Y when controlling for all other covariates
+#'   - `= Direction * Strength`
+#'   - `= (R2.Y - R2.X) * (1 - tanh(p.beta.xy/alpha/2))`
 #' - `delta.R2`
 #'   - `R2.Y - R2.X`
 #' - `R2.Y`
 #'   - \eqn{R^2} of regression model predicting Y using X and all other covariates
 #' - `R2.X`
 #'   - \eqn{R^2} of regression model predicting X using Y and all other covariates
-#'
+#' - `t.beta.xy`
+#'   - *t* value for coefficient of X predicting Y (always equal to *t* value for coefficient of Y predicting X) when controlling for all other covariates
+#' - `p.beta.xy`
+#'   - *p* value for coefficient of X predicting Y (always equal to *p* value for coefficient of Y predicting X) when controlling for all other covariates
+#' - `df.beta.xy`
+#'   - residual degree of freedom (df) of `t.beta.xy`
+#' - `r.partial.xy`
+#'   - partial correlation (always with the same *t* value as `t.beta.xy`) between X and Y when controlling for all other covariates
 #'
 #' @seealso
 #' [S3method.dpi]
@@ -218,9 +351,16 @@ NULL
 #' [dag_network()]
 #'
 #' @examples
-#' \donttest{model = lm(Ozone ~ ., data=airquality)
-#' DPI(model, y="Ozone", x="Solar.R", seed=1)
+#' \donttest{# input a fitted model
+#' model = lm(Ozone ~ ., data=airquality)
+#' DPI(model, y="Ozone", x="Solar.R", seed=1)  # DPI > 0
+#' DPI(model, y="Ozone", x="Wind", seed=1)     # DPI > 0
+#' DPI(model, y="Wind", x="Solar.R", seed=1)   # unrelated
+#'
+#' # input raw data, test with more random covs
 #' DPI(data=airquality, y="Ozone", x="Solar.R", k.cov=10, seed=1)
+#' DPI(data=airquality, y="Ozone", x="Wind", k.cov=10, seed=1)
+#' DPI(data=airquality, y="Wind", x="Solar.R", k.cov=10, seed=1)
 #' }
 #' @export
 DPI = function(
@@ -228,6 +368,7 @@ DPI = function(
     data = NULL,
     k.cov = 1,
     n.sim = 1000,
+    alpha = 0.05,
     seed = NULL,
     progress,
     file = NULL,
@@ -241,11 +382,18 @@ DPI = function(
     else
       progress = TRUE
   }
-  if(!is.null(data)) {
-    model = lm(glue("{y} ~ {x} + ."), data=data)
+  formula.y = glue("{y} ~ {x} + .")
+  formula.x = glue("{x} ~ {y} + .")
+  if(is.null(data)) {
+    data = model.frame(model)  # new data.frame (na.omit)
+    model = lm(formula.y, data=data)  # refit
+  } else {
+    model = lm(formula.y, data=data)
+    data = model.frame(model)  # new data.frame (na.omit)
   }
-  data = model.frame(model)  # data.frame (na.omit)
   formula = formula(model)
+  formula.y = update(formula, glue("{y} ~ {x} + . - {y}"))
+  formula.x = update(formula, glue("{x} ~ {y} + . - {x}"))
   for(var in names(data)) {
     if(inherits(data[[var]], c("numeric", "integer", "double", "logical")) |
        (inherits(data[[var]], "factor") & nlevels(data[[var]])==2))
@@ -282,7 +430,7 @@ DPI = function(
         seed.i = NULL
       else
         seed.i = seeds[i]
-      data.r = data_random(k=k.cov, n=nrow(data), seed=seed.i)
+      data.r = sim_data(n=nrow(data), k=k.cov, seed=seed.i)
       covs = names(data.r)
       if(any(covs %in% names(data))) {
         covs = paste0("DPI_Random_Var_", covs)
@@ -293,13 +441,14 @@ DPI = function(
     }
     ## Y ~ X
     model1 = update(model, formula=glue(
-      "{y} ~ {x} + . {covs}"
+      "{y} ~ {x} + . {covs} - {y}"
     ), data=data.i)
     summ1 = summary(model1)
     R2.Y = summ1[["r.squared"]]
     t.xy = coef(summ1)[2, "t value"]
-    rp.xy = t.xy / sqrt(t.xy^2 + df.residual(model1))  # partial r_xy
+    p.xy = coef(summ1)[2, "Pr(>|t|)"]
     df = df.residual(model1)
+    rp.xy = t.xy / sqrt(t.xy^2 + df)  # partial r_xy
     ## X ~ Y
     model2 = update(model, formula=glue(
       "{x} ~ {y} + . {covs} - {x}"
@@ -308,23 +457,37 @@ DPI = function(
     R2.X = summ2[["r.squared"]]
     ## Return results from one random sample
     dpi = data.frame(
-      DPI = t.xy^2 * (R2.Y - R2.X),
-      t.beta.xy = t.xy,
-      df.beta.xy = df,
-      r.partial.xy = rp.xy,
+      # DPI = t.xy^2 * (R2.Y - R2.X),
+      DPI = (R2.Y - R2.X) * (1 - tanh(p.xy/alpha/2)),
+      # using plogis: 2 * (1 - plogis(p, scale=alpha))
+      # using sigmoid: 2 * ( 1 - 1 / (1 + exp(-p/alpha)) )
+      # plogis(): logistic distribution function, "inverse logit"
+      #   - plogis() is also a rescaled hyperbolic tangent:
+      #       plogis(x) = sigmoid(x) = 1 / (1 + exp(-x))
+      #         = (1 + tanh(x/2)) / 2
+      #       plogis(x, scale) = (1 + tanh(x/scale/2)) / 2
+      # p = seq(0, 1, 0.01)
+      # plot(p, 1 - tanh(p/0.05))
       delta.R2 = R2.Y - R2.X,
       R2.Y,
-      R2.X
+      R2.X,
+      t.beta.xy = t.xy,
+      p.beta.xy = p.xy,
+      df.beta.xy = df,
+      r.partial.xy = rp.xy
     )
-    if(progress) cli::cli_progress_update(.envir=parent.frame(2))
+    if(progress)
+      cli::cli_progress_update(.envir=parent.frame(2))
     return(dpi)
   })
   cli::cli_progress_done()
   options(op)
+  gc()
   dpi = do.call("rbind", dpi)
   class(dpi) = c("dpi", "data.frame")
   attr(dpi, "N.valid") = nrow(data)
-  attr(dpi, "formula") = formula
+  attr(dpi, "formula.y") = formula.y
+  attr(dpi, "formula.x") = formula.x
   attr(dpi, "X") = x
   attr(dpi, "Y") = y
   attr(dpi, "k.cov") = k.cov
@@ -348,19 +511,24 @@ summary.dpi = function(object, ...) {
   se = sd(dpi, na.rm=TRUE)
   z = mean / se
   p.z = pnorm(abs(z), lower.tail=FALSE) * 2
-  CIs = quantile(dpi, probs=c(0.025, 0.975), na.rm=TRUE)
+  # CIs = quantile(dpi, probs=c(0.025, 0.975), na.rm=TRUE)
+  CIs = mean + qnorm(c(0.025, 0.975)) * se
+
   ## Delta R^2
   delta.R2 = object$delta.R2
   dR2.mean = mean(delta.R2, na.rm=TRUE)
   dR2.se = sd(delta.R2, na.rm=TRUE)
   dR2.z = dR2.mean / dR2.se
   dR2.p.z = pnorm(abs(dR2.z), lower.tail=FALSE) * 2
-  dR2.CIs = quantile(delta.R2, probs=c(0.025, 0.975), na.rm=TRUE)
+  # dR2.CIs = quantile(delta.R2, probs=c(0.025, 0.975), na.rm=TRUE)
+  dR2.CIs = dR2.mean + qnorm(c(0.025, 0.975)) * dR2.se
+
   ## partial r & t test (test with raw sample size!)
   r.partial = mean(object$r.partial.xy, na.rm=TRUE)
   t.r = mean(object$t.beta.xy, na.rm=TRUE)
   t.df = attr(object, "df")
   p.t = pt(abs(t.r), t.df, lower.tail=FALSE) * 2
+
   ## Combine
   dpi.summ = list(
     dpi.summ = data.frame(
@@ -406,54 +574,35 @@ print.summary.dpi = function(x, digits=3, ...) {
     z.value = sprintf(fmt, dpi$z.value),
     p.z = p.trans(dpi$p.z, 4),
     sig = sig.trans(dpi$p.z),
-    Sim.Conf.Interval = paste0(
+    Conf.Interval = paste0(
       "[", sprintf(fmt, dpi$Sim.LLCI),
       ", ", sprintf(fmt, dpi$Sim.ULCI),
       "]"),
     row.names = "DPI"
   )
-  dR2 = x$dR2.summ
-  res.dR2 = data.frame(
-    Estimate = sprintf(fmt, dR2$Estimate),
-    Sim.SE = paste0("(", sprintf(fmt, dR2$Sim.SE), ")"),
-    z.value = sprintf(fmt, dR2$z.value),
-    p.z = p.trans(dR2$p.z, 4),
-    sig = sig.trans(dR2$p.z),
-    Sim.Conf.Interval = paste0(
-      "[", sprintf(fmt, dR2$Sim.LLCI),
-      ", ", sprintf(fmt, dR2$Sim.ULCI),
-      "]"),
-    row.names = paste0("\u0394R", cli::symbol$sup_2)
-  )
+
   cli::cli_text(
     cli::col_cyan("Sample size: "),
     "N.valid = {attr(x$dpi, 'N.valid')}")
   cli::cli_text(
-    cli::col_cyan("Model formula: "),
-    "{formula_paste(attr(x$dpi, 'formula'))}")
+    cli::col_cyan("Model Y formula: "),
+    "{formula_paste(attr(x$dpi, 'formula.y'))}")
   cli::cli_text(
-    cli::col_cyan("Directed prediction tested: "),
+    cli::col_cyan("Model X formula: "),
+    "{formula_paste(attr(x$dpi, 'formula.x'))}")
+  cli::cli_text(
+    cli::col_cyan("Directed prediction: "),
     "{.val {attr(x$dpi, 'X')}} (X) -> {.val {attr(x$dpi, 'Y')}} (Y)")
+  cli::cli_text(
+    cli::col_cyan("Partial correlation: "),
+    "r(partial).XY = {cli::col_green({sprintf(fmt, x$r.partial.summ$Estimate)})},
+     p = {cli::col_green({p.trans(x$r.partial.summ$p.t, 4)})}
+     {cli::col_green({sig.trans(x$r.partial.summ$p.t)})}")
   cli::cli_text(
     cli::col_cyan("Simulation sample settings: "),
     "k.random.covs = {cli::col_magenta({attr(x$dpi, 'k.cov')})},
      n.sim = {cli::col_magenta({attr(x$dpi, 'n.sim')})},
      seed = {cli::col_magenta({attr(x$dpi, 'seed')})}")
-  cli::cli_h2(
-    cli::col_cyan("(1) Strength: Partial Correlation (pr_XY)"))
-  cat(glue(
-    "Estimated r(partial) = ",
-    "{sprintf(fmt, x$r.partial.summ$Estimate)}, ",
-    "t({x$r.partial.summ$df}) = ",
-    "{sprintf(fmt, x$r.partial.summ$t.value)}, ",
-    "p = {p.trans(x$r.partial.summ$p.t, 4)} ",
-    "{sig.trans(x$r.partial.summ$p.t)}"
-  ))
-  cli::cli_h2(
-    cli::col_cyan("(2) Direction: \u0394R\u00b2 (= R\u00b2Y - R\u00b2X)"))
-  print(res.dR2)
-  cli::cli_h2(
-    cli::col_cyan("(3) DPI: The Directed Prediction Index"))
   print(res.dpi)
   invisible(NULL)
 }
@@ -479,10 +628,8 @@ plot.dpi = function(x, file=NULL, width=6, height=4, dpi=500, ...) {
   expr.x = eval(parse(text=glue("
     expression(
       paste(
-        'Directed Prediction Index (',
-        DPI[X %->% Y] == italic(t)[italic(r)[partial]]^2 %.% Delta,
-        italic(R)[paste(Y,' vs. ',X)]^2,
-        ')'
+        'Directed Prediction Index: ',
+        DPI[X %->% Y] == (italic(R)[italic(Y)]^2 - italic(R)[italic(X)]^2) %.% (1 - plain(tanh) * frac(italic(p)[paste(italic(XY), '|', italic(Covs))], 2 * alpha))
       )
     )
   ")), envir=parent.frame())
@@ -506,7 +653,7 @@ plot.dpi = function(x, file=NULL, width=6, height=4, dpi=500, ...) {
         ' = {sprintf('%.3f', summ$Estimate)}, ',
         italic(p)[italic(z)],
         ' = {p.trans(summ$p.z)}, ',
-        CI['95%']^Sim,
+        CI['95%'],
         ' = [{sprintf('%.3f', summ$Sim.LLCI)}',
         ', {sprintf('%.3f', summ$Sim.ULCI)}]'
       )
@@ -516,12 +663,12 @@ plot.dpi = function(x, file=NULL, width=6, height=4, dpi=500, ...) {
   expr.caption = eval(parse(text=glue("
     expression(
       paste(
-        bar(italic(r)[partial]),
+        bar(italic(r)[partial[italic(XY)]]),
         ' = {sprintf('%.3f', summ.r$Estimate)}, ',
         bar(italic(t)[italic(r)[partial]]),
         '({summ.r$df})',
         ' = {sprintf('%.3f', summ.r$t.value)}, ',
-        italic(p),
+        italic(p)[italic(r)[partial]],
         ' = {p.trans(summ.r$p.t)}'
       )
     )
@@ -538,7 +685,8 @@ plot.dpi = function(x, file=NULL, width=6, height=4, dpi=500, ...) {
     geom_errorbarh(aes(xmin=summ$Sim.LLCI,
                        xmax=summ$Sim.ULCI,
                        y=1.03),
-                   height=0.04) +
+                   width=0.04) +
+    # ggplot2 update: `height` was translated to `width`.
     annotate("point", x=summ$Estimate, y=1.03, shape=18, size=3,
              color=ifelse(r.sig, "black", "grey")) +
     labs(x=expr.x,
@@ -602,6 +750,7 @@ DPI_curve = function(
     data = NULL,
     k.covs = 1:10,
     n.sim = 1000,
+    alpha = 0.05,
     seed = NULL,
     file = NULL,
     width = 6,
@@ -624,8 +773,13 @@ DPI_curve = function(
       "simulation samples estimated in {cli::pb_elapsed}")
   )
   dpi.curve = lapply(k.covs, function(k.cov) {
-    dpi = DPI(model, y, x, data, k.cov, n.sim, seed, progress=FALSE)
-    CIs.99 = quantile(dpi$DPI, probs=c(0.005, 0.995), na.rm=TRUE)
+    dpi = DPI(model, y, x, data,
+              k.cov, n.sim, alpha,
+              seed, progress=FALSE)
+    # CIs.99 = quantile(dpi$DPI, probs=c(0.005, 0.995), na.rm=TRUE)
+    mean = mean(dpi$DPI, na.rm=TRUE)
+    se = sd(dpi$DPI, na.rm=TRUE)
+    CIs.99 = mean + qnorm(c(0.005, 0.995)) * se
     dpi.summ = cbind(
       data.frame(k.cov),
       summary(dpi)[["dpi.summ"]],
@@ -638,6 +792,7 @@ DPI_curve = function(
   })
   cli::cli_progress_done()
   options(op)
+  gc()
   dpi.curve = do.call("rbind", dpi.curve)
   class(dpi.curve) = c("dpi.curve", "data.frame")
   attr(dpi.curve, "X") = x
@@ -678,9 +833,9 @@ plot.dpi.curve = function(x, file=NULL, width=6, height=4, dpi=500, ...) {
       paste(
         bar(DPI)[{attr(x, 'X')} %->% {attr(x, 'Y')}],
         ' with ',
-        CI['95%']^Sim,
+        CI['95%'],
         ' (dashed) and ',
-        CI['99%']^Sim,
+        CI['99%'],
         ' (dotted)'
       )
     )
@@ -692,7 +847,7 @@ plot.dpi.curve = function(x, file=NULL, width=6, height=4, dpi=500, ...) {
     geom_ribbon(aes(ymin=Sim.LLCI, ymax=Sim.ULCI),
                 color=color, fill=color, alpha=0.15,
                 linetype="dashed") +
-    geom_path(linewidth=1, color=color) +
+    geom_line(linewidth=1, color=color) +
     geom_point(color=color, size=2) +
     geom_hline(yintercept=0, color="darkred", linetype="dashed") +
     scale_x_continuous(breaks=x$k.cov) +
@@ -899,7 +1054,7 @@ cor_network = function(
   suppressWarnings({
     grob = cowplot::as_grob(~plot(p))
   })
-  cor.net = list(cor=cor, plot=p, grob=grob)
+  cor.net = list(cor=cor, plot=grob, qgraph=p)
   class(cor.net) = "cor.net"
   attr(cor.net, "plot.params") = list(file = file,
                                       width = width,
@@ -923,7 +1078,7 @@ print.cor.net = function(
   }
 
   suppressWarnings({
-    p = cowplot::as_grob(~plot(x$plot))
+    p = cowplot::as_grob(~plot(x$qgraph))
   })
 
   index = names(x$cor)[3]  # "cor" or "pcor"
@@ -940,7 +1095,7 @@ print.cor.net = function(
   cli::cli_text("Displaying {.pkg {algo.text}}")
 
   if(is.null(file)) {
-    plot(x$plot)
+    plot(x$qgraph)
     # cowplot::ggdraw(p)  # slower
   } else {
     file = file_insert_name(file, file.index)
@@ -997,6 +1152,7 @@ print.cor.net = function(
 #' - The proportions of two reverse directions add up to 100%.
 #' - Empirical frequency (?~100%) will be mapped onto edge *greyscale/transparency* in the final integrated `DAG`, with its value shown as edge text label.
 #' @param edge.width.max Maximum value of edge strength to scale all edge widths. Defaults to `1.5` for better display of arrow.
+#' @param verbose Print information about BN algorithm and number of bootstrap samples when running the analysis. Defaults to `TRUE`.
 #'
 #' @return
 #' Return a list (class `dag.net`) of Bayesian network results and [`qgraph`][qgraph::qgraph] object with its [`grob`][cowplot::as_grob] (Grid Graphical Object).
@@ -1038,18 +1194,23 @@ print.cor.net = function(
 #' - "airquality_DAG.NET_BNs.02_hc.png"
 #' - "airquality_DAG.NET_BNs.03_rsmax2.png"
 #'
-#' # arrange multiple plots using cowplot::plot_grid()
-#' # but still with unknown issue on incomplete figure
+#' # arrange multiple plots using aplot::plot_list()
+#' # install.packages("aplot")
 #' c1 = cor_network(airquality, "cor")
 #' c2 = cor_network(airquality, "pcor")
 #' bn = dag_network(airquality, seed=1)
-#' plot_grid(
-#'   ~print(c1),
-#'   ~print(c2),
-#'   ~print(bn$hc$DAG),
-#'   ~print(bn$rsmax2$DAG),
-#'   labels="AUTO"
-#' )
+#' p = aplot::plot_list(
+#'   c1$plot,
+#'   c2$plot,
+#'   bn$pc.stable$DAG$plot,
+#'   bn$hc$DAG$plot,
+#'   bn$rsmax2$DAG$plot,
+#'   design="111222
+#'           334455",
+#'   tag_levels="A"
+#' )  # return a patchwork object
+#' ggsave(p, filename="p.png", width=12, height=8, dpi=500)
+#' ggsave(p, filename="p.pdf", width=12, height=8)
 #' }
 #'
 #' @export
@@ -1068,6 +1229,7 @@ dag_network = function(
     width = 6,
     height = 4,
     dpi = 500,
+    verbose = TRUE,
     ...
 ) {
   data = as.data.frame(data)
@@ -1079,15 +1241,18 @@ dag_network = function(
 
   BNs = lapply(algorithm, function(algo) {
     suppressWarnings({
-      cli::cli_text("Running BN algorithm {.val {algo}} with {.val {n.boot}} bootstrap samples...")
+      if(verbose)
+        cli::cli_text("Running BN algorithm {.val {algo}} with {.val {n.boot}} bootstrap samples...")
       set.seed(seed)
-      bns = bnlearn::boot.strength(data, R=n.boot, algorithm=algo,
-                                   algorithm.args=algorithm.args)
+      bns = bnlearn::boot.strength(
+        data, R=n.boot, algorithm=algo,
+        algorithm.args=algorithm.args)
       attr(bns, "algorithm") = algo
       return(bns)
     })
   })
   names(BNs) = algorithm
+  gc()
 
   DAGs = lapply(BNs, function(BN) {
     algo = attr(BN, "algorithm")
@@ -1156,10 +1321,10 @@ dag_network = function(
     DAG[["plotOptions"]][["title"]] =
       paste0("BN algorithm:\n\"", algo, "\"")
     suppressWarnings({
-      DAG$grob = cowplot::as_grob(~plot(DAG))
-      DAG.edge$grob = cowplot::as_grob(~plot(DAG.edge))
-      DAG.strength$grob = cowplot::as_grob(~plot(DAG.strength))
-      DAG.direction$grob = cowplot::as_grob(~plot(DAG.direction))
+      DAG$plot = cowplot::as_grob(~plot(DAG))
+      DAG.edge$plot = cowplot::as_grob(~plot(DAG.edge))
+      DAG.strength$plot = cowplot::as_grob(~plot(DAG.strength))
+      DAG.direction$plot = cowplot::as_grob(~plot(DAG.direction))
     })
     list(
       BN.bootstrap = bn,

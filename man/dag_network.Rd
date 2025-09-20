@@ -19,6 +19,7 @@ dag_network(
   width = 6,
   height = 4,
   dpi = 500,
+  verbose = TRUE,
   ...
 )
 }
@@ -65,8 +66,7 @@ Defaults to the most common algorithms: \code{"pc.stable"} (PC), \code{"hc"} (HC
 
 \item{n.boot}{Number of bootstrap samples (for learning a more "stable" network structure). Defaults to \code{1000}.}
 
-\item{seed}{Random seed for replicable results.
-Defaults to \code{NULL}.}
+\item{seed}{Random seed for replicable results. Defaults to \code{NULL}.}
 
 \item{strength}{Stability threshold of edge \emph{strength}: the minimum proportion (probability) of BNs (among the \code{n.boot} bootstrap samples) in which each edge appears.
 \itemize{
@@ -95,6 +95,8 @@ Defaults to \code{1.2}.}
 Defaults to \code{6} and \code{4}.}
 
 \item{dpi}{Dots per inch (figure resolution). Defaults to \code{500}.}
+
+\item{verbose}{Print information about BN algorithm and number of bootstrap samples when running the analysis. Defaults to \code{TRUE}.}
 
 \item{...}{Arguments passed on to \code{\link[qgraph:qgraph]{qgraph()}}.}
 }
@@ -127,18 +129,23 @@ print(bn, file="airquality.png")
 - "airquality_DAG.NET_BNs.02_hc.png"
 - "airquality_DAG.NET_BNs.03_rsmax2.png"
 
-# arrange multiple plots using cowplot::plot_grid()
-# but still with unknown issue on incomplete figure
+# arrange multiple plots using aplot::plot_list()
+# install.packages("aplot")
 c1 = cor_network(airquality, "cor")
 c2 = cor_network(airquality, "pcor")
 bn = dag_network(airquality, seed=1)
-plot_grid(
-  ~print(c1),
-  ~print(c2),
-  ~print(bn$hc$DAG),
-  ~print(bn$rsmax2$DAG),
-  labels="AUTO"
-)
+p = aplot::plot_list(
+  c1$plot,
+  c2$plot,
+  bn$pc.stable$DAG$plot,
+  bn$hc$DAG$plot,
+  bn$rsmax2$DAG$plot,
+  design="111222
+          334455",
+  tag_levels="A"
+)  # return a patchwork object
+ggsave(p, filename="p.png", width=12, height=8, dpi=500)
+ggsave(p, filename="p.pdf", width=12, height=8)
 }
 
 }
