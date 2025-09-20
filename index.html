@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>The Directed Prediction Index • DPI</title>
+<title>The Directed Prediction Index for Quasi-Causal Inference with Cross-Sectional Data • DPI</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
@@ -17,9 +17,9 @@
 <link href="deps/Lexend-0.4.10/font.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="The Directed Prediction Index">
-<meta name="description" content="The Directed Prediction Index (DPI) is a simulation-based method for quantifying the relative endogeneity (relative dependence) of outcome (Y) versus predictor (X) variables in multiple linear regression models. By comparing the proportion of variance explained (R-squared) between the Y-as-outcome model and the X-as-outcome model while controlling for a sufficient number of potential confounding variables, it suggests a more plausible influence direction from a more exogenous variable (X) to a more endogenous variable (Y). Methodological details are provided at &lt;https://psychbruce.github.io/DPI/&gt;.">
-<meta property="og:description" content="The Directed Prediction Index (DPI) is a simulation-based method for quantifying the relative endogeneity (relative dependence) of outcome (Y) versus predictor (X) variables in multiple linear regression models. By comparing the proportion of variance explained (R-squared) between the Y-as-outcome model and the X-as-outcome model while controlling for a sufficient number of potential confounding variables, it suggests a more plausible influence direction from a more exogenous variable (X) to a more endogenous variable (Y). Methodological details are provided at &lt;https://psychbruce.github.io/DPI/&gt;.">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="The Directed Prediction Index for Quasi-Causal Inference with Cross-Sectional Data">
+<meta name="description" content="The Directed Prediction Index (DPI) is a quasi-causal inference method for cross-sectional data designed to quantify the relative endogeneity (relative dependence) of outcome (Y) versus predictor (X) variables in regression models. By comparing the proportion of variance explained (R-squared) between the Y-as-outcome model and the X-as-outcome model while controlling for a sufficient number of possible confounders, it suggests a plausible (admissible) direction of influence from a more exogenous variable (X) to a more endogenous variable (Y). Methodological details are provided at &lt;https://psychbruce.github.io/DPI/&gt;.">
+<meta property="og:description" content="The Directed Prediction Index (DPI) is a quasi-causal inference method for cross-sectional data designed to quantify the relative endogeneity (relative dependence) of outcome (Y) versus predictor (X) variables in regression models. By comparing the proportion of variance explained (R-squared) between the Y-as-outcome model and the X-as-outcome model while controlling for a sufficient number of possible confounders, it suggests a plausible (admissible) direction of influence from a more exogenous variable (X) to a more endogenous variable (Y). Methodological details are provided at &lt;https://psychbruce.github.io/DPI/&gt;.">
 <meta property="og:image" content="https://psychbruce.github.io/DPI/logo.png">
 </head>
 <body>
@@ -30,7 +30,7 @@
 
     <a class="navbar-brand me-2" href="index.html">DPI</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2025.8</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2025.9</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -60,7 +60,7 @@
 </h1>
 </div>
 <p>🛸 The Directed Prediction Index (DPI).</p>
-<p>The <em>Directed Prediction Index</em> (DPI) is a simulation-based method for quantifying the <em>relative endogeneity</em> (relative dependence) of outcome (<em>Y</em>) versus predictor (<em>X</em>) variables in multiple linear regression models.</p>
+<p>The <em>Directed Prediction Index</em> (DPI) is a quasi-causal inference method for cross-sectional data designed to quantify the <em>relative endogeneity</em> (relative dependence) of outcome (<em>Y</em>) versus predictor (<em>X</em>) variables in regression models.</p>
 <!-- badges: start -->
 
 <!-- badges: end -->
@@ -76,8 +76,9 @@
 <h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
 </h2>
 <ul>
-<li>Bao, H. W. S. (2025). <em>DPI: The Directed Prediction Index</em>. <a href="https://doi.org/10.32614/CRAN.package.DPI" class="external-link uri">https://doi.org/10.32614/CRAN.package.DPI</a>
+<li>Bao, H. W. S. (2025). <em>DPI: The Directed Prediction Index for quasi-causal inference with cross-sectional data</em>. <a href="https://doi.org/10.32614/CRAN.package.DPI" class="external-link uri">https://doi.org/10.32614/CRAN.package.DPI</a>
 </li>
+<li>Bao, H. W. S. (Manuscript in preparation). <em>The Directed Prediction Index (DPI): Quasi-causal inference for observational data from relative endogeneity of variables</em>.</li>
 </ul>
 </div>
 <div class="section level2">
@@ -92,21 +93,128 @@
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"psychbruce/DPI"</span>, force<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="computation-details">Computation Details<a class="anchor" aria-label="anchor" href="#computation-details"></a>
+<h2 id="algorithm-details">Algorithm Details<a class="anchor" aria-label="anchor" href="#algorithm-details"></a>
 </h2>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msub><mtext mathvariant="normal">DPI</mtext><mrow><mi>X</mi><mo>→</mo><mi>Y</mi></mrow></msub></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msup><mi>t</mi><mn>2</mn></msup><mo>⋅</mo><mi>Δ</mi><msup><mi>R</mi><mn>2</mn></msup></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msubsup><mi>t</mi><msub><mi>β</mi><mrow><mi>X</mi><mi>Y</mi><mo stretchy="false" form="prefix">|</mo><mi>C</mi><mi>o</mi><mi>v</mi><mi>s</mi></mrow></msub><mn>2</mn></msubsup><mo>⋅</mo><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>R</mi><mrow><mi>Y</mi><mo>∼</mo><mi>X</mi><mo>+</mo><mi>C</mi><mi>o</mi><mi>v</mi><mi>s</mi></mrow><mn>2</mn></msubsup><mo>−</mo><msubsup><mi>R</mi><mrow><mi>X</mi><mo>∼</mo><mi>Y</mi><mo>+</mo><mi>C</mi><mi>o</mi><mi>v</mi><mi>s</mi></mrow><mn>2</mn></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msubsup><mi>t</mi><mrow><mi>p</mi><mi>a</mi><mi>r</mi><mi>t</mi><mi>i</mi><mi>a</mi><mi>l</mi><mi>.</mi><msub><mi>r</mi><mrow><mi>X</mi><mi>Y</mi><mo stretchy="false" form="prefix">|</mo><mi>C</mi><mi>o</mi><mi>v</mi><mi>s</mi></mrow></msub></mrow><mn>2</mn></msubsup><mo>⋅</mo><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>R</mi><mrow><mi>Y</mi><mo>∼</mo><mi>X</mi><mo>+</mo><mi>C</mi><mi>o</mi><mi>v</mi><mi>s</mi></mrow><mn>2</mn></msubsup><mo>−</mo><msubsup><mi>R</mi><mrow><mi>X</mi><mo>∼</mo><mi>Y</mi><mo>+</mo><mi>C</mi><mi>o</mi><mi>v</mi><mi>s</mi></mrow><mn>2</mn></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">
+<p>Define <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtext mathvariant="normal">DPI</mtext><annotation encoding="application/x-tex">\text{DPI}</annotation></semantics></math> as the product of <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtext mathvariant="normal">Direction</mtext><annotation encoding="application/x-tex">\text{Direction}</annotation></semantics></math> (relative direction) and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtext mathvariant="normal">Strength</mtext><annotation encoding="application/x-tex">\text{Strength}</annotation></semantics></math> (absolute strength) of the expected <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>X</mi><mo>→</mo><mi>Y</mi></mrow><annotation encoding="application/x-tex">X \rightarrow Y</annotation></semantics></math> relationship:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msub><mtext mathvariant="normal">DPI</mtext><mrow><mi>X</mi><mo>→</mo><mi>Y</mi></mrow></msub></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msub><mtext mathvariant="normal">Direction</mtext><mrow><mi>X</mi><mo>→</mo><mi>Y</mi></mrow></msub><mo>⋅</mo><msub><mtext mathvariant="normal">Strength</mtext><mrow><mi>X</mi><mi>Y</mi></mrow></msub></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mtext mathvariant="normal">Delta</mtext><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>R</mi><mn>2</mn></msup><mo stretchy="true" form="postfix">)</mo></mrow><mo>⋅</mo><mtext mathvariant="normal">Sigmoid</mtext><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><mi>p</mi><mi>α</mi></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>R</mi><mrow><mi>Y</mi><mo>∼</mo><mi>X</mi><mo>+</mo><mi>C</mi><mi>o</mi><mi>v</mi><mi>s</mi></mrow><mn>2</mn></msubsup><mo>−</mo><msubsup><mi>R</mi><mrow><mi>X</mi><mo>∼</mo><mi>Y</mi><mo>+</mo><mi>C</mi><mi>o</mi><mi>v</mi><mi>s</mi></mrow><mn>2</mn></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mo>⋅</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mo>tanh</mo><mfrac><msub><mi>p</mi><mrow><mi>X</mi><mi>Y</mi><mo stretchy="false" form="prefix">|</mo><mi>C</mi><mi>o</mi><mi>v</mi><mi>s</mi></mrow></msub><mrow><mn>2</mn><mi>α</mi></mrow></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mo>∈</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><mn>1</mn><mo>,</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">
 \begin{aligned}
-\text{DPI}_{X \rightarrow Y} &amp; = t^2 \cdot \Delta R^2 \\
-&amp; = t_{\beta_{XY|Covs}}^2 \cdot (R_{Y \sim X + Covs}^2 - R_{X \sim Y + Covs}^2) \\
-&amp; = t_{partial.r_{XY|Covs}}^2 \cdot (R_{Y \sim X + Covs}^2 - R_{X \sim Y + Covs}^2)
+\text{DPI}_{X \rightarrow Y}
+&amp; = \text{Direction}_{X \rightarrow Y} \cdot \text{Strength}_{XY} \\
+&amp; = \text{Delta}(R^2) \cdot \text{Sigmoid}(\frac{p}{\alpha}) \\
+&amp; = \left( R_{Y \sim X + Covs}^2 - R_{X \sim Y + Covs}^2 \right) \cdot \left( 1 - \tanh \frac{p_{XY|Covs}}{2\alpha} \right) \\
+&amp; \in (-1, 1)
 \end{aligned}
 </annotation></semantics></math></p>
-<p>In econometrics and broader social sciences, an <em>exogenous</em> variable is assumed to have a unidirectional (causal or quasi-causal) influence on an <em>endogenous</em> variable (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mi>x</mi><mi>o</mi><mi>V</mi><mi>a</mi><mi>r</mi><mo>→</mo><mi>E</mi><mi>n</mi><mi>d</mi><mi>o</mi><mi>V</mi><mi>a</mi><mi>r</mi></mrow><annotation encoding="application/x-tex">ExoVar \rightarrow EndoVar</annotation></semantics></math>). By quantifying the <em>relative endogeneity</em> of outcome versus predictor variables in multiple linear regression models, the DPI can suggest a more plausible direction of influence (e.g., <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mtext mathvariant="normal">DPI</mtext><mrow><mi>X</mi><mo>→</mo><mi>Y</mi></mrow></msub><mo>&gt;</mo><mn>0</mn><mrow><mtext mathvariant="normal">: </mtext><mspace width="0.333em"></mspace></mrow><mi>X</mi><mo>→</mo><mi>Y</mi></mrow><annotation encoding="application/x-tex">\text{DPI}_{X \rightarrow Y} &gt; 0 \text{: } X \rightarrow Y</annotation></semantics></math>) after controlling for a sufficient number of potential confounding variables.</p>
+<p>In econometrics and broader social sciences, an <em>exogenous</em> variable is assumed to have a directed (causal or quasi-causal) influence on an <em>endogenous</em> variable (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mi>x</mi><mi>o</mi><mi>V</mi><mi>a</mi><mi>r</mi><mo>→</mo><mi>E</mi><mi>n</mi><mi>d</mi><mi>o</mi><mi>V</mi><mi>a</mi><mi>r</mi></mrow><annotation encoding="application/x-tex">ExoVar \rightarrow EndoVar</annotation></semantics></math>). By quantifying the <em>relative endogeneity</em> of outcome versus predictor variables in multiple linear regression models, the DPI can suggest a plausible (admissible) direction of influence (i.e., <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mtext mathvariant="normal">DPI</mtext><mrow><mi>X</mi><mo>→</mo><mi>Y</mi></mrow></msub><mo>&gt;</mo><mn>0</mn><mrow><mtext mathvariant="normal">: </mtext><mspace width="0.333em"></mspace></mrow><mi>X</mi><mo>→</mo><mi>Y</mi></mrow><annotation encoding="application/x-tex">\text{DPI}_{X \rightarrow Y} &gt; 0 \text{: } X \rightarrow Y</annotation></semantics></math>) after controlling for a sufficient number of possible confounders and simulated random covariates.</p>
+<div class="section level3">
+<h3 id="key-steps-of-conceptualization">Key Steps of Conceptualization<a class="anchor" aria-label="anchor" href="#key-steps-of-conceptualization"></a>
+</h3>
 <ol style="list-style-type: decimal">
-<li>It uses <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><msubsup><mi>R</mi><mrow><mi>Y</mi><mi>v</mi><mi>s</mi><mi>.</mi><mi>X</mi></mrow><mn>2</mn></msubsup></mrow><annotation encoding="application/x-tex">\Delta R_{Y vs. X}^2</annotation></semantics></math> to test whether <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Y</mi><annotation encoding="application/x-tex">Y</annotation></semantics></math> (outcome), compared to <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math> (predictor), can be <em>more strongly predicted</em> by <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math> observable control variables (included in a regression model) and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math> unobservable random covariates (specified by <code>k.cov</code>; see the <code><a href="reference/DPI.html">DPI()</a></code> function). A higher <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>R</mi><mn>2</mn></msup><annotation encoding="application/x-tex">R^2</annotation></semantics></math> indicates <em>relatively higher dependence</em> (i.e., <em>relatively higher endogeneity</em>) in a given variable set.</li>
-<li>It also uses <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>t</mi><mrow><mi>p</mi><mi>a</mi><mi>r</mi><mi>t</mi><mi>i</mi><mi>a</mi><mi>l</mi><mi>.</mi><mi>r</mi></mrow><mn>2</mn></msubsup><annotation encoding="application/x-tex">t_{partial.r}^2</annotation></semantics></math> to penalize insignificant partial correlation (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>r</mi><mrow><mi>p</mi><mi>a</mi><mi>r</mi><mi>t</mi><mi>i</mi><mi>a</mi><mi>l</mi></mrow></msub><annotation encoding="application/x-tex">r_{partial}</annotation></semantics></math>, with equivalent <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math> test as <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>β</mi><mrow><mi>p</mi><mi>a</mi><mi>r</mi><mi>t</mi><mi>i</mi><mi>a</mi><mi>l</mi></mrow></msub><annotation encoding="application/x-tex">\beta_{partial}</annotation></semantics></math>) between <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Y</mi><annotation encoding="application/x-tex">Y</annotation></semantics></math> and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math>, while ignoring the sign (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>±</mo><annotation encoding="application/x-tex">\pm</annotation></semantics></math>) of this correlation. A higher <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>t</mi><mn>2</mn></msup><annotation encoding="application/x-tex">t^2</annotation></semantics></math> (equivalent to <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>F</mi><annotation encoding="application/x-tex">F</annotation></semantics></math> test value when <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mi>f</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">df = 1</annotation></semantics></math>) indicates a more robust (less spurious) partial relationship when controlling for other variables.</li>
-<li>Simulation samples with <code>k.cov</code> random covariates are generated to test the statistical significance of DPI.</li>
+<li>Define <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mtext mathvariant="normal">Direction</mtext><mrow><mi>X</mi><mo>→</mo><mi>Y</mi></mrow></msub><annotation encoding="application/x-tex">\text{Direction}_{X \rightarrow Y}</annotation></semantics></math> as <em>relative endogeneity</em> (relative dependence) of <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Y</mi><annotation encoding="application/x-tex">Y</annotation></semantics></math> vs. <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math> in a given variable set involving all possible confounders <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi><mi>o</mi><mi>v</mi><mi>s</mi></mrow><annotation encoding="application/x-tex">Covs</annotation></semantics></math>:</li>
 </ol>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msub><mtext mathvariant="normal">Direction</mtext><mrow><mi>X</mi><mo>→</mo><mi>Y</mi></mrow></msub></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mtext mathvariant="normal">Endogeneity</mtext><mrow><mo stretchy="true" form="prefix">(</mo><mi>Y</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mtext mathvariant="normal">Endogeneity</mtext><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msubsup><mi>R</mi><mrow><mi>Y</mi><mo>∼</mo><mi>X</mi><mo>+</mo><mi>C</mi><mi>o</mi><mi>v</mi><mi>s</mi></mrow><mn>2</mn></msubsup><mo>−</mo><msubsup><mi>R</mi><mrow><mi>X</mi><mo>∼</mo><mi>Y</mi><mo>+</mo><mi>C</mi><mi>o</mi><mi>v</mi><mi>s</mi></mrow><mn>2</mn></msubsup></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mtext mathvariant="normal">Delta</mtext><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>R</mi><mn>2</mn></msup><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mo>∈</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><mn>1</mn><mo>,</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">
+\begin{aligned}
+\text{Direction}_{X \rightarrow Y} &amp; = \text{Endogeneity}(Y) - \text{Endogeneity}(X) \\
+&amp; = R_{Y \sim X + Covs}^2 - R_{X \sim Y + Covs}^2 \\
+&amp; = \text{Delta}(R^2) \\
+&amp; \in (-1, 1)
+\end{aligned}
+</annotation></semantics></math></p>
+<ul>
+<li>It uses <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">Delta</mtext><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>R</mi><mn>2</mn></msup><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\text{Delta}(R^2)</annotation></semantics></math> to test whether <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Y</mi><annotation encoding="application/x-tex">Y</annotation></semantics></math> (outcome), compared to <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math> (predictor), can be <em>more strongly predicted</em> by all <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math> observable control variables (included in a given sample) and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math> unobservable random covariates (randomly generated in simulation samples, as specified by <code>k.cov</code> in the <code><a href="reference/DPI.html">DPI()</a></code> function). A higher <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>R</mi><mn>2</mn></msup><annotation encoding="application/x-tex">R^2</annotation></semantics></math> indicates <em>higher dependence</em> (i.e., <em>higher endogeneity</em>) in a given variable set.</li>
+</ul>
+<ol start="2" style="list-style-type: decimal">
+<li>Define <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">Sigmoid</mtext><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><mi>p</mi><mi>α</mi></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\text{Sigmoid}(\frac{p}{\alpha})</annotation></semantics></math> as <em>absolute strength</em> of the partial relationship between <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math> and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Y</mi><annotation encoding="application/x-tex">Y</annotation></semantics></math> when controlling for all possible confounders <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi><mi>o</mi><mi>v</mi><mi>s</mi></mrow><annotation encoding="application/x-tex">Covs</annotation></semantics></math>:</li>
+</ol>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mtext mathvariant="normal">Sigmoid</mtext><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><mi>p</mi><mi>α</mi></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mn>2</mn><mrow><mo stretchy="true" form="prefix">[</mo><mn>1</mn><mo>−</mo><mtext mathvariant="normal">sigmoid</mtext><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><msub><mi>p</mi><mrow><mi>X</mi><mi>Y</mi><mo stretchy="false" form="prefix">|</mo><mi>C</mi><mi>o</mi><mi>v</mi><mi>s</mi></mrow></msub><mi>α</mi></mfrac><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mn>1</mn><mo>−</mo><mo>tanh</mo><mfrac><msub><mi>p</mi><mrow><mi>X</mi><mi>Y</mi><mo stretchy="false" form="prefix">|</mo><mi>C</mi><mi>o</mi><mi>v</mi><mi>s</mi></mrow></msub><mrow><mn>2</mn><mi>α</mi></mrow></mfrac></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mo>∈</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">
+\begin{aligned}
+\text{Sigmoid}(\frac{p}{\alpha}) &amp; = 2 \left[ 1 - \text{sigmoid}(\frac{p_{XY|Covs}}{\alpha}) \right] \\
+&amp; = 1 - \tanh \frac{p_{XY|Covs}}{2\alpha} \\
+&amp; \in (0, 1)
+\end{aligned}
+</annotation></semantics></math></p>
+<ul>
+<li>It uses <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">Sigmoid</mtext><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><mi>p</mi><mi>α</mi></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\text{Sigmoid}(\frac{p}{\alpha})</annotation></semantics></math> to penalize insignificant (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo>&gt;</mo><mi>α</mi></mrow><annotation encoding="application/x-tex">p &gt; \alpha</annotation></semantics></math>) partial relationship between <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math> and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Y</mi><annotation encoding="application/x-tex">Y</annotation></semantics></math>. Partial correlation <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>r</mi><mrow><mi>p</mi><mi>a</mi><mi>r</mi><mi>t</mi><mi>i</mi><mi>a</mi><mi>l</mi></mrow></msub><annotation encoding="application/x-tex">r_{partial}</annotation></semantics></math> always has the equivalent <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math> test and the same <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>p</mi><annotation encoding="application/x-tex">p</annotation></semantics></math> value as partial regression coefficient <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>β</mi><mrow><mi>p</mi><mi>a</mi><mi>r</mi><mi>t</mi><mi>i</mi><mi>a</mi><mi>l</mi></mrow></msub><annotation encoding="application/x-tex">\beta_{partial}</annotation></semantics></math> between <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Y</mi><annotation encoding="application/x-tex">Y</annotation></semantics></math> and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math>. A higher <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">Sigmoid</mtext><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><mi>p</mi><mi>α</mi></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\text{Sigmoid}(\frac{p}{\alpha})</annotation></semantics></math> indicates a more likely (less spurious) partial relationship when controlling for all possible confounders.</li>
+<li>Notes on transformation among <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>tanh</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\tanh(x)</annotation></semantics></math>, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">sigmoid</mtext><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\text{sigmoid}(x)</annotation></semantics></math>, and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">Sigmoid</mtext><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><mi>p</mi><mi>α</mi></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\text{Sigmoid}(\frac{p}{\alpha})</annotation></semantics></math>:</li>
+</ul>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mtext mathvariant="normal">sigmoid</mtext><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mfrac><mn>1</mn><mrow><mn>1</mn><mo>+</mo><msup><mi>e</mi><mrow><mo>−</mo><mi>x</mi></mrow></msup></mrow></mfrac></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mfrac><mrow><mo>tanh</mo><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><mi>x</mi><mn>2</mn></mfrac><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mn>1</mn></mrow><mn>2</mn></mfrac><mo>,</mo></mtd><mtd columnalign="right" style="text-align: right"><mo>∈</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><mo>tanh</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mfrac><mrow><msup><mi>e</mi><mi>x</mi></msup><mo>−</mo><msup><mi>e</mi><mrow><mo>−</mo><mi>x</mi></mrow></msup></mrow><mrow><msup><mi>e</mi><mi>x</mi></msup><mo>+</mo><msup><mi>e</mi><mrow><mo>−</mo><mi>x</mi></mrow></msup></mrow></mfrac></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mn>1</mn><mo>−</mo><mfrac><mn>2</mn><mrow><mn>1</mn><mo>+</mo><msup><mi>e</mi><mrow><mn>2</mn><mi>x</mi></mrow></msup></mrow></mfrac></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mfrac><mn>2</mn><mrow><mn>1</mn><mo>+</mo><msup><mi>e</mi><mrow><mo>−</mo><mn>2</mn><mi>x</mi></mrow></msup></mrow></mfrac><mo>−</mo><mn>1</mn></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mn>2</mn><mo>⋅</mo><mtext mathvariant="normal">sigmoid</mtext><mrow><mo stretchy="true" form="prefix">(</mo><mn>2</mn><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mn>1</mn><mo>,</mo></mtd><mtd columnalign="right" style="text-align: right"><mo>∈</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><mn>1</mn><mo>,</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><mtext mathvariant="normal">Sigmoid</mtext><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><mi>p</mi><mi>α</mi></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mn>2</mn><mrow><mo stretchy="true" form="prefix">[</mo><mn>1</mn><mo>−</mo><mtext mathvariant="normal">sigmoid</mtext><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><mi>p</mi><mi>α</mi></mfrac><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mn>1</mn><mo>−</mo><mo>tanh</mo><mfrac><mi>p</mi><mrow><mn>2</mn><mi>α</mi></mrow></mfrac><mi>.</mi></mtd><mtd columnalign="right" style="text-align: right"><mo>∈</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">
+\begin{aligned}
+\text{sigmoid}(x) &amp; = \frac{1}{1 + e^{-x}} \\
+&amp; = \frac{\tanh(\frac{x}{2}) + 1}{2}, &amp; \in (0, 1) \\
+\tanh(x) &amp; = \frac{e^x - e^{-x}}{e^x + e^{-x}} \\
+&amp; = 1 - \frac{2}{1 + e^{2x}} \\
+&amp; = \frac{2}{1 + e^{-2x}} - 1 \\
+&amp; = 2 \cdot \text{sigmoid}(2x) - 1, &amp; \in (-1, 1) \\
+\text{Sigmoid}(\frac{p}{\alpha}) &amp; = 2 \left[ 1 - \text{sigmoid}(\frac{p}{\alpha}) \right] \\
+&amp; = 1 - \tanh \frac{p}{2\alpha}. &amp; \in (0, 1)
+\end{aligned}
+</annotation></semantics></math></p>
+<table class="table">
+<thead><tr class="header">
+<th><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>p</mi><annotation encoding="application/x-tex">p</annotation></semantics></math></th>
+<th>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">Sigmoid</mtext><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><mi>p</mi><mi>α</mi></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\text{Sigmoid}(\frac{p}{\alpha})</annotation></semantics></math> with <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi><mo>=</mo><mn>0.05</mn></mrow><annotation encoding="application/x-tex">\alpha = 0.05</annotation></semantics></math>
+</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>(~0)</td>
+<td>(~1)</td>
+</tr>
+<tr class="even">
+<td>0.0001</td>
+<td>0.999</td>
+</tr>
+<tr class="odd">
+<td>0.001</td>
+<td>0.990</td>
+</tr>
+<tr class="even">
+<td>0.01</td>
+<td>0.900</td>
+</tr>
+<tr class="odd">
+<td>0.02</td>
+<td>0.803</td>
+</tr>
+<tr class="even">
+<td>0.03</td>
+<td>0.709</td>
+</tr>
+<tr class="odd">
+<td>0.04</td>
+<td>0.620</td>
+</tr>
+<tr class="even">
+<td>0.05 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mfrac><mi>p</mi><mi>α</mi></mfrac><annotation encoding="application/x-tex">\frac{p}{\alpha}</annotation></semantics></math> = 1)</td>
+<td>0.538</td>
+</tr>
+<tr class="odd">
+<td>0.10</td>
+<td>0.238</td>
+</tr>
+<tr class="even">
+<td>0.20</td>
+<td>0.036</td>
+</tr>
+<tr class="odd">
+<td>0.50</td>
+<td>0.00009</td>
+</tr>
+<tr class="even">
+<td>0.80</td>
+<td>0.0000002</td>
+</tr>
+<tr class="odd">
+<td>1</td>
+<td>0.000000004</td>
+</tr>
+</tbody>
+</table>
+<ol start="3" style="list-style-type: decimal">
+<li>Simulate <code>n.sim</code> random samples, with <code>k.cov</code> (unobservable) random covariate(s) in each simulated sample, to test the statistical significance of <code><a href="reference/DPI.html">DPI()</a></code>.</li>
+</ol>
+</div>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
