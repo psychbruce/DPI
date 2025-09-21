@@ -52,9 +52,13 @@ $$
 
 In econometrics and broader social sciences, an *exogenous* variable is assumed to have a directed (causal or quasi-causal) influence on an *endogenous* variable ($ExoVar \rightarrow EndoVar$). By quantifying the *relative endogeneity* of outcome versus predictor variables in multiple linear regression models, the DPI can suggest a plausible (admissible) direction of influence (i.e., $\text{DPI}_{X \rightarrow Y} > 0 \text{: } X \rightarrow Y$) after controlling for a sufficient number of possible confounders and simulated random covariates.
 
-### Key Steps of Conceptualization
+### Key Steps of Conceptualization and Computation
 
-1.  Define $\text{Direction}_{X \rightarrow Y}$ as *relative endogeneity* (relative dependence) of $Y$ vs. $X$ in a given variable set involving all possible confounders $Covs$:
+All steps have been compiled into the functions `DPI()` and `DPI_curve()`. See their help pages for usage and illustrative examples. Below are conceptual rationales and mathematical explanations.
+
+#### Step 1: Relative Direction
+
+Define $\text{Direction}_{X \rightarrow Y}$ as *relative endogeneity* (relative dependence) of $Y$ vs. $X$ in a given variable set involving all possible confounders $Covs$:
 
 $$
 \begin{aligned}
@@ -65,9 +69,11 @@ $$
 \end{aligned}
 $$
 
--   It uses $\text{Delta}(R^2)$ to test whether $Y$ (outcome), compared to $X$ (predictor), can be *more strongly predicted* by all $m$ observable control variables (included in a given sample) and $k$ unobservable random covariates (randomly generated in simulation samples, as specified by `k.cov` in the `DPI()` function). A higher $R^2$ indicates *higher dependence* (i.e., *higher endogeneity*) in a given variable set.
+It uses $\text{Delta}(R^2)$ to test whether $Y$ (outcome), compared to $X$ (predictor), can be *more strongly predicted* by all $m$ observable control variables (included in a given sample) and $k$ unobservable random covariates (randomly generated in simulation samples, as specified by `k.cov` in the `DPI()` function). A higher $R^2$ indicates *higher dependence* (i.e., *higher endogeneity*) in a given variable set.
 
-2.  Define $\text{Sigmoid}(\frac{p}{\alpha})$ as *absolute strength* of the partial relationship between $X$ and $Y$ when controlling for all possible confounders $Covs$:
+#### Step 2: Absolute Strength
+
+Define $\text{Sigmoid}(\frac{p}{\alpha})$ as *absolute strength* of the partial relationship between $X$ and $Y$ when controlling for all possible confounders $Covs$:
 
 $$
 \begin{aligned}
@@ -77,24 +83,25 @@ $$
 \end{aligned}
 $$
 
--   It uses $\text{Sigmoid}(\frac{p}{\alpha})$ to penalize insignificant ($p > \alpha$) partial relationship between $X$ and $Y$. Partial correlation $r_{partial}$ always has the equivalent $t$ test and the same $p$ value as partial regression coefficient $\beta_{partial}$ between $Y$ and $X$. A higher $\text{Sigmoid}(\frac{p}{\alpha})$ indicates a more likely (less spurious) partial relationship when controlling for all possible confounders.
--   Notes on transformation among $\tanh(x)$, $\text{sigmoid}(x)$, and $\text{Sigmoid}(\frac{p}{\alpha})$:
+It uses $\text{Sigmoid}(\frac{p}{\alpha})$ to penalize insignificant ($p > \alpha$) partial relationship between $X$ and $Y$. Partial correlation $r_{partial}$ always has the equivalent $t$ test and the same $p$ value as partial regression coefficient $\beta_{partial}$ between $Y$ and $X$. A higher $\text{Sigmoid}(\frac{p}{\alpha})$ indicates a more likely (less spurious) partial relationship when controlling for all possible confounders.
+
+Notes on transformation among $\tanh(x)$, $\text{sigmoid}(x)$, and $\text{Sigmoid}(\frac{p}{\alpha})$:
 
 $$
 \begin{aligned}
-\text{sigmoid}(x) & = \frac{1}{1 + e^{-x}} \\
-& = \frac{\tanh(\frac{x}{2}) + 1}{2}, & \in (0, 1) \\
 \tanh(x) & = \frac{e^x - e^{-x}}{e^x + e^{-x}} \\
 & = 1 - \frac{2}{1 + e^{2x}} \\
 & = \frac{2}{1 + e^{-2x}} - 1 \\
 & = 2 \cdot \text{sigmoid}(2x) - 1, & \in (-1, 1) \\
+\text{sigmoid}(x) & = \frac{1}{1 + e^{-x}} \\
+& = \frac{\tanh(\frac{x}{2}) + 1}{2}, & \in (0, 1) \\
 \text{Sigmoid}(\frac{p}{\alpha}) & = 2 \left[ 1 - \text{sigmoid}(\frac{p}{\alpha}) \right] \\
 & = 1 - \tanh \frac{p}{2\alpha}. & \in (0, 1)
 \end{aligned}
 $$
 
 | $p$ | $\text{Sigmoid}(\frac{p}{\alpha})$ with $\alpha = 0.05$ |
-|----|----|
+|--------------------------|----------------------------------------------|
 | (\~0) | (\~1) |
 | 0.0001 | 0.999 |
 | 0.001 | 0.990 |
@@ -109,4 +116,26 @@ $$
 | 0.80 | 0.0000002 |
 | 1 | 0.000000004 |
 
-3.  Simulate `n.sim` random samples, with `k.cov` (unobservable) random covariate(s) in each simulated sample, to test the statistical significance of `DPI()`.
+#### Step 3: Data Simulation
+
+**(1) Main analysis using `DPI()`**: Simulate `n.sim` random samples, with `k.cov` (unobservable) random covariate(s) in each simulated sample, to test the statistical significance of DPI.
+
+**(2) Robustness check using `DPI_curve()`**: Run a series of DPI simulation analyses respectively with `1`\~`k.covs` (usually 1\~10) random covariates, producing a curve of DPIs (estimates, 95% CI, and 99% CI; usually getting closer to 0 as `k.covs` increases) that can indicate its sensitivity in identifying the directed prediction (i.e., *How many random covariates can DPIs survive to remain significant?*).
+
+## Other Functions
+
+This package also includes other functions helpful for exploring variable relationships and performing simulation studies.
+
+-   Network analysis functions
+
+    -   `cor_network()`: Correlation and partial correlation networks.
+
+    -   `dag_network()`: Directed acyclic graphs (DAGs) via Bayesian networks (BNs).
+
+-   Data simulation utility functions
+
+    -   `matrix_cor()`: Produce a symmetric correlation matrix from values.
+
+    -   `sim_data()`: Simulate data from a multivariate normal distribution.
+
+    -   `sim_data_exp()`: Simulate experiment-like data with *independent* binary Xs.

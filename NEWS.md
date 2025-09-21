@@ -13,6 +13,7 @@
     & \in (-1, 1)
     \end{aligned}
     $$
+    -   In an earlier version of algorithm, the strength score was computed as $t_{\beta_{XY|Covs}}^2 = t_{r.partial_{XY|Covs}}^2 \in [0, +\infty)$. While this algorithm performs as well as the new $\text{Sigmoid}(\frac{p}{\alpha})$ approach (e.g., with low false positive and false negative rates), $t^2$ has a major flaw that its values cannot converge to a limited range so that the final DPI values would be heavily determined by $t^2$, which is not a desired attribute. In contrast, the new algorithm can make the strength score more likely to be an on-off switch, with values approximating 0 or 1, thereby minimizing its impact on the interpretation of final DPI values.
 -   Renamed `data_random()` to `sim_data()` with enhanced functionality that supports data simulation from a multivariate normal distribution, using `MASS::mvrnorm()`.
 -   Added `sim_data_exp()`: Simulate experiment-like data with *independent* binary Xs.
 -   Used `gc()` in `DPI()`, `DPI_curve()`, and `dag_network()` for memory garbage collection.

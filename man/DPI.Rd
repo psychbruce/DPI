@@ -93,7 +93,7 @@ Return a data.frame of simulation results:
 }
 }
 \description{
-The Directed Prediction Index (DPI) is a quasi-causal inference method for cross-sectional data designed to quantify the \emph{relative endogeneity} (relative dependence) of outcome (\emph{Y}) vs. predictor (\emph{X}) variables in regression models. By comparing the proportion of variance explained (\emph{R}-squared) between the \emph{Y}-as-outcome model and the \emph{X}-as-outcome model while controlling for a sufficient number of possible confounders, it suggests a plausible (admissible) direction of influence from a more exogenous variable (\emph{X}) to a more endogenous variable (\emph{Y}). Methodological details are provided at \url{https://psychbruce.github.io/DPI/}.
+The Directed Prediction Index (DPI) is a quasi-causal inference method for cross-sectional data designed to quantify the \emph{relative endogeneity} (relative dependence) of outcome (\emph{Y}) vs. predictor (\emph{X}) variables in regression models. By comparing the proportion of variance explained (\emph{R}-squared) between the \emph{Y}-as-outcome model and the \emph{X}-as-outcome model while controlling for a sufficient number of possible confounders, it can suggest a plausible (admissible) direction of influence from a more exogenous variable (\emph{X}) to a more endogenous variable (\emph{Y}). Methodological details are provided at \url{https://psychbruce.github.io/DPI/}.
 }
 \examples{
 \donttest{# input a fitted model
