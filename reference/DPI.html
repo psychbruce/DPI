@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">DPI</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2025.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2025.10</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -77,8 +77,8 @@
 
 <dt id="arg-k-cov">k.cov<a class="anchor" aria-label="anchor" href="#arg-k-cov"></a></dt>
 <dd><p>Number of random covariates (simulating potential omitted variables) added to each simulation sample.</p><ul><li><p>Defaults to <code>1</code>. Please also test different <code>k.cov</code> values as robustness checks (see <code><a href="DPI_curve.html">DPI_curve()</a></code>).</p></li>
-<li><p>If <code>k.cov &gt; 0</code>, the raw data (without bootstrapping) are used, with <code>k.cov</code> random variables appended, for simulation.</p></li>
-<li><p>If <code>k.cov = 0</code> (not suggested), bootstrap samples (resampling with replacement) are used for simulation.</p></li>
+<li><p>If <code>k.cov</code> &gt; 0, the raw data (without bootstrapping) are used, with <code>k.cov</code> random variables appended, for simulation.</p></li>
+<li><p>If <code>k.cov</code> = 0 (not suggested), bootstrap samples (resampling with replacement) are used for simulation.</p></li>
 </ul></dd>
 
 
@@ -97,7 +97,7 @@
 
 
 <dt id="arg-progress">progress<a class="anchor" aria-label="anchor" href="#arg-progress"></a></dt>
-<dd><p>Show progress bar. Defaults to <code>FALSE</code> (if <code>n.sim &lt; 5000</code>).</p></dd>
+<dd><p>Show progress bar. Defaults to <code>FALSE</code> (if <code>n.sim</code> &lt; 5000).</p></dd>
 
 
 <dt id="arg-file">file<a class="anchor" aria-label="anchor" href="#arg-file"></a></dt>
@@ -136,8 +136,9 @@
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><a href="S3method.dpi.html">S3method.dpi</a></p>
 <p><code><a href="DPI_curve.html">DPI_curve()</a></code></p>
-<p><code><a href="cor_network.html">cor_network()</a></code></p>
-<p><code><a href="dag_network.html">dag_network()</a></code></p></div>
+<p><code><a href="DPI_dag.html">DPI_dag()</a></code></p>
+<p><code><a href="BNs_dag.html">BNs_dag()</a></code></p>
+<p><code><a href="cor_net.html">cor_net()</a></code></p></div>
     </div>
 
     <div class="section level2">
@@ -149,7 +150,7 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Model Y formula: </span>Ozone ~ Solar.R + Wind + Temp + Month + Day</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Model X formula: </span>Solar.R ~ Ozone + Wind + Temp + Month + Day</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Directed prediction: </span><span style="color: #0000BB;">"Solar.R"</span> (X) -&gt; <span style="color: #0000BB;">"Ozone"</span> (Y)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Partial correlation: </span>r(partial).XY = <span style="color: #00BB00;">0.205</span>, p = <span style="color: #00BB00;">0.0353</span> <span style="color: #00BB00;">*</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Partial correlation: </span>r(partial).XY = <span style="color: #BBBB00;">0.205</span>, p = <span style="color: #BBBB00;">0.0353</span> <span style="color: #BBBB00;">*</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Simulation sample settings: </span>k.random.covs = <span style="color: #BB00BB;">1</span>, n.sim = <span style="color: #BB00BB;">1000</span>, seed = <span style="color: #BB00BB;">1</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  Sim.SE z.value   p.z sig  Conf.Interval</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DPI    0.297 (0.031)   9.453 3e-21 *** [0.236, 0.359]</span>
@@ -159,7 +160,7 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Model Y formula: </span>Ozone ~ Wind + Solar.R + Temp + Month + Day</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Model X formula: </span>Wind ~ Ozone + Solar.R + Temp + Month + Day</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Directed prediction: </span><span style="color: #0000BB;">"Wind"</span> (X) -&gt; <span style="color: #0000BB;">"Ozone"</span> (Y)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Partial correlation: </span>r(partial).XY = <span style="color: #00BB00;">-0.449</span>, p = <span style="color: #00BB00;">1e-06</span> <span style="color: #00BB00;">***</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Partial correlation: </span>r(partial).XY = <span style="color: #BBBB00;">-0.449</span>, p = <span style="color: #BBBB00;">1e-06</span> <span style="color: #BBBB00;">***</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Simulation sample settings: </span>k.random.covs = <span style="color: #BB00BB;">1</span>, n.sim = <span style="color: #BB00BB;">1000</span>, seed = <span style="color: #BB00BB;">1</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  Sim.SE z.value    p.z sig  Conf.Interval</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DPI    0.223 (0.009)  25.296 &lt;1e-99 *** [0.206, 0.240]</span>
@@ -169,7 +170,7 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Model Y formula: </span>Wind ~ Solar.R + Ozone + Temp + Month + Day</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Model X formula: </span>Solar.R ~ Wind + Ozone + Temp + Month + Day</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Directed prediction: </span><span style="color: #0000BB;">"Solar.R"</span> (X) -&gt; <span style="color: #0000BB;">"Wind"</span> (Y)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Partial correlation: </span>r(partial).XY = <span style="color: #00BB00;">0.114</span>, p = <span style="color: #00BB00;">0.2447</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Partial correlation: </span>r(partial).XY = <span style="color: #BBBB00;">0.114</span>, p = <span style="color: #BBBB00;">0.2447</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Simulation sample settings: </span>k.random.covs = <span style="color: #BB00BB;">1</span>, n.sim = <span style="color: #BB00BB;">1000</span>, seed = <span style="color: #BB00BB;">1</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  Sim.SE z.value    p.z sig   Conf.Interval</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DPI    0.004 (0.005)   0.903 0.3666     [-0.005, 0.014]</span>
@@ -181,7 +182,7 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Model Y formula: </span>Ozone ~ Solar.R + Wind + Temp + Month + Day</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Model X formula: </span>Solar.R ~ Ozone + Wind + Temp + Month + Day</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Directed prediction: </span><span style="color: #0000BB;">"Solar.R"</span> (X) -&gt; <span style="color: #0000BB;">"Ozone"</span> (Y)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Partial correlation: </span>r(partial).XY = <span style="color: #00BB00;">0.204</span>, p = <span style="color: #00BB00;">0.0452</span> <span style="color: #00BB00;">*</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Partial correlation: </span>r(partial).XY = <span style="color: #BBBB00;">0.204</span>, p = <span style="color: #BBBB00;">0.0452</span> <span style="color: #BBBB00;">*</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Simulation sample settings: </span>k.random.covs = <span style="color: #BB00BB;">10</span>, n.sim = <span style="color: #BB00BB;">1000</span>, seed = <span style="color: #BB00BB;">1</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  Sim.SE z.value    p.z sig  Conf.Interval</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DPI    0.226 (0.096)   2.342 0.0192 *   [0.037, 0.415]</span>
@@ -191,7 +192,7 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Model Y formula: </span>Ozone ~ Wind + Solar.R + Temp + Month + Day</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Model X formula: </span>Wind ~ Ozone + Solar.R + Temp + Month + Day</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Directed prediction: </span><span style="color: #0000BB;">"Wind"</span> (X) -&gt; <span style="color: #0000BB;">"Ozone"</span> (Y)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Partial correlation: </span>r(partial).XY = <span style="color: #00BB00;">-0.449</span>, p = <span style="color: #00BB00;">4e-06</span> <span style="color: #00BB00;">***</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Partial correlation: </span>r(partial).XY = <span style="color: #BBBB00;">-0.449</span>, p = <span style="color: #BBBB00;">4e-06</span> <span style="color: #BBBB00;">***</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Simulation sample settings: </span>k.random.covs = <span style="color: #BB00BB;">10</span>, n.sim = <span style="color: #BB00BB;">1000</span>, seed = <span style="color: #BB00BB;">1</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  Sim.SE z.value   p.z sig  Conf.Interval</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DPI    0.203 (0.027)   7.567 4e-14 *** [0.150, 0.255]</span>
@@ -201,7 +202,7 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Model Y formula: </span>Wind ~ Solar.R + Ozone + Temp + Month + Day</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Model X formula: </span>Solar.R ~ Wind + Ozone + Temp + Month + Day</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Directed prediction: </span><span style="color: #0000BB;">"Solar.R"</span> (X) -&gt; <span style="color: #0000BB;">"Wind"</span> (Y)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Partial correlation: </span>r(partial).XY = <span style="color: #00BB00;">0.111</span>, p = <span style="color: #00BB00;">0.2765</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Partial correlation: </span>r(partial).XY = <span style="color: #BBBB00;">0.111</span>, p = <span style="color: #BBBB00;">0.2765</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Simulation sample settings: </span>k.random.covs = <span style="color: #BB00BB;">10</span>, n.sim = <span style="color: #BB00BB;">1000</span>, seed = <span style="color: #BB00BB;">1</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  Sim.SE z.value    p.z sig   Conf.Interval</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DPI    0.008 (0.017)   0.492 0.6225     [-0.025, 0.041]</span>

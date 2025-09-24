@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">DPI</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2025.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2025.10</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -71,29 +71,29 @@
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="matrix_cor.html">matrix_cor()</a></code></p>
+    <div class="dont-index"><p><code><a href="cor_matrix.html">cor_matrix()</a></code></p>
 <p><code><a href="sim_data_exp.html">sim_data_exp()</a></code></p></div>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">d1</span> <span class="op">=</span> <span class="fu">sim_data</span><span class="op">(</span>n<span class="op">=</span><span class="fl">100</span>, k<span class="op">=</span><span class="fl">5</span>, seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="cor_network.html">cor_network</a></span><span class="op">(</span><span class="va">d1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="cor_net.html">cor_net</a></span><span class="op">(</span><span class="va">d1</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Displaying <span style="color: #0000BB;">Correlation Network</span></span>
 <span class="r-plt img"><img src="sim_data-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">d2</span> <span class="op">=</span> <span class="fu">sim_data</span><span class="op">(</span>n<span class="op">=</span><span class="fl">100</span>, k<span class="op">=</span><span class="fl">5</span>, cor<span class="op">=</span><span class="fl">0.2</span>, seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="cor_network.html">cor_network</a></span><span class="op">(</span><span class="va">d2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="cor_net.html">cor_net</a></span><span class="op">(</span><span class="va">d2</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Displaying <span style="color: #0000BB;">Correlation Network</span></span>
 <span class="r-plt img"><img src="sim_data-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">cor.mat</span> <span class="op">=</span> <span class="fu"><a href="matrix_cor.html">matrix_cor</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span><span class="va">cor.mat</span> <span class="op">=</span> <span class="fu"><a href="cor_matrix.html">cor_matrix</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="fl">1.0</span>, <span class="fl">0.7</span>, <span class="fl">0.3</span>,</span></span>
 <span class="r-in"><span>  <span class="fl">0.7</span>, <span class="fl">1.0</span>, <span class="fl">0.5</span>,</span></span>
 <span class="r-in"><span>  <span class="fl">0.3</span>, <span class="fl">0.5</span>, <span class="fl">1.0</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">d3</span> <span class="op">=</span> <span class="fu">sim_data</span><span class="op">(</span>n<span class="op">=</span><span class="fl">100</span>, cor<span class="op">=</span><span class="va">cor.mat</span>, seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="cor_network.html">cor_network</a></span><span class="op">(</span><span class="va">d3</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="cor_net.html">cor_net</a></span><span class="op">(</span><span class="va">d3</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Displaying <span style="color: #0000BB;">Correlation Network</span></span>
 <span class="r-plt img"><img src="sim_data-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
