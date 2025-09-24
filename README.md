@@ -23,7 +23,7 @@ Bruce H. W. S. Bao 包寒吴霜
 ## Citation
 
 -   Bao, H. W. S. (2025). *DPI: The Directed Prediction Index for quasi-causal inference with cross-sectional data*. <https://doi.org/10.32614/CRAN.package.DPI>
--   Bao, H. W. S. (Manuscript in preparation). *The Directed Prediction Index (DPI): Quasi-causal inference for observational data from relative endogeneity of variables*.
+-   Bao, H. W. S. (Manuscript in preparation). *The Directed Prediction Index (DPI): Quasi-causal inference for observational data from relative endogeneity*.
 
 ## Installation
 
@@ -101,7 +101,7 @@ $$
 $$
 
 | $p$ | $\text{Sigmoid}(\frac{p}{\alpha})$ with $\alpha = 0.05$ |
-|--------------------------|----------------------------------------------|
+|----|----|
 | (\~0) | (\~1) |
 | 0.0001 | 0.999 |
 | 0.001 | 0.990 |

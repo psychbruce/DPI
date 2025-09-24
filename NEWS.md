@@ -1,5 +1,13 @@
 **Please check the [latest news (change log)](https://psychbruce.github.io/DPI/news/index.html) and keep this package updated.**
 
+# DPI 2025.10
+
+**This version contains breaking changes to function names.**
+
+-   Added `DPI_dag()`: Directed acyclic graphs (DAGs) via the DPI exploratory analysis for all significant partial correlations.
+-   Fixed `cor_network()` to return the correct *p* values of (partial) correlation coefficients.
+-   Renamed `cor_network()` to `cor_net()`, `dag_network()` to `BNs_dag()`, and `matrix_cor()` to `cor_matrix()`.
+
 # DPI 2025.9
 
 **This version contains breaking changes to both algorithm and functionality.**

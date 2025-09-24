@@ -1,7 +1,7 @@
 Package: DPI
 Title: The Directed Prediction Index for Quasi-Causal Inference with Cross-Sectional Data
-Version: 2025.9
-Date: 2025-09-20
+Version: 2025.10
+Date: 2025-10-01
 Authors@R:
     c(person(given = "Han Wu Shuang",
              family = "Bao",

@@ -3,35 +3,55 @@
 \name{S3method.network}
 \alias{S3method.network}
 \alias{print.cor.net}
-\alias{print.dag.net}
-\title{[S3 methods] for \code{\link[=cor_network]{cor_network()}} and \code{\link[=dag_network]{dag_network()}}.}
+\alias{print.bns.dag}
+\alias{print.dpi.dag}
+\title{[S3 methods] for \code{\link[=cor_net]{cor_net()}}, \code{\link[=BNs_dag]{BNs_dag()}}, and \code{\link[=DPI_dag]{DPI_dag()}}.}
 \usage{
 \method{print}{cor.net}(x, file = NULL, width = 6, height = 4, dpi = 500, ...)
 
-\method{print}{dag.net}(
+\method{print}{bns.dag}(
   x,
+  algorithm = names(x),
   file = NULL,
   width = 6,
   height = 4,
   dpi = 500,
-  algorithm = names(x),
+  ...
+)
+
+\method{print}{dpi.dag}(
+  x,
+  k = min(x$k.cov),
+  show.label = TRUE,
+  digits.dpi = 2,
+  color.dpi.insig = "#EEEEEEEE",
+  file = NULL,
+  width = 6,
+  height = 4,
+  dpi = 500,
   ...
 )
 }
 \arguments{
-\item{x}{Object (class \code{cor.net} or \code{dag.net}) returned from \code{\link[=cor_network]{cor_network()}} or \code{\link[=dag_network]{dag_network()}}.}
+\item{x}{Object (class \code{cor.net} / \code{bns.dag} / \code{dpi.dag}) returned from \code{\link[=cor_net]{cor_net()}} / \code{\link[=BNs_dag]{BNs_dag()}} / \code{\link[=DPI_dag]{DPI_dag()}}.}
 
 \item{file}{File name of saved plot (\code{".png"} or \code{".pdf"}).}
 
-\item{width, height}{Width and height (in inches) of saved plot.
-Defaults to \code{6} and \code{4}.}
+\item{width, height}{Width and height (in inches) of saved plot. Defaults to \code{6} and \code{4}.}
 
 \item{dpi}{Dots per inch (figure resolution). Defaults to \code{500}.}
 
 \item{...}{Other arguments (currently not used).}
 
-\item{algorithm}{[For \code{dag.net}] Algorithm(s) to display.
-Defaults to plot the final integrated DAG from BN results for each algorithm in \code{x}.}
+\item{algorithm}{[For \code{bns.dag}] Algorithm(s) to display. Defaults to plot the finally integrated DAG from BN results for each algorithm in \code{x}.}
+
+\item{k}{[For \code{dpi.dag}] A single value of \code{k.cov} to produce the DPI(k) DAG. Defaults to \code{min(x$k.cov)}.}
+
+\item{show.label}{[For \code{dpi.dag}] Show labels of partial correlations, DPI(k), and their significance on edges. Defaults to \code{TRUE}.}
+
+\item{digits.dpi}{[For \code{dpi.dag}] Number of decimal places of DPI values displayed on DAG edges. Defaults to \code{2}.}
+
+\item{color.dpi.insig}{[For \code{dpi.dag}] Edge color for insignificant DPIs. Defaults to \code{"#EEEEEEEE"} (faded light grey).}
 }
 \value{
 Invisibly return a \code{\link[cowplot:as_grob]{grob}} object ("Grid Graphical Object", or a list of them) that can be further reused in \code{\link[ggplot2:ggsave]{ggplot2::ggsave()}} and \code{\link[cowplot:plot_grid]{cowplot::plot_grid()}}.
@@ -41,8 +61,11 @@ Invisibly return a \code{\link[cowplot:as_grob]{grob}} object ("Grid Graphical O
 \item{\code{print(cor.net)}}{
 Plot (partial) correlation network results.
 }
-\item{\code{print(dag.net)}}{
-Plot Bayesian network (DAG) results.
+\item{\code{print(bns.dag)}}{
+Plot DAG with Bayesian network (BNs) results.
+}
+\item{\code{print(dpi.dag)}}{
+Plot DAG with Directed Prediction Index (DPI) results.
 }
 }
 }

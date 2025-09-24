@@ -25,22 +25,22 @@ Simulate data from a multivariate normal distribution.
 }
 \examples{
 d1 = sim_data(n=100, k=5, seed=1)
-cor_network(d1)
+cor_net(d1)
 
 d2 = sim_data(n=100, k=5, cor=0.2, seed=1)
-cor_network(d2)
+cor_net(d2)
 
-cor.mat = matrix_cor(
+cor.mat = cor_matrix(
   1.0, 0.7, 0.3,
   0.7, 1.0, 0.5,
   0.3, 0.5, 1.0
 )
 d3 = sim_data(n=100, cor=cor.mat, seed=1)
-cor_network(d3)
+cor_net(d3)
 
 }
 \seealso{
-\code{\link[=matrix_cor]{matrix_cor()}}
+\code{\link[=cor_matrix]{cor_matrix()}}
 
 \code{\link[=sim_data_exp]{sim_data_exp()}}
 }

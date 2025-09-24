@@ -32,8 +32,8 @@ DPI(
 \item{k.cov}{Number of random covariates (simulating potential omitted variables) added to each simulation sample.
 \itemize{
 \item Defaults to \code{1}. Please also test different \code{k.cov} values as robustness checks (see \code{\link[=DPI_curve]{DPI_curve()}}).
-\item If \code{k.cov > 0}, the raw data (without bootstrapping) are used, with \code{k.cov} random variables appended, for simulation.
-\item If \code{k.cov = 0} (not suggested), bootstrap samples (resampling with replacement) are used for simulation.
+\item If \code{k.cov} > 0, the raw data (without bootstrapping) are used, with \code{k.cov} random variables appended, for simulation.
+\item If \code{k.cov} = 0 (not suggested), bootstrap samples (resampling with replacement) are used for simulation.
 }}
 
 \item{n.sim}{Number of simulation samples. Defaults to \code{1000}.}
@@ -46,7 +46,7 @@ DPI(
 
 \item{seed}{Random seed for replicable results. Defaults to \code{NULL}.}
 
-\item{progress}{Show progress bar. Defaults to \code{FALSE} (if \code{n.sim < 5000}).}
+\item{progress}{Show progress bar. Defaults to \code{FALSE} (if \code{n.sim} < 5000).}
 
 \item{file}{File name of saved plot (\code{".png"} or \code{".pdf"}).}
 
@@ -113,7 +113,9 @@ DPI(data=airquality, y="Wind", x="Solar.R", k.cov=10, seed=1)
 
 \code{\link[=DPI_curve]{DPI_curve()}}
 
-\code{\link[=cor_network]{cor_network()}}
+\code{\link[=DPI_dag]{DPI_dag()}}
 
-\code{\link[=dag_network]{dag_network()}}
+\code{\link[=BNs_dag]{BNs_dag()}}
+
+\code{\link[=cor_net]{cor_net()}}
 }
