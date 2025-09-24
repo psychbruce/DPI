@@ -23,7 +23,7 @@ Bruce H. W. S. Bao 包寒吴霜
 ## Citation
 
 -   Bao, H. W. S. (2025). *DPI: The Directed Prediction Index for quasi-causal inference with cross-sectional data*. <https://doi.org/10.32614/CRAN.package.DPI>
--   Bao, H. W. S. (Manuscript in preparation). *The Directed Prediction Index (DPI): Quasi-causal inference for observational data from relative endogeneity*.
+-   Bao, H. W. S. (Manuscript in preparation). *The Directed Prediction Index (DPI): Causal discovery for observational data from relative endogeneity*.
 
 ## Installation
 
@@ -122,19 +122,21 @@ $$
 
 **(2) Robustness check using `DPI_curve()`**: Run a series of DPI simulation analyses respectively with `1`\~`k.covs` (usually 1\~10) random covariates, producing a curve of DPIs (estimates, 95% CI, and 99% CI; usually getting closer to 0 as `k.covs` increases) that can indicate its sensitivity in identifying the directed prediction (i.e., *How many random covariates can DPIs survive to remain significant?*).
 
+**(3) Causal discovery using `DPI_dag()`**: Directed acyclic graphs (DAGs) via the DPI exploratory analysis for all significant partial correlations.
+
 ## Other Functions
 
 This package also includes other functions helpful for exploring variable relationships and performing simulation studies.
 
 -   Network analysis functions
 
-    -   `cor_network()`: Correlation and partial correlation networks.
+    -   `cor_net()`: Correlation and partial correlation networks.
 
-    -   `dag_network()`: Directed acyclic graphs (DAGs) via Bayesian networks (BNs).
+    -   `BNs_dag()`: Directed acyclic graphs (DAGs) via Bayesian networks (BNs).
 
 -   Data simulation utility functions
 
-    -   `matrix_cor()`: Produce a symmetric correlation matrix from values.
+    -   `cor_matrix()`: Produce a symmetric correlation matrix from values.
 
     -   `sim_data()`: Simulate data from a multivariate normal distribution.
 
