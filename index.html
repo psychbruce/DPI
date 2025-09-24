@@ -78,7 +78,7 @@
 <ul>
 <li>Bao, H. W. S. (2025). <em>DPI: The Directed Prediction Index for quasi-causal inference with cross-sectional data</em>. <a href="https://doi.org/10.32614/CRAN.package.DPI" class="external-link uri">https://doi.org/10.32614/CRAN.package.DPI</a>
 </li>
-<li>Bao, H. W. S. (Manuscript in preparation). <em>The Directed Prediction Index (DPI): Quasi-causal inference for observational data from relative endogeneity</em>.</li>
+<li>Bao, H. W. S. (Manuscript in preparation). <em>The Directed Prediction Index (DPI): Causal discovery for observational data from relative endogeneity</em>.</li>
 </ul>
 </div>
 <div class="section level2">
@@ -217,6 +217,7 @@
 </h4>
 <p><strong>(1) Main analysis using <code><a href="reference/DPI.html">DPI()</a></code></strong>: Simulate <code>n.sim</code> random samples, with <code>k.cov</code> (unobservable) random covariate(s) in each simulated sample, to test the statistical significance of DPI.</p>
 <p><strong>(2) Robustness check using <code><a href="reference/DPI_curve.html">DPI_curve()</a></code></strong>: Run a series of DPI simulation analyses respectively with <code>1</code>~<code>k.covs</code> (usually 1~10) random covariates, producing a curve of DPIs (estimates, 95% CI, and 99% CI; usually getting closer to 0 as <code>k.covs</code> increases) that can indicate its sensitivity in identifying the directed prediction (i.e., <em>How many random covariates can DPIs survive to remain significant?</em>).</p>
+<p><strong>(3) Causal discovery using <code><a href="reference/DPI_dag.html">DPI_dag()</a></code></strong>: Directed acyclic graphs (DAGs) via the DPI exploratory analysis for all significant partial correlations.</p>
 </div>
 </div>
 </div>
@@ -228,14 +229,14 @@
 <li>
 <p>Network analysis functions</p>
 <ul>
-<li><p><code>cor_network()</code>: Correlation and partial correlation networks.</p></li>
-<li><p><code>dag_network()</code>: Directed acyclic graphs (DAGs) via Bayesian networks (BNs).</p></li>
+<li><p><code><a href="reference/cor_net.html">cor_net()</a></code>: Correlation and partial correlation networks.</p></li>
+<li><p><code><a href="reference/BNs_dag.html">BNs_dag()</a></code>: Directed acyclic graphs (DAGs) via Bayesian networks (BNs).</p></li>
 </ul>
 </li>
 <li>
 <p>Data simulation utility functions</p>
 <ul>
-<li><p><code>matrix_cor()</code>: Produce a symmetric correlation matrix from values.</p></li>
+<li><p><code><a href="reference/cor_matrix.html">cor_matrix()</a></code>: Produce a symmetric correlation matrix from values.</p></li>
 <li><p><code><a href="reference/sim_data.html">sim_data()</a></code>: Simulate data from a multivariate normal distribution.</p></li>
 <li><p><code><a href="reference/sim_data_exp.html">sim_data_exp()</a></code>: Simulate experiment-like data with <em>independent</em> binary Xs.</p></li>
 </ul>
