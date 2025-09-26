@@ -98,7 +98,7 @@ Defaults to the most common algorithms: \code{"pc.stable"} (PC), \code{"hc"} (HC
 \item{...}{Arguments passed on to \code{\link[qgraph:qgraph]{qgraph()}}.}
 }
 \value{
-Return a list (class \code{bns.dag}) of Bayesian network results and \code{\link[qgraph:qgraph]{qgraph}} object with its \code{\link[cowplot:as_grob]{grob}} (Grid Graphical Object).
+Return a list (class \code{bns.dag}) of Bayesian network results and \code{\link[qgraph:qgraph]{qgraph}} object.
 }
 \description{
 Directed acyclic graphs (DAGs) via Bayesian networks (BNs). It uses \code{\link[bnlearn:arc.strength]{bnlearn::boot.strength()}} to estimate the strength of each edge as its \emph{empirical frequency} over a set of networks learned from bootstrap samples. It computes (1) the probability of each edge (modulo its direction) and (2) the probabilities of each edge's directions conditional on the edge being present in the graph (in either direction). Stability thresholds are usually set as \code{0.85} for \emph{strength} (i.e., an edge appearing in more than 85\% of BNs bootstrap samples) and \code{0.50} for \emph{direction} (i.e., a direction appearing in more than 50\% of BNs bootstrap samples) (Briganti et al., 2023). Finally, for each chosen algorithm, it returns the stable Bayesian network as the final DAG.
@@ -131,12 +131,13 @@ print(bn, file="airquality.png")
 c1 = cor_net(airquality, "cor")
 c2 = cor_net(airquality, "pcor")
 bn = BNs_dag(airquality, seed=1)
+mytheme = theme(plot.title=element_text(hjust=0.5))
 p = aplot::plot_list(
-  c1$plot,
-  c2$plot,
-  bn$pc.stable$DAG$plot,
-  bn$hc$DAG$plot,
-  bn$rsmax2$DAG$plot,
+  plot(c1),
+  plot(c2),
+  plot(bn$pc.stable$DAG) + mytheme,
+  plot(bn$hc$DAG) + mytheme,
+  plot(bn$rsmax2$DAG) + mytheme,
   design="111222
           334455",
   tag_levels="A"

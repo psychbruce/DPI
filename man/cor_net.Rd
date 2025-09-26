@@ -20,7 +20,6 @@ cor_net(
   edge.width.min = "sig",
   edge.width.max = NULL,
   edge.label.mrg = 0.01,
-  title = NULL,
   file = NULL,
   width = 6,
   height = 4,
@@ -59,8 +58,6 @@ cor_net(
 
 \item{edge.label.mrg}{Margin of the background box around the edge label. Defaults to \code{0.01}.}
 
-\item{title}{Plot title.}
-
 \item{file}{File name of saved plot (\code{".png"} or \code{".pdf"}).}
 
 \item{width, height}{Width and height (in inches) of saved plot. Defaults to \code{6} and \code{4}.}
@@ -70,13 +67,13 @@ cor_net(
 \item{...}{Arguments passed on to \code{\link[qgraph:qgraph]{qgraph()}}.}
 }
 \value{
-Return a list (class \code{cor.net}) of (partial) correlation results and \code{\link[qgraph:qgraph]{qgraph}} object with its \code{\link[cowplot:as_grob]{grob}} (Grid Graphical Object).
+Return a list (class \code{cor.net}) of (partial) correlation results and \code{\link[qgraph:qgraph]{qgraph}} object.
 }
 \description{
 Correlation and partial correlation networks (also called Gaussian graphical models, GGMs).
 }
 \examples{
-# correlation network
+\donttest{# correlation network
 cor_net(airquality)
 cor_net(airquality, show.insig=TRUE)
 
@@ -84,6 +81,11 @@ cor_net(airquality, show.insig=TRUE)
 cor_net(airquality, "pcor")
 cor_net(airquality, "pcor", show.insig=TRUE)
 
+# modify ggplot attributes
+p = cor_net(airquality, "pcor")
+gg = plot(p)  # return a ggplot object
+gg + labs(title="Partial Correlation Network")
+}
 }
 \seealso{
 \link{S3method.network}

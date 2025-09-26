@@ -11,6 +11,7 @@
 #' @importFrom stats lm model.frame update coef df.residual
 #' @importFrom glue glue glue_col
 #' @importFrom crayon italic underline green blue magenta
+#' @importFrom cowplot draw_grob as_grob
 .onAttach = function(libname, pkgname) {
   inst.ver = as.character(utils::packageVersion("DPI"))
   pkgs = c("ggplot2", "cowplot")
@@ -32,7 +33,7 @@
     {underline https://psychbruce.github.io/DPI}
 
     {magenta To use this package in publications, please cite:}
-    Bao, H. W. S. (2025). {italic DPI: The Directed Prediction Index for quasi-causal inference with cross-sectional data} (Version {inst.ver}) [Computer software]. {underline https://doi.org/10.32614/CRAN.package.DPI}
+    Bao, H. W. S. (2025). {italic DPI: The Directed Prediction Index for causal inference from observational data} (Version {inst.ver}) [Computer software]. {underline https://doi.org/10.32614/CRAN.package.DPI}
 
     "))
 }
@@ -849,6 +850,7 @@ DPI_curve = function(
 plot.dpi.curve = function(x, file=NULL, width=6, height=4, dpi=500, ...) {
   k.cov = Estimate = Sim.LLCI = Sim.ULCI = Sim.LLCI.99 = Sim.ULCI.99 = NULL
   color = "#2B579A"
+
   if(is.null(file)) {
     plot.params = attr(x, "plot.params")
     file = plot.params$file
@@ -856,15 +858,7 @@ plot.dpi.curve = function(x, file=NULL, width=6, height=4, dpi=500, ...) {
     height = plot.params$height
     dpi = plot.params$dpi
   }
-  # dp = rbind(
-  #   data.frame(
-  #     k.cov = 0,
-  #     Estimate = lm(Estimate ~ k.cov, x)$coefficients[1],
-  #     Sim.LLCI = lm(Sim.LLCI ~ k.cov, x)$coefficients[1],
-  #     Sim.ULCI = lm(Sim.ULCI ~ k.cov, x)$coefficients[1]
-  #   ),
-  #   x[c("k.cov", "Estimate", "Sim.LLCI", "Sim.ULCI")]
-  # )
+
   expr.subtitle = eval(parse(text=glue("
     expression(
       paste(
@@ -877,6 +871,7 @@ plot.dpi.curve = function(x, file=NULL, width=6, height=4, dpi=500, ...) {
       )
     )
   ")), envir=parent.frame())
+
   p = ggplot(x, aes(x=k.cov, y=Estimate)) +
     geom_ribbon(aes(ymin=Sim.LLCI.99, ymax=Sim.ULCI.99),
                 color=color, fill=color, alpha=0.1,
@@ -916,25 +911,23 @@ plot.dpi.curve = function(x, file=NULL, width=6, height=4, dpi=500, ...) {
 
 #' \[S3 methods\] for [cor_net()], [BNs_dag()], and [DPI_dag()].
 #'
-#' \describe{
-#'   \item{`print(cor.net)`}{
-#'     Plot (partial) correlation network results.
-#'   }
-#'   \item{`print(bns.dag)`}{
-#'     Plot DAG with Bayesian network (BNs) results.
-#'   }
-#'   \item{`print(dpi.dag)`}{
-#'     Plot DAG with Directed Prediction Index (DPI) results.
-#'   }
-#' }
+#' - Transform `qgraph` into `ggplot`
+#'   - `plot(cor.net)`
+#'   - `plot(bns.dag)`
+#'   - `plot(dpi.dag)`
+#' - Plot network results
+#'   - `print(cor.net)`
+#'   - `print(bns.dag)`
+#'   - `print(dpi.dag)`
 #' @keywords internal
 #' @name S3method.network
 #' @inheritParams cor_net
 #' @inheritParams BNs_dag
 #' @param x Object (class `cor.net` / `bns.dag` / `dpi.dag`) returned from [cor_net()] / [BNs_dag()] / [DPI_dag()].
+#' @param scale Scale the [`grob`][cowplot::draw_grob] object of `qgraph` on the `ggplot` canvas. Defaults to `1.2`.
 #' @param ... Other arguments (currently not used).
 #' @return
-#' Invisibly return a [`grob`][cowplot::as_grob] object ("Grid Graphical Object", or a list of them) that can be further reused in [ggplot2::ggsave()] and [cowplot::plot_grid()].
+#' Return a `ggplot` object that can be further modified and used in [ggplot2::ggsave()] and [cowplot::plot_grid()].
 NULL
 
 
@@ -957,14 +950,13 @@ NULL
 #' @param edge.width.min Minimum value of edge strength to scale all edge widths. Defaults to `sig` (the threshold of significant values).
 #' @param edge.width.max Maximum value of edge strength to scale all edge widths. Defaults to `NULL` (for undirected correlation networks) and `1.5` (for directed acyclic networks to better display arrows).
 #' @param edge.label.mrg Margin of the background box around the edge label. Defaults to `0.01`.
-#' @param title Plot title.
 #' @param file File name of saved plot (`".png"` or `".pdf"`).
 #' @param width,height Width and height (in inches) of saved plot. Defaults to `6` and `4`.
 #' @param dpi Dots per inch (figure resolution). Defaults to `500`.
 #' @param ... Arguments passed on to [`qgraph()`][qgraph::qgraph].
 #'
 #' @return
-#' Return a list (class `cor.net`) of (partial) correlation results and [`qgraph`][qgraph::qgraph] object with its [`grob`][cowplot::as_grob] (Grid Graphical Object).
+#' Return a list (class `cor.net`) of (partial) correlation results and [`qgraph`][qgraph::qgraph] object.
 #'
 #' @seealso
 #' [S3method.network]
@@ -974,7 +966,7 @@ NULL
 #' [BNs_dag()]
 #'
 #' @examples
-#' # correlation network
+#' \donttest{# correlation network
 #' cor_net(airquality)
 #' cor_net(airquality, show.insig=TRUE)
 #'
@@ -982,6 +974,11 @@ NULL
 #' cor_net(airquality, "pcor")
 #' cor_net(airquality, "pcor", show.insig=TRUE)
 #'
+#' # modify ggplot attributes
+#' p = cor_net(airquality, "pcor")
+#' gg = plot(p)  # return a ggplot object
+#' gg + labs(title="Partial Correlation Network")
+#' }
 #' @export
 cor_net = function(
     data,
@@ -999,7 +996,6 @@ cor_net = function(
     edge.width.min = "sig",
     edge.width.max = NULL,
     edge.label.mrg = 0.01,
-    title = NULL,
     file = NULL,
     width = 6,
     height = 4,
@@ -1042,7 +1038,6 @@ cor_net = function(
     shape = "circle",
     # maximum = max,
     details = show.cutoff,
-    title = title,
 
     ## --- [node] --- ##
     groups = node.group,
@@ -1091,10 +1086,7 @@ cor_net = function(
     p[["graphAttributes"]][["Edges"]][["label.bg"]] = edge.label.bg
   }
 
-  suppressWarnings({
-    grob = cowplot::as_grob(~plot(p))
-  })
-  cor.net = list(cor=cor, plot=grob, qgraph=p)
+  cor.net = list(cor=cor, qgraph=p)
   class(cor.net) = "cor.net"
   attr(cor.net, "plot.params") = list(file = file,
                                       width = width,
@@ -1106,8 +1098,18 @@ cor_net = function(
 
 #' @rdname S3method.network
 #' @export
+plot.cor.net = function(x, scale=1.2, ...) {
+  suppressWarnings({
+    grob = as_grob(~plot(x$qgraph))
+  })
+  ggplot() + draw_grob(grob, scale=scale)
+}
+
+
+#' @rdname S3method.network
+#' @export
 print.cor.net = function(
-    x, file=NULL, width=6, height=4, dpi=500, ...
+    x, scale=1.2, file=NULL, width=6, height=4, dpi=500, ...
 ) {
   if(is.null(file)) {
     plot.params = attr(x, "plot.params")
@@ -1117,9 +1119,7 @@ print.cor.net = function(
     dpi = plot.params$dpi
   }
 
-  suppressWarnings({
-    p = cowplot::as_grob(~plot(x$qgraph))
-  })
+  gg = plot(x, scale)
 
   index = names(x$cor)[3]  # "r" or "r.partial"
   if(index=="r") {
@@ -1135,15 +1135,15 @@ print.cor.net = function(
   cli::cli_text("Displaying {.pkg {algo.text}}")
 
   if(is.null(file)) {
-    plot(x$qgraph)
-    # cowplot::ggdraw(p)  # slower
+    # plot(x$qgraph)  # faster
+    print(gg)  # slower
   } else {
     file = file_insert_name(file, file.index)
-    ggsave(p, filename=file, width=width, height=height, dpi=dpi)
+    ggsave(gg, filename=file, width=width, height=height, dpi=dpi)
     cli::cli_alert_success("Plot saved to {.path {file}}")
   }
 
-  invisible(p)
+  invisible(gg)
 }
 
 
@@ -1193,7 +1193,7 @@ print.cor.net = function(
 #' @param verbose Print information about BN algorithm and number of bootstrap samples when running the analysis. Defaults to `TRUE`.
 #'
 #' @return
-#' Return a list (class `bns.dag`) of Bayesian network results and [`qgraph`][qgraph::qgraph] object with its [`grob`][cowplot::as_grob] (Grid Graphical Object).
+#' Return a list (class `bns.dag`) of Bayesian network results and [`qgraph`][qgraph::qgraph] object.
 #'
 #' @references
 #' Briganti, G., Scutari, M., & McNally, R. J. (2023). A tutorial on Bayesian networks for psychopathology researchers. *Psychological Methods, 28*(4), 947--961. \doi{10.1037/met0000479}
@@ -1239,12 +1239,13 @@ print.cor.net = function(
 #' c1 = cor_net(airquality, "cor")
 #' c2 = cor_net(airquality, "pcor")
 #' bn = BNs_dag(airquality, seed=1)
+#' mytheme = theme(plot.title=element_text(hjust=0.5))
 #' p = aplot::plot_list(
-#'   c1$plot,
-#'   c2$plot,
-#'   bn$pc.stable$DAG$plot,
-#'   bn$hc$DAG$plot,
-#'   bn$rsmax2$DAG$plot,
+#'   plot(c1),
+#'   plot(c2),
+#'   plot(bn$pc.stable$DAG) + mytheme,
+#'   plot(bn$hc$DAG) + mytheme,
+#'   plot(bn$rsmax2$DAG) + mytheme,
 #'   design="111222
 #'           334455",
 #'   tag_levels="A"
@@ -1304,6 +1305,7 @@ BNs_dag = function(
     maxs = c(edge = 1,
              strength = edge.width.max,
              direction = 1)
+
     dags = lapply(types, function(type) {
       p = qgraph::qgraph(
         ## --- [data] --- ##
@@ -1315,8 +1317,6 @@ BNs_dag = function(
         ## --- [graph] --- ##
         layout = "spring",
         shape = "circle",
-        title = paste0("BN algorithm: \"", algo, "\"\n",
-                       "DAG value: ", type),
 
         ## --- [label] --- ##
         labels = vars,
@@ -1334,14 +1334,18 @@ BNs_dag = function(
         usePCH = TRUE,
         DoNotPlot = TRUE,
         ...)
+
       if(type!="edge") {
         # edge.values = p[["Edgelist"]][["weight"]]
         edge.labels = p[["graphAttributes"]][["Edges"]][["labels"]]
         edge.labels = paste0(100 * as.numeric(edge.labels), "%")
         p[["graphAttributes"]][["Edges"]][["labels"]] = edge.labels
       }
+
+      p$algo = algo
+      p$title = paste0(
+        "BN algorithm: \"", algo, "\" (DAG value: ", type, ")")
       class(p) = c("bns.dag", class(p))
-      attr(p, "algo") = algo
       return(p)
     })
     names(dags) = paste0("dag.", types)
@@ -1358,14 +1362,7 @@ BNs_dag = function(
       DAG.direction[["graphAttributes"]][["Edges"]]
     DAG[["graphAttributes"]][["Edges"]][["width"]] =
       DAG.strength[["graphAttributes"]][["Edges"]][["width"]]
-    DAG[["plotOptions"]][["title"]] =
-      paste0("BN algorithm:\n\"", algo, "\"")
-    suppressWarnings({
-      DAG$plot = cowplot::as_grob(~plot(DAG))
-      DAG.edge$plot = cowplot::as_grob(~plot(DAG.edge))
-      DAG.strength$plot = cowplot::as_grob(~plot(DAG.strength))
-      DAG.direction$plot = cowplot::as_grob(~plot(DAG.direction))
-    })
+    DAG$title = paste0("BN algorithm: \"", algo, "\"")
     list(
       BN.bootstrap = bn,
       BN = bn[bn$strength > strength & bn$direction > direction,],
@@ -1386,15 +1383,37 @@ BNs_dag = function(
 
 
 #' @rdname S3method.network
+#' @export
+plot.bns.dag = function(x, algorithm, scale=1.2, ...) {
+  if(inherits(x, "qgraph")) {
+    algorithm = x$algo
+    title = x$title
+  } else {
+    # algorithm must be specified
+    title = x[[algorithm]][["DAG"]]$title
+    x = x[[algorithm]][["DAG"]]
+  }
+  class(x) = "qgraph"
+  suppressWarnings({
+    grob = as_grob(~plot(x))
+  })
+  ggplot() +
+    draw_grob(grob, scale=scale) +
+    labs(title=title)
+}
+
+
+#' @rdname S3method.network
 #' @param algorithm \[For `bns.dag`\] Algorithm(s) to display. Defaults to plot the finally integrated DAG from BN results for each algorithm in `x`.
 #' @export
 print.bns.dag = function(
     x,
     algorithm = names(x),
+    scale = 1.2,
     file=NULL, width=6, height=4, dpi=500,
     ...
 ) {
-  if(inherits(x, "qgraph")) algorithm = attr(x, "algo")
+  if(inherits(x, "qgraph")) algorithm = x$algo
 
   if(is.null(file)) {
     plot.params = attr(x, "plot.params")
@@ -1404,26 +1423,16 @@ print.bns.dag = function(
     dpi = plot.params$dpi
   }
 
-  p.list = list()
+  gg.list = list()
 
   for(algo in algorithm) {
-    suppressWarnings({
-      if(inherits(x, "qgraph")) {
-        p = cowplot::as_grob(~plot(x))
-      } else {
-        p = cowplot::as_grob(~plot(x[[algo]][["DAG"]]))
-      }
-    })
-    p.list = c(p.list, list(p))
+    gg = plot(x, algo, scale)
+    gg.list = c(gg.list, list(gg))
 
     cli::cli_text("Displaying DAG with BN algorithm {.val {algo}}")
 
     if(is.null(file)) {
-      if(inherits(x, "qgraph")) {
-        plot(x)
-      } else {
-        plot(x[[algo]][["DAG"]])
-      }
+      print(gg)
     } else {
       if(length(algorithm)==1) {
         file.i = file_insert_name(file, sprintf(
@@ -1432,13 +1441,13 @@ print.bns.dag = function(
         file.i = file_insert_name(file, sprintf(
           "_BNs.DAG.%02d_%s", which(algo==algorithm), algo))
       }
-      ggsave(p, filename=file.i, width=width, height=height, dpi=dpi)
+      ggsave(gg, filename=file.i, width=width, height=height, dpi=dpi)
       cli::cli_alert_success("Plot saved to {.path {file.i}}")
     }
   }
 
-  names(p.list) = algorithm
-  invisible(p.list)
+  names(gg.list) = algorithm
+  invisible(gg.list)
 }
 
 
@@ -1460,7 +1469,7 @@ bn_to_matrix = function(bn, strength=0.85, direction=0.50) {
 }
 
 
-#' Directed acyclic graphs (DAGs) via the DPI exploratory analysis for all significant partial *r*s.
+#' Directed acyclic graphs (DAGs) via DPI exploratory analysis (causal discovery) for all significant partial *r*s.
 #'
 #' @inheritParams DPI_curve
 #' @param data A dataset with at least 3 variables.
@@ -1486,10 +1495,25 @@ bn_to_matrix = function(bn, strength=0.85, direction=0.50) {
 #'
 #' # directed acyclic graphs
 #' dpi.dag = DPI_dag(airquality, k.covs=c(1,3,5), seed=1)
-#' print(dpi.dag, k=1)  # DAG via DPI(k=1)
-#' print(dpi.dag, k=3)  # DAG via DPI(k=3)
-#' print(dpi.dag, k=5)  # DAG via DPI(k=5)
-#' plot(dpi.dag)
+#' print(dpi.dag, k=1)  # DAG with DPI(k=1)
+#' print(dpi.dag, k=3)  # DAG with DPI(k=3)
+#' print(dpi.dag, k=5)  # DAG with DPI(k=5)
+#'
+#' # modify ggplot attributes
+#' gg = plot(dpi.dag, k=5, show.label=FALSE)
+#' gg + labs(title="DAG with DPI(k=5)")
+#'
+#' # visualize DPIs of multiple paths
+#' ggplot(dpi.dag$DPI, aes(x=k.cov, y=DPI)) +
+#'   geom_ribbon(aes(ymin=Sim.LLCI, ymax=Sim.ULCI, fill=path),
+#'               alpha=0.1) +
+#'   geom_line(aes(color=path), linewidth=0.7) +
+#'   geom_point(aes(color=path)) +
+#'   geom_hline(yintercept=0, color="red", linetype="dashed") +
+#'   scale_y_continuous(limits=c(NA, 0.5)) +
+#'   labs(color="Directed Prediction",
+#'        fill="Directed Prediction") +
+#'   theme_classic()
 #' }
 #' @export
 DPI_dag = function(
@@ -1525,7 +1549,7 @@ DPI_dag = function(
     "k.covs = {cli::col_magenta({k.covs})},
      n.sim = {cli::col_magenta({n.sim})},
      seed = {cli::col_magenta({seed})}")
-  dpi.dag = lapply(seq_len(n.pcor), function(i) {
+  DPIs = lapply(seq_len(n.pcor), function(i) {
     x = d.pcor[i, 1]
     y = d.pcor[i, 2]
     r.partial = d.pcor[i, 3]
@@ -1553,8 +1577,9 @@ DPI_dag = function(
     return(data.frame(
       var1 = x,
       var2 = y,
-      from = as.factor(from),
-      to = as.factor(to),
+      from = from,
+      to = to,
+      path = paste(from, to, sep=" \u2192 "),
       r.partial = r.partial,
       p.rp = p.rp,
       k.cov = DPIs$k.cov,
@@ -1566,9 +1591,8 @@ DPI_dag = function(
       Sim.ULCI = sign * DPIs$Sim.ULCI
     ))
   })
-  dpi.dag = do.call("rbind", dpi.dag)
-  class(dpi.dag) = c("dpi.dag", "data.frame")
-  attr(dpi.dag, "qgraph") = pcor$qgraph
+  dpi.dag = list(DPI=do.call("rbind", DPIs), qgraph=pcor$qgraph)
+  class(dpi.dag) = c("dpi.dag")
   attr(dpi.dag, "plot.params") = list(file = file,
                                       width = width,
                                       height = height,
@@ -1578,22 +1602,19 @@ DPI_dag = function(
 
 
 #' @rdname S3method.network
-#' @param k \[For `dpi.dag`\] A single value of `k.cov` to produce the DPI(k) DAG. Defaults to `min(x$k.cov)`.
-#' @param show.label \[For `dpi.dag`\] Show labels of partial correlations, DPI(k), and their significance on edges. Defaults to `TRUE`.
-#' @param digits.dpi \[For `dpi.dag`\] Number of decimal places of DPI values displayed on DAG edges. Defaults to `2`.
-#' @param color.dpi.insig \[For `dpi.dag`\] Edge color for insignificant DPIs. Defaults to `"#EEEEEEEE"` (faded light grey).
 #' @export
-print.dpi.dag = function(
+plot.dpi.dag = function(
     x,
-    k = min(x$k.cov),
+    k = min(x$DPI$k.cov),
     show.label = TRUE,
     digits.dpi = 2,
     color.dpi.insig = "#EEEEEEEE",
-    file=NULL, width=6, height=4, dpi=500,
+    scale = 1.2,
     ...
 ) {
-  dpi = subset(x, k.cov==k)
-  p = attr(x, "qgraph")
+  dpi = subset(x$DPI, k.cov==k)
+  p = x$qgraph
+
   vars = p[["Arguments"]][["labels"]]
   vars.from = p[["Edgelist"]][["from"]]
   vars.to = p[["Edgelist"]][["to"]]
@@ -1638,11 +1659,49 @@ print.dpi.dag = function(
   }
 
   suppressWarnings({
-    grob = cowplot::as_grob(~plot(p))
+    grob = as_grob(~plot(p))
   })
+  ggplot() + draw_grob(grob, scale=scale)
+}
 
-  plot(p)
 
-  invisible(grob)
+#' @rdname S3method.network
+#' @param k \[For `dpi.dag`\] A single value of `k.cov` to produce the DPI(k) DAG. Defaults to `min(x$DPI$k.cov)`.
+#' @param show.label \[For `dpi.dag`\] Show labels of partial correlations, DPI(k), and their significance on edges. Defaults to `TRUE`.
+#' @param digits.dpi \[For `dpi.dag`\] Number of decimal places of DPI values displayed on DAG edges. Defaults to `2`.
+#' @param color.dpi.insig \[For `dpi.dag`\] Edge color for insignificant DPIs. Defaults to `"#EEEEEEEE"` (faded light grey).
+#' @export
+print.dpi.dag = function(
+    x,
+    k = min(x$DPI$k.cov),
+    show.label = TRUE,
+    digits.dpi = 2,
+    color.dpi.insig = "#EEEEEEEE",
+    scale = 1.2,
+    file=NULL, width=6, height=4, dpi=500,
+    ...
+) {
+  if(is.null(file)) {
+    plot.params = attr(x, "plot.params")
+    file = plot.params$file
+    width = plot.params$width
+    height = plot.params$height
+    dpi = plot.params$dpi
+  }
+
+  gg = plot(x, k, show.label,
+            digits.dpi, color.dpi.insig, scale)
+
+  cli::cli_text("Displaying DAG with DPI algorithm (k.cov = {.val {k}})")
+
+  if(is.null(file)) {
+    print(gg)
+  } else {
+    file = file_insert_name(file, "_DPI.DAG")
+    ggsave(gg, filename=file, width=width, height=height, dpi=dpi)
+    cli::cli_alert_success("Plot saved to {.path {file}}")
+  }
+
+  invisible(gg)
 }
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/DPI.R
 \name{DPI_dag}
 \alias{DPI_dag}
-\title{Directed acyclic graphs (DAGs) via the DPI exploratory analysis for all significant partial \emph{r}s.}
+\title{Directed acyclic graphs (DAGs) via DPI exploratory analysis (causal discovery) for all significant partial \emph{r}s.}
 \usage{
 DPI_dag(
   data,
@@ -44,7 +44,7 @@ DPI_dag(
 Return a data.frame (class \code{dpi.dag}) of DPI exploration results.
 }
 \description{
-Directed acyclic graphs (DAGs) via the DPI exploratory analysis for all significant partial \emph{r}s.
+Directed acyclic graphs (DAGs) via DPI exploratory analysis (causal discovery) for all significant partial \emph{r}s.
 }
 \examples{
 \donttest{# partial correlation networks (undirected)
@@ -52,10 +52,25 @@ cor_net(airquality, "pcor")
 
 # directed acyclic graphs
 dpi.dag = DPI_dag(airquality, k.covs=c(1,3,5), seed=1)
-print(dpi.dag, k=1)  # DAG via DPI(k=1)
-print(dpi.dag, k=3)  # DAG via DPI(k=3)
-print(dpi.dag, k=5)  # DAG via DPI(k=5)
-plot(dpi.dag)
+print(dpi.dag, k=1)  # DAG with DPI(k=1)
+print(dpi.dag, k=3)  # DAG with DPI(k=3)
+print(dpi.dag, k=5)  # DAG with DPI(k=5)
+
+# modify ggplot attributes
+gg = plot(dpi.dag, k=5, show.label=FALSE)
+gg + labs(title="DAG with DPI(k=5)")
+
+# visualize DPIs of multiple paths
+ggplot(dpi.dag$DPI, aes(x=k.cov, y=DPI)) +
+  geom_ribbon(aes(ymin=Sim.LLCI, ymax=Sim.ULCI, fill=path),
+              alpha=0.1) +
+  geom_line(aes(color=path), linewidth=0.7) +
+  geom_point(aes(color=path)) +
+  geom_hline(yintercept=0, color="red", linetype="dashed") +
+  scale_y_continuous(limits=c(NA, 0.5)) +
+  labs(color="Directed Prediction",
+       fill="Directed Prediction") +
+  theme_classic()
 }
 }
 \seealso{

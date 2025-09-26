@@ -2,7 +2,7 @@
 
 🛸 The Directed Prediction Index (DPI).
 
-The *Directed Prediction Index* (DPI) is a quasi-causal inference method for cross-sectional data designed to quantify the *relative endogeneity* (relative dependence) of outcome (*Y*) versus predictor (*X*) variables in regression models.
+The *Directed Prediction Index* (DPI) is a quasi-causal inference (causal discovery) method for observational data designed to quantify the *relative endogeneity* (relative dependence) of outcome (*Y*) versus predictor (*X*) variables in regression models.
 
 <!-- badges: start -->
 
@@ -22,8 +22,8 @@ Bruce H. W. S. Bao 包寒吴霜
 
 ## Citation
 
--   Bao, H. W. S. (2025). *DPI: The Directed Prediction Index for quasi-causal inference with cross-sectional data*. <https://doi.org/10.32614/CRAN.package.DPI>
--   Bao, H. W. S. (Manuscript in preparation). *The Directed Prediction Index (DPI): Causal discovery for observational data from relative endogeneity*.
+-   Bao, H. W. S. (2025). *DPI: The Directed Prediction Index for causal inference from observational data*. <https://doi.org/10.32614/CRAN.package.DPI>
+-   Bao, H. W. S. (Manuscript). *The Directed Prediction Index (DPI) for causal inference from observational data by quantifying relative endogeneity*.
 
 ## Installation
 

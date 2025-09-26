@@ -2,16 +2,24 @@
 % Please edit documentation in R/DPI.R
 \name{S3method.network}
 \alias{S3method.network}
+\alias{plot.cor.net}
 \alias{print.cor.net}
+\alias{plot.bns.dag}
 \alias{print.bns.dag}
+\alias{plot.dpi.dag}
 \alias{print.dpi.dag}
 \title{[S3 methods] for \code{\link[=cor_net]{cor_net()}}, \code{\link[=BNs_dag]{BNs_dag()}}, and \code{\link[=DPI_dag]{DPI_dag()}}.}
 \usage{
-\method{print}{cor.net}(x, file = NULL, width = 6, height = 4, dpi = 500, ...)
+\method{plot}{cor.net}(x, scale = 1.2, ...)
+
+\method{print}{cor.net}(x, scale = 1.2, file = NULL, width = 6, height = 4, dpi = 500, ...)
+
+\method{plot}{bns.dag}(x, algorithm, scale = 1.2, ...)
 
 \method{print}{bns.dag}(
   x,
   algorithm = names(x),
+  scale = 1.2,
   file = NULL,
   width = 6,
   height = 4,
@@ -19,12 +27,23 @@
   ...
 )
 
-\method{print}{dpi.dag}(
+\method{plot}{dpi.dag}(
   x,
-  k = min(x$k.cov),
+  k = min(x$DPI$k.cov),
   show.label = TRUE,
   digits.dpi = 2,
   color.dpi.insig = "#EEEEEEEE",
+  scale = 1.2,
+  ...
+)
+
+\method{print}{dpi.dag}(
+  x,
+  k = min(x$DPI$k.cov),
+  show.label = TRUE,
+  digits.dpi = 2,
+  color.dpi.insig = "#EEEEEEEE",
+  scale = 1.2,
   file = NULL,
   width = 6,
   height = 4,
@@ -35,17 +54,19 @@
 \arguments{
 \item{x}{Object (class \code{cor.net} / \code{bns.dag} / \code{dpi.dag}) returned from \code{\link[=cor_net]{cor_net()}} / \code{\link[=BNs_dag]{BNs_dag()}} / \code{\link[=DPI_dag]{DPI_dag()}}.}
 
+\item{scale}{Scale the \code{\link[cowplot:draw_grob]{grob}} object of \code{qgraph} on the \code{ggplot} canvas. Defaults to \code{1.2}.}
+
+\item{...}{Other arguments (currently not used).}
+
 \item{file}{File name of saved plot (\code{".png"} or \code{".pdf"}).}
 
 \item{width, height}{Width and height (in inches) of saved plot. Defaults to \code{6} and \code{4}.}
 
 \item{dpi}{Dots per inch (figure resolution). Defaults to \code{500}.}
 
-\item{...}{Other arguments (currently not used).}
-
 \item{algorithm}{[For \code{bns.dag}] Algorithm(s) to display. Defaults to plot the finally integrated DAG from BN results for each algorithm in \code{x}.}
 
-\item{k}{[For \code{dpi.dag}] A single value of \code{k.cov} to produce the DPI(k) DAG. Defaults to \code{min(x$k.cov)}.}
+\item{k}{[For \code{dpi.dag}] A single value of \code{k.cov} to produce the DPI(k) DAG. Defaults to \code{min(x$DPI$k.cov)}.}
 
 \item{show.label}{[For \code{dpi.dag}] Show labels of partial correlations, DPI(k), and their significance on edges. Defaults to \code{TRUE}.}
 
@@ -54,18 +75,21 @@
 \item{color.dpi.insig}{[For \code{dpi.dag}] Edge color for insignificant DPIs. Defaults to \code{"#EEEEEEEE"} (faded light grey).}
 }
 \value{
-Invisibly return a \code{\link[cowplot:as_grob]{grob}} object ("Grid Graphical Object", or a list of them) that can be further reused in \code{\link[ggplot2:ggsave]{ggplot2::ggsave()}} and \code{\link[cowplot:plot_grid]{cowplot::plot_grid()}}.
+Return a \code{ggplot} object that can be further modified and used in \code{\link[ggplot2:ggsave]{ggplot2::ggsave()}} and \code{\link[cowplot:plot_grid]{cowplot::plot_grid()}}.
 }
 \description{
-\describe{
-\item{\code{print(cor.net)}}{
-Plot (partial) correlation network results.
+\itemize{
+\item Transform \code{qgraph} into \code{ggplot}
+\itemize{
+\item \code{plot(cor.net)}
+\item \code{plot(bns.dag)}
+\item \code{plot(dpi.dag)}
 }
-\item{\code{print(bns.dag)}}{
-Plot DAG with Bayesian network (BNs) results.
-}
-\item{\code{print(dpi.dag)}}{
-Plot DAG with Directed Prediction Index (DPI) results.
+\item Plot network results
+\itemize{
+\item \code{print(cor.net)}
+\item \code{print(bns.dag)}
+\item \code{print(dpi.dag)}
 }
 }
 }
