@@ -154,7 +154,7 @@
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Return a list (class <code>bns.dag</code>) of Bayesian network results and <code><a href="https://rdrr.io/pkg/qgraph/man/qgraph.html" class="external-link">qgraph</a></code> object with its <code><a href="https://wilkelab.org/cowplot/reference/as_grob.html" class="external-link">grob</a></code> (Grid Graphical Object).</p>
+    <p>Return a list (class <code>bns.dag</code>) of Bayesian network results and <code><a href="https://rdrr.io/pkg/qgraph/man/qgraph.html" class="external-link">qgraph</a></code> object.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
@@ -208,12 +208,13 @@
 <span class="r-in"><span><span class="va">c1</span> <span class="op">=</span> <span class="fu"><a href="cor_net.html">cor_net</a></span><span class="op">(</span><span class="va">airquality</span>, <span class="st">"cor"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">c2</span> <span class="op">=</span> <span class="fu"><a href="cor_net.html">cor_net</a></span><span class="op">(</span><span class="va">airquality</span>, <span class="st">"pcor"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">bn</span> <span class="op">=</span> <span class="fu">BNs_dag</span><span class="op">(</span><span class="va">airquality</span>, seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">mytheme</span> <span class="op">=</span> <span class="fu">theme</span><span class="op">(</span>plot.title<span class="op">=</span><span class="fu">element_text</span><span class="op">(</span>hjust<span class="op">=</span><span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">p</span> <span class="op">=</span> <span class="fu">aplot</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/aplot/man/plot_list.html" class="external-link">plot_list</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  <span class="va">c1</span><span class="op">$</span><span class="va">plot</span>,</span></span>
-<span class="r-in"><span>  <span class="va">c2</span><span class="op">$</span><span class="va">plot</span>,</span></span>
-<span class="r-in"><span>  <span class="va">bn</span><span class="op">$</span><span class="va">pc.stable</span><span class="op">$</span><span class="va">DAG</span><span class="op">$</span><span class="va">plot</span>,</span></span>
-<span class="r-in"><span>  <span class="va">bn</span><span class="op">$</span><span class="va">hc</span><span class="op">$</span><span class="va">DAG</span><span class="op">$</span><span class="va">plot</span>,</span></span>
-<span class="r-in"><span>  <span class="va">bn</span><span class="op">$</span><span class="va">rsmax2</span><span class="op">$</span><span class="va">DAG</span><span class="op">$</span><span class="va">plot</span>,</span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">c1</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">c2</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">bn</span><span class="op">$</span><span class="va">pc.stable</span><span class="op">$</span><span class="va">DAG</span><span class="op">)</span> <span class="op">+</span> <span class="va">mytheme</span>,</span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">bn</span><span class="op">$</span><span class="va">hc</span><span class="op">$</span><span class="va">DAG</span><span class="op">)</span> <span class="op">+</span> <span class="va">mytheme</span>,</span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">bn</span><span class="op">$</span><span class="va">rsmax2</span><span class="op">$</span><span class="va">DAG</span><span class="op">)</span> <span class="op">+</span> <span class="va">mytheme</span>,</span></span>
 <span class="r-in"><span>  design<span class="op">=</span><span class="st">"111222</span></span></span>
 <span class="r-in"><span><span class="st">          334455"</span>,</span></span>
 <span class="r-in"><span>  tag_levels<span class="op">=</span><span class="st">"A"</span></span></span>
