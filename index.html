@@ -78,7 +78,7 @@
 <ul>
 <li>Bao, H. W. S. (2025). <em>DPI: The Directed Prediction Index for causal inference from observational data</em>. <a href="https://doi.org/10.32614/CRAN.package.DPI" class="external-link uri">https://doi.org/10.32614/CRAN.package.DPI</a>
 </li>
-<li>Bao, H. W. S. (Manuscript). <em>The Directed Prediction Index (DPI) for causal inference from observational data by quantifying relative endogeneity</em>.</li>
+<li>Bao, H. W. S. (Manuscript). <em>The Directed Prediction Index (DPI): Quantifying relative endogeneity for causal inference from observational data</em>.</li>
 </ul>
 </div>
 <div class="section level2">
@@ -150,64 +150,85 @@
 \end{aligned}
 </annotation></semantics></math></p>
 <table class="table">
+<colgroup>
+<col width="33%">
+<col width="33%">
+<col width="33%">
+</colgroup>
 <thead><tr class="header">
 <th><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>p</mi><annotation encoding="application/x-tex">p</annotation></semantics></math></th>
 <th>
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">Sigmoid</mtext><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><mi>p</mi><mi>α</mi></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\text{Sigmoid}(\frac{p}{\alpha})</annotation></semantics></math> with <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi><mo>=</mo><mn>0.05</mn></mrow><annotation encoding="application/x-tex">\alpha = 0.05</annotation></semantics></math>
+</th>
+<th>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">Sigmoid</mtext><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><mi>p</mi><mi>α</mi></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\text{Sigmoid}(\frac{p}{\alpha})</annotation></semantics></math> with <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi><mo>=</mo><mn>0.05</mn></mrow><annotation encoding="application/x-tex">\alpha = 0.05</annotation></semantics></math> and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">Bonferroni</mtext><mo>=</mo><mn>5</mn></mrow><annotation encoding="application/x-tex">\text{Bonferroni} = 5</annotation></semantics></math>
 </th>
 </tr></thead>
 <tbody>
 <tr class="odd">
 <td>(~0)</td>
 <td>(~1)</td>
+<td>(~1)</td>
 </tr>
 <tr class="even">
 <td>0.0001</td>
 <td>0.999</td>
+<td>0.995</td>
 </tr>
 <tr class="odd">
 <td>0.001</td>
 <td>0.990</td>
+<td>0.950</td>
 </tr>
 <tr class="even">
 <td>0.01</td>
 <td>0.900</td>
+<td>0.538 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mfrac><mi>p</mi><msub><mi>α</mi><mrow><mi>a</mi><mi>d</mi><mi>j</mi><mi>.</mi></mrow></msub></mfrac><annotation encoding="application/x-tex">\frac{p}{\alpha_{adj.}}</annotation></semantics></math> = 1)</td>
 </tr>
 <tr class="odd">
 <td>0.02</td>
 <td>0.803</td>
+<td>0.238</td>
 </tr>
 <tr class="even">
 <td>0.03</td>
 <td>0.709</td>
+<td>0.095</td>
 </tr>
 <tr class="odd">
 <td>0.04</td>
 <td>0.620</td>
+<td>0.036</td>
 </tr>
 <tr class="even">
-<td>0.05 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mfrac><mi>p</mi><mi>α</mi></mfrac><annotation encoding="application/x-tex">\frac{p}{\alpha}</annotation></semantics></math> = 1)</td>
-<td>0.538</td>
+<td>0.05</td>
+<td>0.538 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mfrac><mi>p</mi><mi>α</mi></mfrac><annotation encoding="application/x-tex">\frac{p}{\alpha}</annotation></semantics></math> = 1)</td>
+<td>0.013</td>
 </tr>
 <tr class="odd">
 <td>0.10</td>
 <td>0.238</td>
+<td>0.00009</td>
 </tr>
 <tr class="even">
 <td>0.20</td>
 <td>0.036</td>
+<td>0.000000004</td>
 </tr>
 <tr class="odd">
 <td>0.50</td>
 <td>0.00009</td>
+<td>0</td>
 </tr>
 <tr class="even">
 <td>0.80</td>
 <td>0.0000002</td>
+<td>0</td>
 </tr>
 <tr class="odd">
 <td>1</td>
 <td>0.000000004</td>
+<td>0</td>
 </tr>
 </tbody>
 </table>

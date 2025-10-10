@@ -46,6 +46,7 @@
 <span>  k.cov <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  n.sim <span class="op">=</span> <span class="fl">1000</span>,</span>
 <span>  alpha <span class="op">=</span> <span class="fl">0.05</span>,</span>
+<span>  bonf <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  seed <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">progress</span>,</span>
 <span>  file <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -89,6 +90,13 @@
 <dt id="arg-alpha">alpha<a class="anchor" aria-label="anchor" href="#arg-alpha"></a></dt>
 <dd><p>Significance level for computing the <code>Strength</code> score (0~1) based on <em>p</em> value of partial correlation between <code>X</code> and <code>Y</code>. Defaults to <code>0.05</code>.</p><ul><li><p><code>Direction = R2.Y - R2.X</code></p></li>
 <li><p><code>Strength = 1 - tanh(p.beta.xy/alpha/2)</code></p></li>
+</ul></dd>
+
+
+<dt id="arg-bonf">bonf<a class="anchor" aria-label="anchor" href="#arg-bonf"></a></dt>
+<dd><p>Bonferroni correction to control for false positive rates: <code>alpha</code> is divided by, and <em>p</em> values are multiplied by, the number of comparisons.</p><ul><li><p>Defaults to <code>FALSE</code>: No correction, suitable if you plan to test only one pair of variables.</p></li>
+<li><p><code>TRUE</code>: Using <code>k * (k - 1) / 2</code> (number of all combinations of variable pairs) where <code>k = length(data)</code>.</p></li>
+<li><p>A user-specified number of comparisons.</p></li>
 </ul></dd>
 
 
@@ -152,6 +160,7 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Directed prediction: </span><span style="color: #0000BB;">"Solar.R"</span> (X) -&gt; <span style="color: #0000BB;">"Ozone"</span> (Y)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Partial correlation: </span>r(partial).XY = <span style="color: #BBBB00;">0.205</span>, p = <span style="color: #BBBB00;">0.0353</span> <span style="color: #BBBB00;">*</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Simulation sample settings: </span>k.random.covs = <span style="color: #BB00BB;">1</span>, n.sim = <span style="color: #BB00BB;">1000</span>, seed = <span style="color: #BB00BB;">1</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">False positive rates (FPR) control: </span>Alpha = <span style="color: #BB00BB;">0.05</span> (Bonferroni correction = <span style="color: #BB00BB;">1</span>)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  Sim.SE z.value   p.z sig  Conf.Interval</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DPI    0.297 (0.031)   9.453 3e-21 *** [0.236, 0.359]</span>
 <span class="r-plt img"><img src="DPI-1.png" alt="" width="700" height="433"></span>
@@ -162,6 +171,7 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Directed prediction: </span><span style="color: #0000BB;">"Wind"</span> (X) -&gt; <span style="color: #0000BB;">"Ozone"</span> (Y)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Partial correlation: </span>r(partial).XY = <span style="color: #BBBB00;">-0.449</span>, p = <span style="color: #BBBB00;">1e-06</span> <span style="color: #BBBB00;">***</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Simulation sample settings: </span>k.random.covs = <span style="color: #BB00BB;">1</span>, n.sim = <span style="color: #BB00BB;">1000</span>, seed = <span style="color: #BB00BB;">1</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">False positive rates (FPR) control: </span>Alpha = <span style="color: #BB00BB;">0.05</span> (Bonferroni correction = <span style="color: #BB00BB;">1</span>)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  Sim.SE z.value    p.z sig  Conf.Interval</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DPI    0.223 (0.009)  25.296 &lt;1e-99 *** [0.206, 0.240]</span>
 <span class="r-plt img"><img src="DPI-2.png" alt="" width="700" height="433"></span>
@@ -172,6 +182,7 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Directed prediction: </span><span style="color: #0000BB;">"Solar.R"</span> (X) -&gt; <span style="color: #0000BB;">"Wind"</span> (Y)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Partial correlation: </span>r(partial).XY = <span style="color: #BBBB00;">0.114</span>, p = <span style="color: #BBBB00;">0.2447</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Simulation sample settings: </span>k.random.covs = <span style="color: #BB00BB;">1</span>, n.sim = <span style="color: #BB00BB;">1000</span>, seed = <span style="color: #BB00BB;">1</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">False positive rates (FPR) control: </span>Alpha = <span style="color: #BB00BB;">0.05</span> (Bonferroni correction = <span style="color: #BB00BB;">1</span>)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  Sim.SE z.value    p.z sig   Conf.Interval</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DPI    0.004 (0.005)   0.903 0.3666     [-0.005, 0.014]</span>
 <span class="r-plt img"><img src="DPI-3.png" alt="" width="700" height="433"></span>
@@ -184,6 +195,7 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Directed prediction: </span><span style="color: #0000BB;">"Solar.R"</span> (X) -&gt; <span style="color: #0000BB;">"Ozone"</span> (Y)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Partial correlation: </span>r(partial).XY = <span style="color: #BBBB00;">0.204</span>, p = <span style="color: #BBBB00;">0.0452</span> <span style="color: #BBBB00;">*</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Simulation sample settings: </span>k.random.covs = <span style="color: #BB00BB;">10</span>, n.sim = <span style="color: #BB00BB;">1000</span>, seed = <span style="color: #BB00BB;">1</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">False positive rates (FPR) control: </span>Alpha = <span style="color: #BB00BB;">0.05</span> (Bonferroni correction = <span style="color: #BB00BB;">1</span>)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  Sim.SE z.value    p.z sig  Conf.Interval</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DPI    0.226 (0.096)   2.342 0.0192 *   [0.037, 0.415]</span>
 <span class="r-plt img"><img src="DPI-4.png" alt="" width="700" height="433"></span>
@@ -194,6 +206,7 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Directed prediction: </span><span style="color: #0000BB;">"Wind"</span> (X) -&gt; <span style="color: #0000BB;">"Ozone"</span> (Y)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Partial correlation: </span>r(partial).XY = <span style="color: #BBBB00;">-0.449</span>, p = <span style="color: #BBBB00;">4e-06</span> <span style="color: #BBBB00;">***</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Simulation sample settings: </span>k.random.covs = <span style="color: #BB00BB;">10</span>, n.sim = <span style="color: #BB00BB;">1000</span>, seed = <span style="color: #BB00BB;">1</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">False positive rates (FPR) control: </span>Alpha = <span style="color: #BB00BB;">0.05</span> (Bonferroni correction = <span style="color: #BB00BB;">1</span>)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  Sim.SE z.value   p.z sig  Conf.Interval</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DPI    0.203 (0.027)   7.567 4e-14 *** [0.150, 0.255]</span>
 <span class="r-plt img"><img src="DPI-5.png" alt="" width="700" height="433"></span>
@@ -204,6 +217,7 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Directed prediction: </span><span style="color: #0000BB;">"Solar.R"</span> (X) -&gt; <span style="color: #0000BB;">"Wind"</span> (Y)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Partial correlation: </span>r(partial).XY = <span style="color: #BBBB00;">0.111</span>, p = <span style="color: #BBBB00;">0.2765</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Simulation sample settings: </span>k.random.covs = <span style="color: #BB00BB;">10</span>, n.sim = <span style="color: #BB00BB;">1000</span>, seed = <span style="color: #BB00BB;">1</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">False positive rates (FPR) control: </span>Alpha = <span style="color: #BB00BB;">0.05</span> (Bonferroni correction = <span style="color: #BB00BB;">1</span>)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  Sim.SE z.value    p.z sig   Conf.Interval</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DPI    0.008 (0.017)   0.492 0.6225     [-0.025, 0.041]</span>
 <span class="r-plt img"><img src="DPI-6.png" alt="" width="700" height="433"></span>

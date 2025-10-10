@@ -46,6 +46,7 @@
 <span>  k.covs <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>,</span>
 <span>  n.sim <span class="op">=</span> <span class="fl">1000</span>,</span>
 <span>  alpha <span class="op">=</span> <span class="fl">0.05</span>,</span>
+<span>  bonf <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  seed <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">progress</span>,</span>
 <span>  file <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -89,6 +90,13 @@
 </ul></dd>
 
 
+<dt id="arg-bonf">bonf<a class="anchor" aria-label="anchor" href="#arg-bonf"></a></dt>
+<dd><p>Bonferroni correction to control for false positive rates: <code>alpha</code> is divided by, and <em>p</em> values are multiplied by, the number of comparisons.</p><ul><li><p>Defaults to <code>FALSE</code>: No correction, suitable if you plan to test only one pair of variables.</p></li>
+<li><p><code>TRUE</code>: Using <code>k * (k - 1) / 2</code> (number of all combinations of variable pairs) where <code>k = length(data)</code>.</p></li>
+<li><p>A user-specified number of comparisons.</p></li>
+</ul></dd>
+
+
 <dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>
 <dd><p>Random seed for replicable results. Defaults to <code>NULL</code>.</p></dd>
 
@@ -129,13 +137,13 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ⠙ Simulation k.covs: 1/10 <span style="color: #00BB00;">████</span><span style="color: #555555;">███████████████████████████</span><span style="color: #00BB00;"> </span>  10% [00:00:3.5]</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ⠹ Simulation k.covs: 2/10 <span style="color: #00BB00;">███████</span><span style="color: #555555;">████████████████████████</span><span style="color: #00BB00;"> </span>  20% [00:00:7.2]</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ⠸ Simulation k.covs: 3/10 <span style="color: #00BB00;">██████████</span><span style="color: #555555;">█████████████████████</span><span style="color: #00BB00;"> </span>  30% [00:00:11]</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ⠼ Simulation k.covs: 4/10 <span style="color: #00BB00;">█████████████</span><span style="color: #555555;">██████████████████</span><span style="color: #00BB00;"> </span>  40% [00:00:14.9]</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ⠴ Simulation k.covs: 5/10 <span style="color: #00BB00;">████████████████</span><span style="color: #555555;">███████████████</span><span style="color: #00BB00;"> </span>  50% [00:00:19]</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ⠦ Simulation k.covs: 6/10 <span style="color: #00BB00;">███████████████████</span><span style="color: #555555;">████████████</span><span style="color: #00BB00;"> </span>  60% [00:00:23.2]</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ⠧ Simulation k.covs: 7/10 <span style="color: #00BB00;">██████████████████████</span><span style="color: #555555;">█████████</span><span style="color: #00BB00;"> </span>  70% [00:00:27.7]</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ⠇ Simulation k.covs: 8/10 <span style="color: #00BB00;">█████████████████████████</span><span style="color: #555555;">██████</span><span style="color: #00BB00;"> </span>  80% [00:00:32.3]</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ⠏ Simulation k.covs: 9/10 <span style="color: #00BB00;">████████████████████████████</span><span style="color: #555555;">███</span><span style="color: #00BB00;"> </span>  90% [00:00:36.9]</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 10 * 1000 simulation samples estimated in 41.8s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ⠼ Simulation k.covs: 4/10 <span style="color: #00BB00;">█████████████</span><span style="color: #555555;">██████████████████</span><span style="color: #00BB00;"> </span>  40% [00:00:15]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ⠴ Simulation k.covs: 5/10 <span style="color: #00BB00;">████████████████</span><span style="color: #555555;">███████████████</span><span style="color: #00BB00;"> </span>  50% [00:00:19.1]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ⠦ Simulation k.covs: 6/10 <span style="color: #00BB00;">███████████████████</span><span style="color: #555555;">████████████</span><span style="color: #00BB00;"> </span>  60% [00:00:23.3]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ⠧ Simulation k.covs: 7/10 <span style="color: #00BB00;">██████████████████████</span><span style="color: #555555;">█████████</span><span style="color: #00BB00;"> </span>  70% [00:00:27.9]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ⠇ Simulation k.covs: 8/10 <span style="color: #00BB00;">█████████████████████████</span><span style="color: #555555;">██████</span><span style="color: #00BB00;"> </span>  80% [00:00:32.5]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ⠏ Simulation k.covs: 9/10 <span style="color: #00BB00;">████████████████████████████</span><span style="color: #555555;">███</span><span style="color: #00BB00;"> </span>  90% [00:00:37.2]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 10 * 1000 simulation samples estimated in 42s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">DPIs</span><span class="op">)</span>  <span class="co"># ggplot object</span></span></span>
 <span class="r-plt img"><img src="DPI_curve-1.png" alt="" width="700" height="433"></span>
