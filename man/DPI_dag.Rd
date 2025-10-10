@@ -6,9 +6,10 @@
 \usage{
 DPI_dag(
   data,
-  k.covs = 1:5,
+  k.covs = 1,
   n.sim = 1000,
   alpha = 0.05,
+  bonf = FALSE,
   seed = NULL,
   progress,
   file = NULL,
@@ -20,7 +21,7 @@ DPI_dag(
 \arguments{
 \item{data}{A dataset with at least 3 variables.}
 
-\item{k.covs}{An integer vector of number of random covariates (simulating potential omitted variables) added to each simulation sample. Defaults to \code{1:5} (producing DPI results for \code{k.cov}=1~5). For details, see \code{\link[=DPI]{DPI()}}.}
+\item{k.covs}{An integer vector (e.g., \code{1:10}) of number of random covariates (simulating potential omitted variables) added to each simulation sample. Defaults to \code{1}. For details, see \code{\link[=DPI]{DPI()}}.}
 
 \item{n.sim}{Number of simulation samples. Defaults to \code{1000}.}
 
@@ -28,6 +29,13 @@ DPI_dag(
 \itemize{
 \item \code{Direction = R2.Y - R2.X}
 \item \code{Strength = 1 - tanh(p.beta.xy/alpha/2)}
+}}
+
+\item{bonf}{Bonferroni correction to control for false positive rates: \code{alpha} is divided by, and \emph{p} values are multiplied by, the number of comparisons.
+\itemize{
+\item Defaults to \code{FALSE}: No correction.
+\item \code{TRUE}: Using the number of all significant partial \emph{r}s.
+\item A user-specified number of comparisons.
 }}
 
 \item{seed}{Random seed for replicable results. Defaults to \code{NULL}.}

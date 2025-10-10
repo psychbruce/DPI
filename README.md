@@ -23,7 +23,7 @@ Bruce H. W. S. Bao 包寒吴霜
 ## Citation
 
 -   Bao, H. W. S. (2025). *DPI: The Directed Prediction Index for causal inference from observational data*. <https://doi.org/10.32614/CRAN.package.DPI>
--   Bao, H. W. S. (Manuscript). *The Directed Prediction Index (DPI) for causal inference from observational data by quantifying relative endogeneity*.
+-   Bao, H. W. S. (Manuscript). *The Directed Prediction Index (DPI): Quantifying relative endogeneity for causal inference from observational data*.
 
 ## Installation
 
@@ -100,21 +100,21 @@ $$
 \end{aligned}
 $$
 
-| $p$ | $\text{Sigmoid}(\frac{p}{\alpha})$ with $\alpha = 0.05$ |
-|----|----|
-| (\~0) | (\~1) |
-| 0.0001 | 0.999 |
-| 0.001 | 0.990 |
-| 0.01 | 0.900 |
-| 0.02 | 0.803 |
-| 0.03 | 0.709 |
-| 0.04 | 0.620 |
-| 0.05 ($\frac{p}{\alpha}$ = 1) | 0.538 |
-| 0.10 | 0.238 |
-| 0.20 | 0.036 |
-| 0.50 | 0.00009 |
-| 0.80 | 0.0000002 |
-| 1 | 0.000000004 |
+| $p$ | $\text{Sigmoid}(\frac{p}{\alpha})$ with $\alpha = 0.05$ | $\text{Sigmoid}(\frac{p}{\alpha})$ with $\alpha = 0.05$ and $\text{Bonferroni} = 5$ |
+|----|----|----|
+| (\~0) | (\~1) | (\~1) |
+| 0.0001 | 0.999 | 0.995 |
+| 0.001 | 0.990 | 0.950 |
+| 0.01 | 0.900 | 0.538 ($\frac{p}{\alpha_{adj.}}$ = 1) |
+| 0.02 | 0.803 | 0.238 |
+| 0.03 | 0.709 | 0.095 |
+| 0.04 | 0.620 | 0.036 |
+| 0.05 | 0.538 ($\frac{p}{\alpha}$ = 1) | 0.013 |
+| 0.10 | 0.238 | 0.00009 |
+| 0.20 | 0.036 | 0.000000004 |
+| 0.50 | 0.00009 | 0 |
+| 0.80 | 0.0000002 | 0 |
+| 1 | 0.000000004 | 0 |
 
 #### Step 3: Data Simulation
 

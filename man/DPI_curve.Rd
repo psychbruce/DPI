@@ -12,6 +12,7 @@ DPI_curve(
   k.covs = 1:10,
   n.sim = 1000,
   alpha = 0.05,
+  bonf = FALSE,
   seed = NULL,
   progress,
   file = NULL,
@@ -37,6 +38,13 @@ DPI_curve(
 \itemize{
 \item \code{Direction = R2.Y - R2.X}
 \item \code{Strength = 1 - tanh(p.beta.xy/alpha/2)}
+}}
+
+\item{bonf}{Bonferroni correction to control for false positive rates: \code{alpha} is divided by, and \emph{p} values are multiplied by, the number of comparisons.
+\itemize{
+\item Defaults to \code{FALSE}: No correction, suitable if you plan to test only one pair of variables.
+\item \code{TRUE}: Using \code{k * (k - 1) / 2} (number of all combinations of variable pairs) where \code{k = length(data)}.
+\item A user-specified number of comparisons.
 }}
 
 \item{seed}{Random seed for replicable results. Defaults to \code{NULL}.}

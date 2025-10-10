@@ -42,6 +42,17 @@
 #### Utils ####
 
 
+as_numeric = function(data) {
+  data = as.data.frame(data)
+  for(var in names(data)) {
+    if(inherits(data[[var]], c("numeric", "integer", "double", "logical")) |
+       (inherits(data[[var]], "factor") & nlevels(data[[var]])==2))
+      data[[var]] = as.numeric(data[[var]])
+  }
+  return(data)
+}
+
+
 #' Simulate data from a multivariate normal distribution.
 #'
 #' @param n Number of observations (cases).
@@ -345,6 +356,10 @@ NULL
 #' @param alpha Significance level for computing the `Strength` score (0~1) based on *p* value of partial correlation between `X` and `Y`. Defaults to `0.05`.
 #' - `Direction = R2.Y - R2.X`
 #' - `Strength = 1 - tanh(p.beta.xy/alpha/2)`
+#' @param bonf Bonferroni correction to control for false positive rates: `alpha` is divided by, and *p* values are multiplied by, the number of comparisons.
+#' - Defaults to `FALSE`: No correction, suitable if you plan to test only one pair of variables.
+#' - `TRUE`: Using `k * (k - 1) / 2` (number of all combinations of variable pairs) where `k = length(data)`.
+#' - A user-specified number of comparisons.
 #' @param seed Random seed for replicable results. Defaults to `NULL`.
 #' @param progress Show progress bar. Defaults to `FALSE` (if `n.sim` < 5000).
 #' @param file File name of saved plot (`".png"` or `".pdf"`).
@@ -401,6 +416,7 @@ DPI = function(
     k.cov = 1,
     n.sim = 1000,
     alpha = 0.05,
+    bonf = FALSE,
     seed = NULL,
     progress,
     file = NULL,
@@ -414,23 +430,36 @@ DPI = function(
     else
       progress = TRUE
   }
+
   formula.y = glue("{y} ~ {x} + .")
   formula.x = glue("{x} ~ {y} + .")
+
   if(is.null(data)) {
     data = model.frame(model)  # new data.frame (na.omit)
     model = lm(formula.y, data=data)  # refit
   } else {
+    data = as_numeric(data)
     model = lm(formula.y, data=data)
     data = model.frame(model)  # new data.frame (na.omit)
   }
+
   formula = formula(model)
   formula.y = update(formula, glue("{y} ~ {x} + . - {y}"))
   formula.x = update(formula, glue("{x} ~ {y} + . - {x}"))
-  for(var in names(data)) {
-    if(inherits(data[[var]], c("numeric", "integer", "double", "logical")) |
-       (inherits(data[[var]], "factor") & nlevels(data[[var]])==2))
-      data[[var]] = as.numeric(scale(as.numeric(data[[var]])))
+
+  if(is.numeric(bonf)) {
+    alpha = alpha / bonf
+  } else {
+    if(bonf) {
+      k = length(data)
+      bonf = k * (k - 1) / 2
+      alpha = alpha / bonf
+    } else {
+      bonf = 1
+    }
   }
+  bonf = as.integer(bonf)
+
   op = options()
   options(cli.progress_bar_style="bar")
   cli::cli_progress_bar(
@@ -445,6 +474,7 @@ DPI = function(
       "{cli::col_green(cli::symbol$tick)}",
       "{cli::pb_total} simulation samples estimated in {cli::pb_elapsed}")
   )
+
   if(!is.null(seed)) {
     set.seed(seed)
     seeds = sample(seq_len(10^8), n.sim)
@@ -518,13 +548,15 @@ DPI = function(
   dpi = do.call("rbind", dpi)
   class(dpi) = c("dpi", "data.frame")
   attr(dpi, "N.valid") = nrow(data)
+  attr(dpi, "df") = dpi$df.beta.xy[1]
   attr(dpi, "formula.y") = formula.y
   attr(dpi, "formula.x") = formula.x
   attr(dpi, "X") = x
   attr(dpi, "Y") = y
   attr(dpi, "k.cov") = k.cov
   attr(dpi, "n.sim") = n.sim
-  attr(dpi, "df") = dpi$df.beta.xy[1]
+  attr(dpi, "alpha") = alpha
+  attr(dpi, "bonferroni") = bonf
   attr(dpi, "seed") = ifelse(is.null(seed), "NULL", seed)
   attr(dpi, "plot.params") = list(file = file,
                                   width = width,
@@ -538,22 +570,24 @@ DPI = function(
 #' @export
 summary.dpi = function(object, ...) {
   ## DPI
+  alpha = attr(object, "alpha")
+  bonf = attr(object, "bonferroni")
   dpi = object$DPI
   mean = mean(dpi, na.rm=TRUE)
   se = sd(dpi, na.rm=TRUE)
   z = mean / se
-  p.z = pnorm(abs(z), lower.tail=FALSE) * 2
+  p.z = min(1, pnorm(abs(z), lower.tail=FALSE) * 2 * bonf)
   # CIs = quantile(dpi, probs=c(0.025, 0.975), na.rm=TRUE)
-  CIs = mean + qnorm(c(0.025, 0.975)) * se
+  CIs = mean + qnorm(c(alpha/2, 1-alpha/2)) * se
 
   ## Delta R^2
   delta.R2 = object$delta.R2
   dR2.mean = mean(delta.R2, na.rm=TRUE)
   dR2.se = sd(delta.R2, na.rm=TRUE)
   dR2.z = dR2.mean / dR2.se
-  dR2.p.z = pnorm(abs(dR2.z), lower.tail=FALSE) * 2
+  dR2.p.z = min(1, pnorm(abs(dR2.z), lower.tail=FALSE) * 2 * bonf)
   # dR2.CIs = quantile(delta.R2, probs=c(0.025, 0.975), na.rm=TRUE)
-  dR2.CIs = dR2.mean + qnorm(c(0.025, 0.975)) * dR2.se
+  dR2.CIs = dR2.mean + qnorm(c(alpha/2, 1-alpha/2)) * dR2.se
 
   ## partial r & t test (test with raw sample size!)
   r.partial = mean(object$r.partial.xy, na.rm=TRUE)
@@ -635,6 +669,10 @@ print.summary.dpi = function(x, digits=3, ...) {
     "k.random.covs = {cli::col_magenta({attr(x$dpi, 'k.cov')})},
      n.sim = {cli::col_magenta({attr(x$dpi, 'n.sim')})},
      seed = {cli::col_magenta({attr(x$dpi, 'seed')})}")
+  cli::cli_text(
+    cli::col_cyan("False positive rates (FPR) control: "),
+    "Alpha = {cli::col_magenta({format(attr(x$dpi, 'alpha'), digits=digits)})}
+     (Bonferroni correction = {cli::col_magenta({attr(x$dpi, 'bonferroni')})})")
   print(res.dpi)
   invisible(NULL)
 }
@@ -649,6 +687,7 @@ plot.dpi = function(x, file=NULL, width=6, height=4, dpi=500, ...) {
   summ = x.summ$dpi.summ
   summ.r = x.summ$r.partial.summ
   r.sig = summ.r$p.t < 0.05
+  bonf = attr(x, "bonferroni")
   if(is.null(file)) {
     plot.params = attr(x, "plot.params")
     file = plot.params$file
@@ -683,9 +722,11 @@ plot.dpi = function(x, file=NULL, width=6, height=4, dpi=500, ...) {
       paste(
         bar(DPI)[{attr(x, 'X')} %->% {attr(x, 'Y')}],
         ' = {sprintf('%.3f', summ$Estimate)}, ',
-        italic(p)[italic(z)],
+        {ifelse(bonf==1, \"italic(p)[italic(z)]\",
+                paste0(\"italic(p)[italic(z)]^'Bonf=\", bonf, \"'\"))},
         ' = {p.trans(summ$p.z)}, ',
-        CI['95%'],
+        {ifelse(bonf==1, \"CI['95%']\",
+                paste0(\"CI['95%']^'Bonf=\", bonf, \"'\"))},
         ' = [{sprintf('%.3f', summ$Sim.LLCI)}',
         ', {sprintf('%.3f', summ$Sim.ULCI)}]'
       )
@@ -782,6 +823,7 @@ DPI_curve = function(
     k.covs = 1:10,
     n.sim = 1000,
     alpha = 0.05,
+    bonf = FALSE,
     seed = NULL,
     progress,
     file = NULL,
@@ -812,18 +854,20 @@ DPI_curve = function(
   )
   dpi.curve = lapply(k.covs, function(k.cov) {
     dpi = DPI(model, y, x, data,
-              k.cov, n.sim, alpha,
+              k.cov, n.sim,
+              alpha, bonf,
               seed, progress=FALSE)
-    # CIs.99 = quantile(dpi$DPI, probs=c(0.005, 0.995), na.rm=TRUE)
     dpi.summ = summary(dpi)[["dpi.summ"]]
-    CIs.99 = dpi.summ$Estimate + qnorm(c(0.005, 0.995)) * dpi.summ$Sim.SE
+    # CIs.99 = quantile(dpi$DPI, probs=c(0.005, 0.995), na.rm=TRUE)
+    # CIs.99 = dpi.summ$Estimate + qnorm(c(0.005, 0.995)) * dpi.summ$Sim.SE
     dpi.summ = cbind(
       data.frame(k.cov),
-      dpi.summ,
-      data.frame(Sim.LLCI.99 = CIs.99[1],
-                 Sim.ULCI.99 = CIs.99[2])
+      dpi.summ
+      # data.frame(Sim.LLCI.99 = CIs.99[1],
+      #            Sim.ULCI.99 = CIs.99[2])
     )
     row.names(dpi.summ) = k.cov
+    attr(dpi.summ, "bonferroni") = attr(dpi, "bonferroni")
     if(progress)
       cli::cli_progress_update(.envir=parent.frame(2))
     return(dpi.summ)
@@ -851,6 +895,8 @@ plot.dpi.curve = function(x, file=NULL, width=6, height=4, dpi=500, ...) {
   k.cov = Estimate = Sim.LLCI = Sim.ULCI = Sim.LLCI.99 = Sim.ULCI.99 = NULL
   color = "#2B579A"
 
+  bonf = attr(x, "bonferroni")
+
   if(is.null(file)) {
     plot.params = attr(x, "plot.params")
     file = plot.params$file
@@ -864,20 +910,18 @@ plot.dpi.curve = function(x, file=NULL, width=6, height=4, dpi=500, ...) {
       paste(
         bar(DPI)[{attr(x, 'X')} %->% {attr(x, 'Y')}],
         ' with ',
-        CI['95%'],
-        ' (dashed) and ',
-        CI['99%'],
-        ' (dotted)'
+        {ifelse(bonf==1, \"CI['95%']\",
+                paste0(\"CI['95%']^'Bonf=\", bonf, \"'\"))}
       )
     )
   ")), envir=parent.frame())
 
   p = ggplot(x, aes(x=k.cov, y=Estimate)) +
-    geom_ribbon(aes(ymin=Sim.LLCI.99, ymax=Sim.ULCI.99),
-                color=color, fill=color, alpha=0.1,
-                linetype="dotted") +
+    # geom_ribbon(aes(ymin=Sim.LLCI.99, ymax=Sim.ULCI.99),
+    #             color=color, fill=color, alpha=0.1,
+    #             linetype="dotted") +
     geom_ribbon(aes(ymin=Sim.LLCI, ymax=Sim.ULCI),
-                color=color, fill=color, alpha=0.15,
+                color=color, fill=color, alpha=0.2,
                 linetype="dashed") +
     geom_line(linewidth=1, color=color) +
     geom_point(color=color, size=2) +
@@ -1003,7 +1047,7 @@ cor_net = function(
     ...
 ) {
   index = match.arg(index)
-  data = na.omit(data)
+  data = as_numeric(na.omit(data))
   r = cor(data)
   n = nrow(data)
   k = ncol(data)
@@ -1473,7 +1517,11 @@ bn_to_matrix = function(bn, strength=0.85, direction=0.50) {
 #'
 #' @inheritParams DPI_curve
 #' @param data A dataset with at least 3 variables.
-#' @param k.covs An integer vector of number of random covariates (simulating potential omitted variables) added to each simulation sample. Defaults to `1:5` (producing DPI results for `k.cov`=1~5). For details, see [DPI()].
+#' @param k.covs An integer vector (e.g., `1:10`) of number of random covariates (simulating potential omitted variables) added to each simulation sample. Defaults to `1`. For details, see [DPI()].
+#' @param bonf Bonferroni correction to control for false positive rates: `alpha` is divided by, and *p* values are multiplied by, the number of comparisons.
+#' - Defaults to `FALSE`: No correction.
+#' - `TRUE`: Using the number of all significant partial *r*s.
+#' - A user-specified number of comparisons.
 #'
 #' @return
 #' Return a data.frame (class `dpi.dag`) of DPI exploration results.
@@ -1518,9 +1566,10 @@ bn_to_matrix = function(bn, strength=0.85, direction=0.50) {
 #' @export
 DPI_dag = function(
     data,
-    k.covs = 1:5,
+    k.covs = 1,
     n.sim = 1000,
     alpha = 0.05,
+    bonf = FALSE,
     seed = NULL,
     progress,
     file = NULL,
@@ -1534,26 +1583,29 @@ DPI_dag = function(
     else
       progress = TRUE
   }
-  for(var in names(data)) {
-    if(inherits(data[[var]], c("numeric", "integer", "double", "logical")) |
-       (inherits(data[[var]], "factor") & nlevels(data[[var]])==2))
-      data[[var]] = as.numeric(scale(as.numeric(data[[var]])))
-  }
 
   pcor = cor_net(data, "pcor", edge.width.max=1.5)
   d.pcor = subset(pcor$cor, pval < alpha)[, 1:4]
   n.pcor = nrow(d.pcor)
+
+  if(is.logical(bonf)) bonf = ifelse(bonf, n.pcor, 1)
 
   cli::cli_text(
     cli::col_cyan("Simulation sample settings: "),
     "k.covs = {cli::col_magenta({k.covs})},
      n.sim = {cli::col_magenta({n.sim})},
      seed = {cli::col_magenta({seed})}")
+  cli::cli_text(
+    cli::col_cyan("False positive rates (FPR) control: "),
+    "Alpha = {cli::col_magenta({format(alpha / bonf, digits=3)})}
+     (Bonferroni correction = {cli::col_magenta({bonf})})")
+
   DPIs = lapply(seq_len(n.pcor), function(i) {
     x = d.pcor[i, 1]
     y = d.pcor[i, 2]
     r.partial = d.pcor[i, 3]
     p.rp = d.pcor[i, 4]
+    cli::cli_text(" ")
     cli::cli_text(cli::col_cyan("Exploring [{i}/{n.pcor}]:"))
     cli::cli_text(
       "r.partial =
@@ -1562,7 +1614,9 @@ DPI_dag = function(
        {cli::col_yellow({sig.trans(p.rp)})}")
     DPIs = DPI_curve(x=x, y=y, data=data,
                      k.covs=k.covs, n.sim=n.sim,
-                     alpha=alpha, seed=seed, progress=progress)
+                     alpha=alpha, bonf=bonf,
+                     seed=seed, progress=progress)
+    bonf = attr(DPIs, "bonferroni")
     sign = sign(DPIs[1, "z.value"])
     from = ifelse(sign > 0, x, y)
     to = ifelse(sign > 0, y, x)
@@ -1571,7 +1625,8 @@ DPI_dag = function(
         ---------
         DPI[{.val {from}}->{.val {to}}]({k.covs[j]}) =
         {cli::col_green({sprintf('%.3f', sign * DPIs[j, 'Estimate'])})},
-        p = {cli::col_green({p.trans(DPIs[j, 'p.z'])})}
+        {ifelse(bonf==1, 'p', paste0('p(Bonf=', bonf, ')'))}
+        = {cli::col_green({p.trans(DPIs[j, 'p.z'])})}
         {cli::col_green({sig.trans(DPIs[j, 'p.z'])})}")
     }
     return(data.frame(
@@ -1591,6 +1646,7 @@ DPI_dag = function(
       Sim.ULCI = sign * DPIs$Sim.ULCI
     ))
   })
+
   dpi.dag = list(DPI=do.call("rbind", DPIs), qgraph=pcor$qgraph)
   class(dpi.dag) = c("dpi.dag")
   attr(dpi.dag, "plot.params") = list(file = file,

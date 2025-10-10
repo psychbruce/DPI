@@ -5,6 +5,7 @@
 **This version contains breaking changes to function names and visualization methods.**
 
 -   Added `DPI_dag()`: Directed acyclic graphs (DAGs) via DPI exploratory analysis (causal discovery) for all significant partial correlations.
+-   Added `bonf` parameter to `DPI()`, `DPI_curve()`, and `DPI_dag()`: Bonferroni correction to control for false positive rates.
 -   Added S3 methods `plot.cor.net()`, `plot.bns.dag()`, and `plot.dpi.dag()` that can transform `qgraph` base-plot objects into `ggplot` objects for more stable and flexible visualization.
 -   Renamed `cor_network()` to `cor_net()`, `dag_network()` to `BNs_dag()`, and `matrix_cor()` to `cor_matrix()`.
 -   Fixed `cor_net()` to return the exactly correct *p* values of (partial) correlation coefficients.
