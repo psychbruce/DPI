@@ -233,6 +233,61 @@ sim_data_exp = function(n, r.xy, approx=TRUE, tol=0.01, max.iter=30, verbose=FAL
 }
 
 
+#' Convert *p* values to approximate (pseudo) Bayes Factors (PseudoBF10).
+#'
+#' Convert *p* values to approximate (pseudo) Bayes Factors (PseudoBF10). This transformation has been suggested by Wagenmakers (2022).
+#'
+#' @param p *p* value(s).
+#' @param n Number of observations.
+#' @param log Return `log(BF10)` or raw `BF10`. Defaults to `FALSE`.
+#' @param label Add labels (i.e., names) to returned values. Defaults to `FALSE`.
+#'
+#' @return
+#' A (named) numeric vector of pseudo Bayes Factors (\eqn{\text{PseudoBF}_{10}}).
+#'
+#' @references
+#' Wagenmakers, E.-J. (2022). *Approximate objective Bayes factors from p-values and sample size: The \eqn{3p\sqrt{n}} rule.* PsyArXiv.
+#' <https://doi.org/10.31234/osf.io/egydq>
+#'
+#' @seealso
+#' [bayestestR::p_to_bf()]
+#'
+#' @examples
+#' p_to_bf(0.05, 100)
+#' p_to_bf(c(0.01, 0.05), 100)
+#' p_to_bf(c(0.001, 0.01, 0.05, 0.1), 100, label=TRUE)
+#' p_to_bf(c(0.001, 0.01, 0.05, 0.1), 1000, label=TRUE)
+#'
+#' @export
+p_to_bf = function(p, n, log=FALSE, label=FALSE) {
+  # if(p <= 0.1) {
+  #   logBF = log(3 * p * sqrt(n))
+  # } else if(p <= 0.5) {
+  #   # BF = (4 / 3) * p ^ (2 / 3) * sqrt(n)
+  #   logBF = log(p) * (2 / 3) + log(sqrt(n) * (4 / 3))
+  # } else {
+  #   # BF = p ^ (1 / 4) * sqrt(n)
+  #   logBF = log(p) / 4 + log(sqrt(n))
+  # }
+  logBF =
+    ifelse(
+      p <= 0.1,
+      log(3 * p * sqrt(n)),
+      ifelse(
+        p <= 0.5,
+        log(p) * (2 / 3) + log(sqrt(n) * (4 / 3)),
+        log(p) / 4 + log(sqrt(n))
+      )
+    ) * -1  # log(BF10)
+  if(label)
+    names(logBF) = paste0("(p = ", p, ", n = ", n, ")")
+  if(log)
+    return(logBF)
+  else
+    return(exp(logBF))
+}
+
+
 p.trans = function(p, digits.p=3, p.min=1e-99) {
   ifelse(
     is.na(p) | p > 1 | p < 0,
@@ -274,35 +329,6 @@ p.t = function(t, df) {
 
 r_to_p = function(r, df) {
   p.t(r/sqrt((1-r^2)/df), df)
-}
-
-
-p_to_bf = function(p, n, log=FALSE, label=FALSE) {
-  # if(p <= 0.1) {
-  #   logBF = log(3 * p * sqrt(n))
-  # } else if(p <= 0.5) {
-  #   # BF = (4 / 3) * p ^ (2 / 3) * sqrt(n)
-  #   logBF = log(p) * (2 / 3) + log(sqrt(n) * (4 / 3))
-  # } else {
-  #   # BF = p ^ (1 / 4) * sqrt(n)
-  #   logBF = log(p) / 4 + log(sqrt(n))
-  # }
-  logBF =
-    ifelse(
-      p <= 0.1,
-      log(3 * p * sqrt(n)),
-      ifelse(
-        p <= 0.5,
-        log(p) * (2 / 3) + log(sqrt(n) * (4 / 3)),
-        log(p) / 4 + log(sqrt(n))
-      )
-    ) * -1  # log(BF10)
-  if(label)
-    names(logBF) = paste0("(p = ", p, ", n = ", n, ")")
-  if(log)
-    return(logBF)
-  else
-    return(exp(logBF))
 }
 
 
@@ -389,7 +415,7 @@ NULL
 #' - Defaults to `FALSE`: No correction, suitable if you plan to test only one pair of variables.
 #' - `TRUE`: Using `k * (k - 1) / 2` (number of all combinations of variable pairs) where `k = length(data)`.
 #' - A user-specified number of comparisons.
-#' @param pseudoBF Use normalized pseudo Bayes factors `sigmoid(log(PseudoBF10))` alternatively as the `Significance` score (0~1). Pseudo Bayes factors are computed from *p* value of X-Y partial relationship and total sample size, using the transformation rules proposed by Wagenmakers (2022) <https://doi.org/10.31234/osf.io/egydq>.
+#' @param pseudoBF Use normalized pseudo Bayes Factors `sigmoid(log(PseudoBF10))` alternatively as the `Significance` score (0~1). Pseudo Bayes Factors are computed from *p* value of X-Y partial relationship and total sample size, using the transformation rules proposed by Wagenmakers (2022) <https://doi.org/10.31234/osf.io/egydq>.
 #'
 #' Defaults to `FALSE` because it makes less penalties for insignificant partial relationships between `X` and `Y`, see Examples in [DPI()] and [online documentation](https://psychbruce.github.io/DPI/#step-2-normalized-penalty-as-significance-score).
 #' @param seed Random seed for replicable results. Defaults to `NULL`.
@@ -424,7 +450,7 @@ NULL
 #' - `sigmoid.p.xy`
 #'   - sigmoid *p* value as `1 - tanh(p.beta.xy/alpha/2)`
 #' - `pseudo.BF.xy`
-#'   - pseudo Bayes factors (\eqn{BF_{10}}) computed from *p* value `p.beta.xy` and sample size `nobs(model)` (see [Wagenmakers, 2022](https://doi.org/10.31234/osf.io/egydq))
+#'   - pseudo Bayes Factors (\eqn{BF_{10}}) computed from *p* value `p.beta.xy` and sample size `nobs(model)` (see [Wagenmakers, 2022](https://doi.org/10.31234/osf.io/egydq))
 #'
 #' @seealso
 #' [S3method.dpi]
@@ -436,6 +462,8 @@ NULL
 #' [BNs_dag()]
 #'
 #' [cor_net()]
+#'
+#' [p_to_bf()]
 #'
 #' @examples
 #' \donttest{# input a fitted model
@@ -452,7 +480,7 @@ NULL
 #' DPI(data=airquality, y="Wind", x="Solar.R",
 #'     k.cov=10, seed=1)
 #'
-#' # or use pseudo Bayes factors for the significance score
+#' # or use pseudo Bayes Factors for the significance score
 #' # (less conservative for insignificant X-Y relationship)
 #' DPI(data=airquality, y="Ozone", x="Solar.R", k.cov=10,
 #'     pseudoBF=TRUE, seed=1)  # DPI > 0 (true positive)
@@ -629,7 +657,8 @@ summary.dpi = function(object, ...) {
 
   ## DPI
   dpi = object$DPI
-  # n.sim = length(dpi)
+  n.obs = attr(object, "N.valid")
+  n.sim = length(dpi)
   mean = mean(dpi, na.rm=TRUE)
   se = sd(dpi, na.rm=TRUE)
   z = mean / se
@@ -637,16 +666,6 @@ summary.dpi = function(object, ...) {
   p.z = min(1, pnorm(abs(z), lower.tail=FALSE) * 2 * bonf)
   # CIs = quantile(dpi, probs=c(0.025, 0.975), na.rm=TRUE)
   CIs = mean + qnorm(c(alpha/2, 1-alpha/2)) * se
-
-  ## Delta R^2
-  delta.R2 = object$delta.R2
-  dR2.mean = mean(delta.R2, na.rm=TRUE)
-  dR2.se = sd(delta.R2, na.rm=TRUE)
-  dR2.z = dR2.mean / dR2.se
-  if(is.nan(dR2.z)) dR2.z = 0  # all values are 0 -> z = NaN
-  dR2.p.z = min(1, pnorm(abs(dR2.z), lower.tail=FALSE) * 2 * bonf)
-  # dR2.CIs = quantile(delta.R2, probs=c(0.025, 0.975), na.rm=TRUE)
-  dR2.CIs = dR2.mean + qnorm(c(alpha/2, 1-alpha/2)) * dR2.se
 
   ## partial r & t test (test with raw sample size!)
   r.partial = mean(object$r.partial.xy, na.rm=TRUE)
@@ -663,17 +682,8 @@ summary.dpi = function(object, ...) {
       p.z = p.z,
       Sim.LLCI = CIs[1],
       Sim.ULCI = CIs[2],
-      # PseudoBF10 = p_to_bf(p.z, n.sim),
+      log.PseudoBF10 = p_to_bf(p.z, n.obs, log=TRUE),
       row.names = "DPI"
-    ),
-    dR2.summ = data.frame(
-      Estimate = dR2.mean,
-      Sim.SE = dR2.se,
-      z.value = dR2.z,
-      p.z = dR2.p.z,
-      Sim.LLCI = dR2.CIs[1],
-      Sim.ULCI = dR2.CIs[2],
-      row.names = "Delta.R2"
     ),
     r.partial.summ = data.frame(
       Estimate = r.partial,
@@ -708,7 +718,7 @@ print.summary.dpi = function(x, digits=3, ...) {
       "[", sprintf(fmt, dpi$Sim.LLCI),
       ", ", sprintf(fmt, dpi$Sim.ULCI),
       "]"),
-    # Sim.PseudoBF10 = sprintf(fmt, dpi$PseudoBF10),
+    log.PseudoBF10 = sprintf(fmt, dpi$log.PseudoBF10),
     row.names = "DPI"
   )
 
@@ -758,7 +768,7 @@ plot.dpi = function(x, file=NULL, width=6, height=4, dpi=500, ...) {
   x.summ = summary(x)
   summ = x.summ$dpi.summ
   summ.r = x.summ$r.partial.summ
-  r.sig = summ.r$p.t < 0.05
+  false.pos = summ$p.z < 0.05 & summ.r$p.t >= 0.05
   bonf = attr(x, "bonferroni")
   pseudoBF = attr(x, "pseudoBF")
   if(is.null(file)) {
@@ -793,10 +803,13 @@ plot.dpi = function(x, file=NULL, width=6, height=4, dpi=500, ...) {
   expr.title = eval(parse(text=glue("
     expression(
       paste(
-        'Histogram of DPI (',
+        DPI[{attr(x, 'X')} %->% {attr(x, 'Y')}],
+        ' (',
         italic(k)[random.covs] == {attr(x, 'k.cov')},
         ', ',
         italic(n)[sim.samples] == {attr(x, 'n.sim')},
+        ', ',
+        seed == {attr(x, 'seed')},
         ')'
       )
     )
@@ -805,15 +818,16 @@ plot.dpi = function(x, file=NULL, width=6, height=4, dpi=500, ...) {
   expr.subtitle = eval(parse(text=glue("
     expression(
       paste(
-        bar(DPI)[{attr(x, 'X')} %->% {attr(x, 'Y')}],
-        ' = {sprintf('%.3f', summ$Estimate)}, ',
+        bar(DPI), ' = {sprintf('%.3f', summ$Estimate)}, ',
         {ifelse(bonf==1, \"italic(p)[italic(z)]\",
                 paste0(\"italic(p)[italic(z)]^'Bonf=\", bonf, \"'\"))},
         ' = {p.trans(summ$p.z)}, ',
         {ifelse(bonf==1, \"CI['95%']\",
                 paste0(\"CI['95%']^'Bonf=\", bonf, \"'\"))},
         ' = [{sprintf('%.3f', summ$Sim.LLCI)}',
-        ', {sprintf('%.3f', summ$Sim.ULCI)}]'
+        ', {sprintf('%.3f', summ$Sim.ULCI)}]',
+        ', ', logBF[10]^'pseudo',
+        ' = {sprintf('%.3f', summ$log.PseudoBF10)}'
       )
     )
   ")), envir=parent.frame())
@@ -839,25 +853,30 @@ plot.dpi = function(x, file=NULL, width=6, height=4, dpi=500, ...) {
     geom_density(
       aes(y=after_stat(scaled)), adjust=2,  # default: adjust=1
       linewidth=0.6, color=color, fill=color, alpha=0.2) +
-    geom_vline(xintercept=0, color="darkred", linetype="dashed") +
+    geom_vline(xintercept=0, color="firebrick", linetype="dashed") +
     geom_errorbarh(aes(xmin=summ$Sim.LLCI,
                        xmax=summ$Sim.ULCI,
                        y=1.03),
-                   width=0.04) +
+                   width=0.04,
+                   color=ifelse(false.pos, "red", "black")) +
     # ggplot2 update: `height` was translated to `width`.
     annotate("point", x=summ$Estimate, y=1.03, shape=18, size=3,
-             color=ifelse(r.sig, "black", "grey")) +
+             color=ifelse(false.pos, "red", "black")) +
+    annotate("text", x=summ$Estimate, y=0.95, color="red",
+             label=ifelse(false.pos, "insignificant correlation!", "")) +
     labs(x=expr.x,
          y="Density (Scaled)",
          title=expr.title,
          subtitle=expr.subtitle,
          caption=expr.caption) +
     theme_classic() +
-    theme(plot.subtitle=element_text(color=color),
-          plot.caption=element_text(color="darkred"),
-          axis.text=element_text(color="black"),
-          axis.line=element_line(color="black"),
-          axis.ticks=element_line(color="black"))
+    theme(
+      plot.subtitle=element_text(
+        color=color, margin=margin(b=0.5, unit="lines")),
+      plot.caption=element_text(color="firebrick"),
+      axis.text=element_text(color="black"),
+      axis.line=element_line(color="black"),
+      axis.ticks=element_line(color="black"))
 
   if(!is.null(file)) {
     ggsave(p, filename=file, width=width, height=height, dpi=dpi)
@@ -895,6 +914,8 @@ print.dpi = function(x, digits=3, ...) {
 #' [BNs_dag()]
 #'
 #' [cor_net()]
+#'
+#' [p_to_bf()]
 #'
 #' @examples
 #' \donttest{model = lm(Ozone ~ ., data=airquality)
@@ -943,15 +964,7 @@ DPI_curve = function(
               k.cov, n.sim,
               alpha, bonf, pseudoBF,
               seed, progress=FALSE)
-    dpi.summ = summary(dpi)[["dpi.summ"]]
-    # CIs.99 = quantile(dpi$DPI, probs=c(0.005, 0.995), na.rm=TRUE)
-    # CIs.99 = dpi.summ$Estimate + qnorm(c(0.005, 0.995)) * dpi.summ$Sim.SE
-    dpi.summ = cbind(
-      data.frame(k.cov),
-      dpi.summ
-      # data.frame(Sim.LLCI.99 = CIs.99[1],
-      #            Sim.ULCI.99 = CIs.99[2])
-    )
+    dpi.summ = cbind(data.frame(k.cov), summary(dpi)[["dpi.summ"]])
     row.names(dpi.summ) = k.cov
     attr(dpi.summ, "bonferroni") = attr(dpi, "bonferroni")
     if(progress)
@@ -1011,7 +1024,7 @@ plot.dpi.curve = function(x, file=NULL, width=6, height=4, dpi=500, ...) {
                 linetype="dashed") +
     geom_line(linewidth=1, color=color) +
     geom_point(color=color, size=2) +
-    geom_hline(yintercept=0, color="darkred", linetype="dashed") +
+    geom_hline(yintercept=0, color="firebrick", linetype="dashed") +
     scale_x_continuous(breaks=x$k.cov) +
     labs(
       x=paste0(
@@ -1618,6 +1631,8 @@ bn_to_matrix = function(bn, strength=0.85, direction=0.50) {
 #' [BNs_dag()]
 #'
 #' [cor_net()]
+#'
+#' [p_to_bf()]
 #'
 #' @examples
 #' \donttest{# partial correlation networks (undirected)

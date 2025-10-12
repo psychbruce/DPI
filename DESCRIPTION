@@ -29,6 +29,6 @@ URL: https://psychbruce.github.io/DPI/
 BugReports: https://github.com/psychbruce/DPI/issues
 Depends: R (>= 4.0.0)
 Imports: glue, crayon, cli, ggplot2, cowplot, qgraph, bnlearn, MASS
-Suggests: bruceR, aplot
+Suggests: bruceR, aplot, bayestestR
 RoxygenNote: 7.3.3
 Roxygen: list(markdown = TRUE)

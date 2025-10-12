@@ -7,10 +7,12 @@
 -   Added `DPI_dag()`: Directed acyclic graphs (DAGs) via DPI exploratory analysis (causal discovery) for all significant partial correlations.
 -   Added `bonf` and `pseudoBF` parameters to `DPI()`, `DPI_curve()`, and `DPI_dag()`.
     -   `bonf`: Bonferroni correction to control for false positive rates among multiple pairwise DPI tests.
-    -   `pseudoBF`: Use normalized pseudo Bayes factors `sigmoid(log(PseudoBF10))` as the Significance score (0\~1). Pseudo Bayes factors are computed using the transformation rules proposed by Wagenmakers (2022) <https://doi.org/10.31234/osf.io/egydq>.
+    -   `pseudoBF`: Use normalized pseudo Bayes Factors `sigmoid(log(PseudoBF10))` as the Significance score (0\~1). Pseudo Bayes Factors are computed using the transformation rules proposed by Wagenmakers (2022) <https://doi.org/10.31234/osf.io/egydq>.
 -   Added S3 methods `plot.cor.net()`, `plot.bns.dag()`, and `plot.dpi.dag()` that can transform `qgraph` base-plot objects into `ggplot` objects for more stable and flexible visualization.
+-   Added `p_to_bf()`: Convert *p* values to pseudo Bayes Factors ($\text{PseudoBF}_{10}$).
 -   Renamed `cor_network()` to `cor_net()`, `dag_network()` to `BNs_dag()`, and `matrix_cor()` to `cor_matrix()`.
 -   Fixed `cor_net()` to return the exactly correct *p* values of (partial) correlation coefficients.
+-   Improved output information in console and plot.
 
 # DPI 2025.9
 
