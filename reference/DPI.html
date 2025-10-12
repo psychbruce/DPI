@@ -102,7 +102,7 @@
 
 
 <dt id="arg-pseudobf">pseudoBF<a class="anchor" aria-label="anchor" href="#arg-pseudobf"></a></dt>
-<dd><p>Use normalized pseudo Bayes factors <code>sigmoid(log(PseudoBF10))</code> alternatively as the <code>Significance</code> score (0~1). Pseudo Bayes factors are computed from <em>p</em> value of X-Y partial relationship and total sample size, using the transformation rules proposed by Wagenmakers (2022) <a href="https://doi.org/10.31234/osf.io/egydq" class="external-link">https://doi.org/10.31234/osf.io/egydq</a>.</p>
+<dd><p>Use normalized pseudo Bayes Factors <code>sigmoid(log(PseudoBF10))</code> alternatively as the <code>Significance</code> score (0~1). Pseudo Bayes Factors are computed from <em>p</em> value of X-Y partial relationship and total sample size, using the transformation rules proposed by Wagenmakers (2022) <a href="https://doi.org/10.31234/osf.io/egydq" class="external-link">https://doi.org/10.31234/osf.io/egydq</a>.</p>
 <p>Defaults to <code>FALSE</code> because it makes less penalties for insignificant partial relationships between <code>X</code> and <code>Y</code>, see Examples in <code>DPI()</code> and <a href="https://psychbruce.github.io/DPI/#step-2-normalized-penalty-as-significance-score">online documentation</a>.</p></dd>
 
 
@@ -151,7 +151,7 @@
 </ul></li>
 <li><p><code>sigmoid.p.xy</code></p><ul><li><p>sigmoid <em>p</em> value as <code>1 - tanh(p.beta.xy/alpha/2)</code></p></li>
 </ul></li>
-<li><p><code>pseudo.BF.xy</code></p><ul><li><p>pseudo Bayes factors (\(BF_{10}\)) computed from <em>p</em> value <code>p.beta.xy</code> and sample size <code>nobs(model)</code> (see <a href="https://doi.org/10.31234/osf.io/egydq" class="external-link">Wagenmakers, 2022</a>)</p></li>
+<li><p><code>pseudo.BF.xy</code></p><ul><li><p>pseudo Bayes Factors (\(BF_{10}\)) computed from <em>p</em> value <code>p.beta.xy</code> and sample size <code>nobs(model)</code> (see <a href="https://doi.org/10.31234/osf.io/egydq" class="external-link">Wagenmakers, 2022</a>)</p></li>
 </ul></li>
 </ul></div>
     <div class="section level2">
@@ -160,7 +160,8 @@
 <p><code><a href="DPI_curve.html">DPI_curve()</a></code></p>
 <p><code><a href="DPI_dag.html">DPI_dag()</a></code></p>
 <p><code><a href="BNs_dag.html">BNs_dag()</a></code></p>
-<p><code><a href="cor_net.html">cor_net()</a></code></p></div>
+<p><code><a href="cor_net.html">cor_net()</a></code></p>
+<p><code><a href="p_to_bf.html">p_to_bf()</a></code></p></div>
     </div>
 
     <div class="section level2">
@@ -176,8 +177,8 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Significance score method: </span><span style="color: #BBBB00;">Sigmoid(p/alpha) = 1 - tanh(p.xy/alpha/2)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Simulation sample setting: </span>k.random.covs = <span style="color: #BB00BB;">1</span>, n.sim = <span style="color: #BB00BB;">1000</span>, seed = <span style="color: #BB00BB;">1</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">False positive rates (FPR) control: </span>Alpha = <span style="color: #BB00BB;">0.05</span> (Bonferroni correction = <span style="color: #BB00BB;">1</span>)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  Sim.SE z.value   p.z sig  Conf.Interval</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> DPI    0.297 (0.031)   9.453 3e-21 *** [0.236, 0.359]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  Sim.SE z.value   p.z sig  Conf.Interval log.PseudoBF10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> DPI    0.297 (0.031)   9.453 3e-21 *** [0.236, 0.359]         43.710</span>
 <span class="r-plt img"><img src="DPI-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu">DPI</span><span class="op">(</span><span class="va">model</span>, y<span class="op">=</span><span class="st">"Ozone"</span>, x<span class="op">=</span><span class="st">"Wind"</span>, seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span>     <span class="co"># DPI &gt; 0</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Sample size: </span>N.valid = 111</span>
@@ -188,8 +189,8 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Significance score method: </span><span style="color: #BBBB00;">Sigmoid(p/alpha) = 1 - tanh(p.xy/alpha/2)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Simulation sample setting: </span>k.random.covs = <span style="color: #BB00BB;">1</span>, n.sim = <span style="color: #BB00BB;">1000</span>, seed = <span style="color: #BB00BB;">1</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">False positive rates (FPR) control: </span>Alpha = <span style="color: #BB00BB;">0.05</span> (Bonferroni correction = <span style="color: #BB00BB;">1</span>)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  Sim.SE z.value    p.z sig  Conf.Interval</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> DPI    0.223 (0.009)  25.296 &lt;1e-99 *** [0.206, 0.240]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  Sim.SE z.value    p.z sig  Conf.Interval log.PseudoBF10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> DPI    0.223 (0.009)  25.296 &lt;1e-99 *** [0.206, 0.240]        319.946</span>
 <span class="r-plt img"><img src="DPI-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu">DPI</span><span class="op">(</span><span class="va">model</span>, y<span class="op">=</span><span class="st">"Wind"</span>, x<span class="op">=</span><span class="st">"Solar.R"</span>, seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span>   <span class="co"># unrelated</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Sample size: </span>N.valid = 111</span>
@@ -200,8 +201,8 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Significance score method: </span><span style="color: #BBBB00;">Sigmoid(p/alpha) = 1 - tanh(p.xy/alpha/2)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Simulation sample setting: </span>k.random.covs = <span style="color: #BB00BB;">1</span>, n.sim = <span style="color: #BB00BB;">1000</span>, seed = <span style="color: #BB00BB;">1</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">False positive rates (FPR) control: </span>Alpha = <span style="color: #BB00BB;">0.05</span> (Bonferroni correction = <span style="color: #BB00BB;">1</span>)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  Sim.SE z.value    p.z sig   Conf.Interval</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> DPI    0.004 (0.005)   0.903 0.3666     [-0.005, 0.014]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  Sim.SE z.value    p.z sig   Conf.Interval log.PseudoBF10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> DPI    0.004 (0.005)   0.903 0.3666     [-0.005, 0.014]         -1.974</span>
 <span class="r-plt img"><img src="DPI-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># or input raw data, test with more random covs</span></span></span>
@@ -215,8 +216,8 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Significance score method: </span><span style="color: #BBBB00;">Sigmoid(p/alpha) = 1 - tanh(p.xy/alpha/2)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Simulation sample setting: </span>k.random.covs = <span style="color: #BB00BB;">10</span>, n.sim = <span style="color: #BB00BB;">1000</span>, seed = <span style="color: #BB00BB;">1</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">False positive rates (FPR) control: </span>Alpha = <span style="color: #BB00BB;">0.05</span> (Bonferroni correction = <span style="color: #BB00BB;">1</span>)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  Sim.SE z.value    p.z sig  Conf.Interval</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> DPI    0.226 (0.096)   2.342 0.0192 *   [0.037, 0.415]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  Sim.SE z.value    p.z sig  Conf.Interval log.PseudoBF10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> DPI    0.226 (0.096)   2.342 0.0192 *   [0.037, 0.415]          0.501</span>
 <span class="r-plt img"><img src="DPI-4.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu">DPI</span><span class="op">(</span>data<span class="op">=</span><span class="va">airquality</span>, y<span class="op">=</span><span class="st">"Ozone"</span>, x<span class="op">=</span><span class="st">"Wind"</span>,</span></span>
 <span class="r-in"><span>    k.cov<span class="op">=</span><span class="fl">10</span>, seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
@@ -228,8 +229,8 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Significance score method: </span><span style="color: #BBBB00;">Sigmoid(p/alpha) = 1 - tanh(p.xy/alpha/2)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Simulation sample setting: </span>k.random.covs = <span style="color: #BB00BB;">10</span>, n.sim = <span style="color: #BB00BB;">1000</span>, seed = <span style="color: #BB00BB;">1</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">False positive rates (FPR) control: </span>Alpha = <span style="color: #BB00BB;">0.05</span> (Bonferroni correction = <span style="color: #BB00BB;">1</span>)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  Sim.SE z.value   p.z sig  Conf.Interval</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> DPI    0.203 (0.027)   7.567 4e-14 *** [0.150, 0.255]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  Sim.SE z.value   p.z sig  Conf.Interval log.PseudoBF10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> DPI    0.203 (0.027)   7.567 4e-14 *** [0.150, 0.255]         27.442</span>
 <span class="r-plt img"><img src="DPI-5.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu">DPI</span><span class="op">(</span>data<span class="op">=</span><span class="va">airquality</span>, y<span class="op">=</span><span class="st">"Wind"</span>, x<span class="op">=</span><span class="st">"Solar.R"</span>,</span></span>
 <span class="r-in"><span>    k.cov<span class="op">=</span><span class="fl">10</span>, seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
@@ -241,11 +242,11 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Significance score method: </span><span style="color: #BBBB00;">Sigmoid(p/alpha) = 1 - tanh(p.xy/alpha/2)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Simulation sample setting: </span>k.random.covs = <span style="color: #BB00BB;">10</span>, n.sim = <span style="color: #BB00BB;">1000</span>, seed = <span style="color: #BB00BB;">1</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">False positive rates (FPR) control: </span>Alpha = <span style="color: #BB00BB;">0.05</span> (Bonferroni correction = <span style="color: #BB00BB;">1</span>)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  Sim.SE z.value    p.z sig   Conf.Interval</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> DPI    0.008 (0.017)   0.492 0.6225     [-0.025, 0.041]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  Sim.SE z.value    p.z sig   Conf.Interval log.PseudoBF10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> DPI    0.008 (0.017)   0.492 0.6225     [-0.025, 0.041]         -2.236</span>
 <span class="r-plt img"><img src="DPI-6.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># or use pseudo Bayes factors for the significance score</span></span></span>
+<span class="r-in"><span><span class="co"># or use pseudo Bayes Factors for the significance score</span></span></span>
 <span class="r-in"><span><span class="co"># (less conservative for insignificant X-Y relationship)</span></span></span>
 <span class="r-in"><span><span class="fu">DPI</span><span class="op">(</span>data<span class="op">=</span><span class="va">airquality</span>, y<span class="op">=</span><span class="st">"Ozone"</span>, x<span class="op">=</span><span class="st">"Solar.R"</span>, k.cov<span class="op">=</span><span class="fl">10</span>,</span></span>
 <span class="r-in"><span>    pseudoBF<span class="op">=</span><span class="cn">TRUE</span>, seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span>  <span class="co"># DPI &gt; 0 (true positive)</span></span></span>
@@ -257,8 +258,8 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Significance score method: </span><span style="color: #BBBB00;">Sigmoid(log(PseudoBF10.xy))</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Simulation sample setting: </span>k.random.covs = <span style="color: #BB00BB;">10</span>, n.sim = <span style="color: #BB00BB;">1000</span>, seed = <span style="color: #BB00BB;">1</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">False positive rates (FPR) control: </span>Alpha = <span style="color: #BB00BB;">0.05</span> (Bonferroni correction = <span style="color: #BB00BB;">1</span>)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  Sim.SE z.value    p.z sig  Conf.Interval</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> DPI    0.178 (0.067)   2.654 0.0080 **  [0.046, 0.309]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  Sim.SE z.value    p.z sig  Conf.Interval log.PseudoBF10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> DPI    0.178 (0.067)   2.654 0.0080 **  [0.046, 0.309]          1.380</span>
 <span class="r-plt img"><img src="DPI-7.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu">DPI</span><span class="op">(</span>data<span class="op">=</span><span class="va">airquality</span>, y<span class="op">=</span><span class="st">"Ozone"</span>, x<span class="op">=</span><span class="st">"Wind"</span>, k.cov<span class="op">=</span><span class="fl">10</span>,</span></span>
 <span class="r-in"><span>    pseudoBF<span class="op">=</span><span class="cn">TRUE</span>, seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span>  <span class="co"># DPI &gt; 0 (true positive)</span></span></span>
@@ -270,8 +271,8 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Significance score method: </span><span style="color: #BBBB00;">Sigmoid(log(PseudoBF10.xy))</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Simulation sample setting: </span>k.random.covs = <span style="color: #BB00BB;">10</span>, n.sim = <span style="color: #BB00BB;">1000</span>, seed = <span style="color: #BB00BB;">1</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">False positive rates (FPR) control: </span>Alpha = <span style="color: #BB00BB;">0.05</span> (Bonferroni correction = <span style="color: #BB00BB;">1</span>)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  Sim.SE z.value   p.z sig  Conf.Interval</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> DPI    0.203 (0.027)   7.567 4e-14 *** [0.150, 0.255]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  Sim.SE z.value   p.z sig  Conf.Interval log.PseudoBF10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> DPI    0.203 (0.027)   7.567 4e-14 *** [0.150, 0.255]         27.443</span>
 <span class="r-plt img"><img src="DPI-8.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu">DPI</span><span class="op">(</span>data<span class="op">=</span><span class="va">airquality</span>, y<span class="op">=</span><span class="st">"Wind"</span>, x<span class="op">=</span><span class="st">"Solar.R"</span>, k.cov<span class="op">=</span><span class="fl">10</span>,</span></span>
 <span class="r-in"><span>    pseudoBF<span class="op">=</span><span class="cn">TRUE</span>, seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span>  <span class="co"># DPI &gt; 0 (false positive!)</span></span></span>
@@ -283,8 +284,8 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Significance score method: </span><span style="color: #BBBB00;">Sigmoid(log(PseudoBF10.xy))</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Simulation sample setting: </span>k.random.covs = <span style="color: #BB00BB;">10</span>, n.sim = <span style="color: #BB00BB;">1000</span>, seed = <span style="color: #BB00BB;">1</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">False positive rates (FPR) control: </span>Alpha = <span style="color: #BB00BB;">0.05</span> (Bonferroni correction = <span style="color: #BB00BB;">1</span>)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  Sim.SE z.value    p.z sig  Conf.Interval</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> DPI    0.032 (0.012)   2.767 0.0057 **  [0.009, 0.055]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  Sim.SE z.value    p.z sig  Conf.Interval log.PseudoBF10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> DPI    0.032 (0.012)   2.767 0.0057 **  [0.009, 0.055]          1.722</span>
 <span class="r-plt img"><img src="DPI-9.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

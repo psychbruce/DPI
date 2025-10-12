@@ -150,9 +150,9 @@
 &amp; = 1 - \tanh \frac{p}{2\alpha}. &amp; \in (0, 1)
 \end{aligned}
 </annotation></semantics></math></p>
-<p><a href="https://doi.org/10.31234/osf.io/egydq" class="external-link">Wagenmakers (2022)</a> also proposed a simple and useful algorithm to compute <em>approximate (pseudo) Bayes factors</em> from <em>p</em> values and sample sizes (see transformation rules below).</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">Pseudo-</mtext><mi>B</mi><msub><mi>F</mi><mn>10</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>p</mi><mo>,</mo><mi>n</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mrow><mo stretchy="true" form="prefix">{</mo><mtable><mtr><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mfrac><mn>1</mn><mrow><mn>3</mn><mi>p</mi><msqrt><mi>n</mi></msqrt></mrow></mfrac></mtd><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mtext mathvariant="normal">if</mtext></mtd><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mn>0</mn><mo>&lt;</mo><mi>p</mi><mo>≤</mo><mn>0.10</mn></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mfrac><mn>1</mn><mrow><mfrac displaystyle="false"><mn>4</mn><mn>3</mn></mfrac><msup><mi>p</mi><mrow><mn>2</mn><mi>/</mi><mn>3</mn></mrow></msup><msqrt><mi>n</mi></msqrt></mrow></mfrac></mtd><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mtext mathvariant="normal">if</mtext></mtd><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mn>0.10</mn><mo>&lt;</mo><mi>p</mi><mo>≤</mo><mn>0.50</mn></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mfrac><mn>1</mn><mrow><msup><mi>p</mi><mrow><mn>1</mn><mi>/</mi><mn>4</mn></mrow></msup><msqrt><mi>n</mi></msqrt></mrow></mfrac></mtd><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mtext mathvariant="normal">if</mtext></mtd><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mn>0.50</mn><mo>&lt;</mo><mi>p</mi><mo>≤</mo><mn>1</mn></mtd></mtr></mtable></mrow></mrow><annotation encoding="application/x-tex">
-\text{Pseudo-}BF_{10}(p, n) =
+<p><a href="https://doi.org/10.31234/osf.io/egydq" class="external-link">Wagenmakers (2022)</a> also proposed a simple and useful algorithm to compute <em>approximate (pseudo) Bayes Factors</em> from <em>p</em> values and sample sizes (see transformation rules below).</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mtext mathvariant="normal">PseudoBF</mtext><mn>10</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>p</mi><mo>,</mo><mi>n</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mrow><mo stretchy="true" form="prefix">{</mo><mtable><mtr><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mfrac><mn>1</mn><mrow><mn>3</mn><mi>p</mi><msqrt><mi>n</mi></msqrt></mrow></mfrac></mtd><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mtext mathvariant="normal">if</mtext></mtd><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mn>0</mn><mo>&lt;</mo><mi>p</mi><mo>≤</mo><mn>0.10</mn></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mfrac><mn>1</mn><mrow><mfrac displaystyle="false"><mn>4</mn><mn>3</mn></mfrac><msup><mi>p</mi><mrow><mn>2</mn><mi>/</mi><mn>3</mn></mrow></msup><msqrt><mi>n</mi></msqrt></mrow></mfrac></mtd><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mtext mathvariant="normal">if</mtext></mtd><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mn>0.10</mn><mo>&lt;</mo><mi>p</mi><mo>≤</mo><mn>0.50</mn></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mfrac><mn>1</mn><mrow><msup><mi>p</mi><mrow><mn>1</mn><mi>/</mi><mn>4</mn></mrow></msup><msqrt><mi>n</mi></msqrt></mrow></mfrac></mtd><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mtext mathvariant="normal">if</mtext></mtd><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mn>0.50</mn><mo>&lt;</mo><mi>p</mi><mo>≤</mo><mn>1</mn></mtd></mtr></mtable></mrow></mrow><annotation encoding="application/x-tex">
+\text{PseudoBF}_{10}(p, n) =
 \left\{
 \begin{aligned}
 &amp; \frac{1}{3 p \sqrt n} &amp;&amp; \text{if} &amp;&amp; 0 &lt; p \le 0.10 \\
@@ -161,13 +161,13 @@
 \end{aligned}
 \right.
 </annotation></semantics></math></p>
-<p>Below we show that normalized penalty scores <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">Sigmoid</mtext><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><mi>p</mi><mi>α</mi></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\text{Sigmoid}(\frac{p}{\alpha})</annotation></semantics></math> and normalized log pseudo Bayes factors <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">sigmoid</mtext><mrow><mo stretchy="true" form="prefix">(</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>P</mi><mi>s</mi><mi>e</mi><mi>u</mi><mi>d</mi><mi>o</mi><mi>B</mi><msub><mi>F</mi><mn>10</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\text{sigmoid}(\log(PseudoBF_{10}))</annotation></semantics></math> have comparable effects in penalizing insignificant <em>p</em> values. However, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">Sigmoid</mtext><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><mi>p</mi><mi>α</mi></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\text{Sigmoid}(\frac{p}{\alpha})</annotation></semantics></math> indeed makes stronger penalties for <em>p</em> values when <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo>&gt;</mo><mi>α</mi></mrow><annotation encoding="application/x-tex">p &gt; \alpha</annotation></semantics></math> by restricting the penalty scores closer to 0, and it also makes straightforward both the specification of a more conservative α level and the Bonferroni correction of <em>p</em> values for multiple pairwise DPI tests.</p>
+<p>Below we show that normalized penalty scores <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">Sigmoid</mtext><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><mi>p</mi><mi>α</mi></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\text{Sigmoid}(\frac{p}{\alpha})</annotation></semantics></math> and normalized log pseudo Bayes Factors <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">sigmoid</mtext><mrow><mo stretchy="true" form="prefix">(</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mtext mathvariant="normal">PseudoBF</mtext><mn>10</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\text{sigmoid}(\log(\text{PseudoBF}_{10}))</annotation></semantics></math> have comparable effects in penalizing insignificant <em>p</em> values. However, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">Sigmoid</mtext><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><mi>p</mi><mi>α</mi></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\text{Sigmoid}(\frac{p}{\alpha})</annotation></semantics></math> indeed makes stronger penalties for <em>p</em> values when <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo>&gt;</mo><mi>α</mi></mrow><annotation encoding="application/x-tex">p &gt; \alpha</annotation></semantics></math> by restricting the penalty scores closer to 0, and it also makes straightforward both the specification of a more conservative α level and the Bonferroni correction of <em>p</em> values for multiple pairwise DPI tests.</p>
 <div class="section level5">
-<h5 id="table-transformation-from-p-values-to-normalized-penalty-scores-and-pseudo-bayes-factors">Table. Transformation from <em>p</em> values to normalized penalty scores and pseudo Bayes factors.<a class="anchor" aria-label="anchor" href="#table-transformation-from-p-values-to-normalized-penalty-scores-and-pseudo-bayes-factors"></a>
+<h5 id="table-transformation-from-p-values-to-normalized-penalty-scores-and-pseudo-bayes-factors">Table. Transformation from <em>p</em> values to normalized penalty scores and pseudo Bayes Factors.<a class="anchor" aria-label="anchor" href="#table-transformation-from-p-values-to-normalized-penalty-scores-and-pseudo-bayes-factors"></a>
 </h5>
 <table style="width:98%;" class="table">
 <colgroup>
-<col width="8%">
+<col width="9%">
 <col width="26%">
 <col width="26%">
 <col width="18%">
@@ -182,11 +182,11 @@
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">Sigmoid</mtext><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><mi>p</mi><mi>α</mi></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\text{Sigmoid}(\frac{p}{\alpha})</annotation></semantics></math><br>
 (α = 0.01)</th>
 <th>
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">Pseudo-</mtext><mi>B</mi><msub><mi>F</mi><mn>10</mn></msub></mrow><annotation encoding="application/x-tex">\text{Pseudo-}BF_{10}</annotation></semantics></math><br>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mtext mathvariant="normal">PseudoBF</mtext><mn>10</mn></msub><annotation encoding="application/x-tex">\text{PseudoBF}_{10}</annotation></semantics></math><br>
 (<em>n</em> = 100)<br>
 [sigmoid(logBF)]</th>
 <th>
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">Pseudo-</mtext><mi>B</mi><msub><mi>F</mi><mn>10</mn></msub></mrow><annotation encoding="application/x-tex">\text{Pseudo-}BF_{10}</annotation></semantics></math><br>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mtext mathvariant="normal">PseudoBF</mtext><mn>10</mn></msub><annotation encoding="application/x-tex">\text{PseudoBF}_{10}</annotation></semantics></math><br>
 (<em>n</em> = 1000)<br>
 [sigmoid(logBF)]</th>
 </tr></thead>
@@ -303,16 +303,26 @@
 <li>
 <p>Network analysis functions</p>
 <ul>
-<li><p><code><a href="reference/cor_net.html">cor_net()</a></code>: Correlation and partial correlation networks.</p></li>
-<li><p><code><a href="reference/BNs_dag.html">BNs_dag()</a></code>: Directed acyclic graphs (DAGs) via Bayesian networks (BNs).</p></li>
+<li>
+<code><a href="reference/cor_net.html">cor_net()</a></code>: Correlation and partial correlation networks.</li>
+<li>
+<code><a href="reference/BNs_dag.html">BNs_dag()</a></code>: Directed acyclic graphs (DAGs) via Bayesian networks (BNs).</li>
 </ul>
 </li>
 <li>
 <p>Data simulation utility functions</p>
 <ul>
+<li>
+<code><a href="reference/sim_data.html">sim_data()</a></code>: Simulate data from a multivariate normal distribution.</li>
+<li>
+<code><a href="reference/sim_data_exp.html">sim_data_exp()</a></code>: Simulate experiment-like data with <em>independent</em> binary Xs.</li>
+</ul>
+</li>
+<li>
+<p>Miscellaneous functions</p>
+<ul>
 <li><p><code><a href="reference/cor_matrix.html">cor_matrix()</a></code>: Produce a symmetric correlation matrix from values.</p></li>
-<li><p><code><a href="reference/sim_data.html">sim_data()</a></code>: Simulate data from a multivariate normal distribution.</p></li>
-<li><p><code><a href="reference/sim_data_exp.html">sim_data_exp()</a></code>: Simulate experiment-like data with <em>independent</em> binary Xs.</p></li>
+<li><p><code><a href="reference/p_to_bf.html">p_to_bf()</a></code>: Convert <em>p</em> values to pseudo Bayes Factors (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mtext mathvariant="normal">PseudoBF</mtext><mn>10</mn></msub><annotation encoding="application/x-tex">\text{PseudoBF}_{10}</annotation></semantics></math>).</p></li>
 </ul>
 </li>
 </ul>

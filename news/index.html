@@ -39,11 +39,13 @@
 <ul><li>
 <code>bonf</code>: Bonferroni correction to control for false positive rates among multiple pairwise DPI tests.</li>
 <li>
-<code>pseudoBF</code>: Use normalized pseudo Bayes factors <code>sigmoid(log(PseudoBF10))</code> as the Significance score (0~1). Pseudo Bayes factors are computed using the transformation rules proposed by Wagenmakers (2022) <a href="https://doi.org/10.31234/osf.io/egydq" class="external-link uri">https://doi.org/10.31234/osf.io/egydq</a>.</li>
+<code>pseudoBF</code>: Use normalized pseudo Bayes Factors <code>sigmoid(log(PseudoBF10))</code> as the Significance score (0~1). Pseudo Bayes Factors are computed using the transformation rules proposed by Wagenmakers (2022) <a href="https://doi.org/10.31234/osf.io/egydq" class="external-link uri">https://doi.org/10.31234/osf.io/egydq</a>.</li>
 </ul></li>
 <li>Added S3 methods <code><a href="../reference/S3method.network.html">plot.cor.net()</a></code>, <code><a href="../reference/S3method.network.html">plot.bns.dag()</a></code>, and <code><a href="../reference/S3method.network.html">plot.dpi.dag()</a></code> that can transform <code>qgraph</code> base-plot objects into <code>ggplot</code> objects for more stable and flexible visualization.</li>
+<li>Added <code><a href="../reference/p_to_bf.html">p_to_bf()</a></code>: Convert <em>p</em> values to pseudo Bayes Factors (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mtext mathvariant="normal">PseudoBF</mtext><mn>10</mn></msub><annotation encoding="application/x-tex">\text{PseudoBF}_{10}</annotation></semantics></math>).</li>
 <li>Renamed <code>cor_network()</code> to <code><a href="../reference/cor_net.html">cor_net()</a></code>, <code>dag_network()</code> to <code><a href="../reference/BNs_dag.html">BNs_dag()</a></code>, and <code>matrix_cor()</code> to <code><a href="../reference/cor_matrix.html">cor_matrix()</a></code>.</li>
 <li>Fixed <code><a href="../reference/cor_net.html">cor_net()</a></code> to return the exactly correct <em>p</em> values of (partial) correlation coefficients.</li>
+<li>Improved output information in console and plot.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2025.9" id="dpi-20259">DPI 2025.9<a class="anchor" aria-label="anchor" href="#dpi-20259"></a></h2><p class="text-muted">CRAN release: 2025-09-20</p>
