@@ -58,7 +58,7 @@ All steps have been compiled into the functions `DPI()` and `DPI_curve()`. See t
 
 #### Step 1: Relative Endogeneity as Direction Score
 
-Define $\text{Direction}_{X \rightarrow Y}$ as *relative endogeneity* (relative dependence) of $Y$ vs. $X$ in a given variable set involving all possible confounders $Covs$:
+Define $\text{Direction}_{X \rightarrow Y}$ as ***relative endogeneity*** (relative dependence) of $Y$ vs. $X$ in a given variable set involving all possible confounders $Covs$:
 
 $$
 \begin{aligned}
@@ -69,11 +69,11 @@ $$
 \end{aligned}
 $$
 
-It uses $\text{Delta}(R^2)$ to test whether $Y$ (outcome), compared to $X$ (predictor), can be *more strongly predicted* by all $m$ observable control variables (included in a given sample) and $k$ unobservable random covariates (randomly generated in simulation samples, as specified by `k.cov` in the `DPI()` function). A higher $R^2$ indicates *higher dependence* (i.e., *higher endogeneity*) in a given variable set.
+The $\text{Delta}(R^2)$ endogeneity score aims to test whether $Y$ (outcome), compared to $X$ (predictor), can be *more strongly predicted* by all $m$ observable control variables (included in a given sample) and $k$ unobservable random covariates (randomly generated in simulation samples, as specified by `k.cov` in the `DPI()` function). A higher $R^2$ indicates *higher dependence* (i.e., *higher endogeneity*) in a given variable set.
 
 #### Step 2: Normalized Penalty as Significance Score
 
-Define $\text{Sigmoid}(\frac{p}{\alpha})$ as *normalized penalty* for insignificance of the partial relationship between $X$ and $Y$ when controlling for all possible confounders $Covs$:
+Define $\text{Sigmoid}(\frac{p}{\alpha})$ as ***normalized penalty*** for insignificance of the partial relationship between $X$ and $Y$ when controlling for all possible confounders $Covs$:
 
 $$
 \begin{aligned}
@@ -83,7 +83,9 @@ $$
 \end{aligned}
 $$
 
-The $\text{Sigmoid}(\frac{p}{\alpha})$ can *penalize* insignificant ($p > \alpha$) partial relationship between $X$ and $Y$. Partial correlation $r_{partial}$ always has the equivalent $t$ test and the same $p$ value as partial regression coefficient $\beta_{partial}$ between $Y$ and $X$. A higher $\text{Sigmoid}(\frac{p}{\alpha})$ indicates a more likely (less spurious) partial relationship when controlling for all possible confounders. Be careful that it does not suggest the strength or effect size of relationships. It is used mainly for penalizing insignificant relationships.
+The $\text{Sigmoid}(\frac{p}{\alpha})$ penalty score aims to *penalize* insignificant ($p > \alpha$) partial relationship between $X$ and $Y$. Partial correlation $r_{partial}$ always has the equivalent $t$ test and the same $p$ value as partial regression coefficient $\beta_{partial}$ between $Y$ and $X$. A higher $\text{Sigmoid}(\frac{p}{\alpha})$ indicates a more likely (less spurious) partial relationship when controlling for all possible confounders. Be careful that it does not suggest the strength or effect size of relationships. It is used mainly for penalizing insignificant partial relationships.
+
+To control for false positive rates, we suggest users either setting a lower $\alpha$ level (`alpha=...` in `DPI()` and related functions) or using Bonferroni correction for multiple pairwise tests (`bonf=...` in `DPI()` and related functions).
 
 Notes on transformation among $\tanh(x)$, $\text{sigmoid}(x)$, and $\text{Sigmoid}(\frac{p}{\alpha})$:
 
@@ -100,39 +102,7 @@ $$
 \end{aligned}
 $$
 
-+-----------+-------------------------------------+-------------------------------------+--------------------------------+--------------------------------+
-| $p$ value | $\text{Sigmoid}(\frac{p}{\alpha})$\ | $\text{Sigmoid}(\frac{p}{\alpha})$\ | $\text{Pseudo-}BF_{10}$\       | $\text{Pseudo-}BF_{10}$\       |
-|           | ($\alpha = 0.05$)                   | ($\alpha = 0.01$)                   | ($n=100$)\                     | ($n=1000$)\                    |
-|           |                                     |                                     | [$\text{sigmoid}(logBF_{10})$] | [$\text{sigmoid}(logBF_{10})$] |
-+===========+=====================================+=====================================+================================+================================+
-| (\~0)     | (\~1)                               | (\~1)                               | ($+\infty$) [\~1]              | ($+\infty$) [\~1]              |
-+-----------+-------------------------------------+-------------------------------------+--------------------------------+--------------------------------+
-| 0.0001    | 0.999                               | 0.995                               | 333.333 [0.997]                | 105.409 [0.991]                |
-+-----------+-------------------------------------+-------------------------------------+--------------------------------+--------------------------------+
-| 0.001     | 0.990                               | 0.950                               | 33.333 [0.971]                 | 10.541 [0.913]                 |
-+-----------+-------------------------------------+-------------------------------------+--------------------------------+--------------------------------+
-| 0.01      | 0.900                               | 0.538 ($\frac{p}{\alpha}$ = 1)      | 3.333 [0.769]                  | 1.054 [0.513]                  |
-+-----------+-------------------------------------+-------------------------------------+--------------------------------+--------------------------------+
-| 0.02      | 0.803                               | 0.238                               | 1.667 [0.625]                  | 0.527 [0.345]                  |
-+-----------+-------------------------------------+-------------------------------------+--------------------------------+--------------------------------+
-| 0.03      | 0.709                               | 0.095                               | 1.111 [0.526]                  | 0.351 [0.260]                  |
-+-----------+-------------------------------------+-------------------------------------+--------------------------------+--------------------------------+
-| 0.04      | 0.620                               | 0.036                               | 0.833 [0.455]                  | 0.264 [0.209]                  |
-+-----------+-------------------------------------+-------------------------------------+--------------------------------+--------------------------------+
-| 0.05      | 0.538 ($\frac{p}{\alpha}$ = 1)      | 0.013                               | 0.667 [0.400]                  | 0.211 [0.174]                  |
-+-----------+-------------------------------------+-------------------------------------+--------------------------------+--------------------------------+
-| 0.10      | 0.238                               | 0.00009                             | 0.333 [0.250]                  | 0.105 [0.095]                  |
-+-----------+-------------------------------------+-------------------------------------+--------------------------------+--------------------------------+
-| 0.20      | 0.036                               | 0.000000004                         | 0.219 [0.180]                  | 0.069 [0.065]                  |
-+-----------+-------------------------------------+-------------------------------------+--------------------------------+--------------------------------+
-| 0.50      | 0.00009                             | 0                                   | 0.119 [0.106]                  | 0.038 [0.036]                  |
-+-----------+-------------------------------------+-------------------------------------+--------------------------------+--------------------------------+
-| 0.80      | 0.0000002                           | 0                                   | 0.106 [0.096]                  | 0.033 [0.032]                  |
-+-----------+-------------------------------------+-------------------------------------+--------------------------------+--------------------------------+
-| 1         | 0.000000004                         | 0                                   | 0.100 [0.091]                  | 0.032 [0.031]                  |
-+-----------+-------------------------------------+-------------------------------------+--------------------------------+--------------------------------+
-
-[Wagenmakers (2022)](https://doi.org/10.31234/osf.io/egydq) proposed a simple and useful algorithm to compute *approximate (pseudo) Bayes Factors* from *p* values and sample sizes (see transformation rules below). Here we show that normalized significance $\text{Sigmoid}(\frac{p}{\alpha})$ and normalized log Bayes Factors $\text{sigmoid}(logBF_{10})$ have roughly equivalent effects in penalizing insignificant *p* values, but $\text{Sigmoid}(\frac{p}{\alpha})$ makes stronger penalties for *p* values when $p > \alpha$ by restricting them closer to 0.
+[Wagenmakers (2022)](https://doi.org/10.31234/osf.io/egydq) also proposed a simple and useful algorithm to compute *approximate (pseudo) Bayes factors* from *p* values and sample sizes (see transformation rules below). Here we show that normalized penalty scores $\text{Sigmoid}(\frac{p}{\alpha})$ and normalized log pseudo Bayes factors $\text{sigmoid}(\log(PseudoBF_{10}))$ have comparable effects in penalizing insignificant *p* values. However, $\text{Sigmoid}(\frac{p}{\alpha})$ indeed makes stronger penalties for *p* values when $p > \alpha$ by restricting the penalty scores closer to 0, and it also makes straightforward both the specification of a more conservative α and the Bonferroni correction of *p* values for multiple pairwise DPI tests.
 
 $$
 \text{Pseudo-}BF_{10}(p, n) =
@@ -145,7 +115,39 @@ $$
 \right.
 $$
 
-To control for false positive rates, we suggest users either setting a lower $\alpha$ level (`alpha=...` in `DPI()` and related functions) or using Bonferroni correction for multiple pairwise tests (`bonf=...` in `DPI()` and related functions).
+##### Table. Transformation from *p* values to normalized penalty scores and pseudo Bayes factors.
+
++------------+-------------------------------------+-------------------------------------+--------------------------+--------------------------+
+| $p$        | $\text{Sigmoid}(\frac{p}{\alpha})$\ | $\text{Sigmoid}(\frac{p}{\alpha})$\ | $\text{Pseudo-}BF_{10}$\ | $\text{Pseudo-}BF_{10}$\ |
+|            | (α = 0.05)                          | (α = 0.01)                          | (*n* = 100)\             | (*n* = 1000)\            |
+|            |                                     |                                     | [sigmoid(logBF)]         | [sigmoid(logBF)]         |
++============+=====================================+=====================================+==========================+==========================+
+| (\~0)      | (\~1)                               | (\~1)                               | ($+\infty$) [\~1]        | ($+\infty$) [\~1]        |
++------------+-------------------------------------+-------------------------------------+--------------------------+--------------------------+
+| 0.0001     | 0.999                               | 0.995                               | 333.333 [0.997]          | 105.409 [0.991]          |
++------------+-------------------------------------+-------------------------------------+--------------------------+--------------------------+
+| 0.001      | 0.990                               | 0.950                               | 33.333 [0.971]           | 10.541 [0.913]           |
++------------+-------------------------------------+-------------------------------------+--------------------------+--------------------------+
+| 0.01       | 0.900                               | 0.538 ($\frac{p}{\alpha}$ = 1)      | 3.333 [0.769]            | 1.054 [0.513]            |
++------------+-------------------------------------+-------------------------------------+--------------------------+--------------------------+
+| 0.02       | 0.803                               | 0.238                               | 1.667 [0.625]            | 0.527 [0.345]            |
++------------+-------------------------------------+-------------------------------------+--------------------------+--------------------------+
+| 0.03       | 0.709                               | 0.095                               | 1.111 [0.526]            | 0.351 [0.260]            |
++------------+-------------------------------------+-------------------------------------+--------------------------+--------------------------+
+| 0.04       | 0.620                               | 0.036                               | 0.833 [0.455]            | 0.264 [0.209]            |
++------------+-------------------------------------+-------------------------------------+--------------------------+--------------------------+
+| 0.05       | 0.538 ($\frac{p}{\alpha}$ = 1)      | 0.013                               | 0.667 [0.400]            | 0.211 [0.174]            |
++------------+-------------------------------------+-------------------------------------+--------------------------+--------------------------+
+| 0.10       | 0.238                               | 0.00009                             | 0.333 [0.250]            | 0.105 [0.095]            |
++------------+-------------------------------------+-------------------------------------+--------------------------+--------------------------+
+| 0.20       | 0.036                               | 0.000000004                         | 0.219 [0.180]            | 0.069 [0.065]            |
++------------+-------------------------------------+-------------------------------------+--------------------------+--------------------------+
+| 0.50       | 0.00009                             | 0                                   | 0.119 [0.106]            | 0.038 [0.036]            |
++------------+-------------------------------------+-------------------------------------+--------------------------+--------------------------+
+| 0.80       | 0.0000002                           | 0                                   | 0.106 [0.096]            | 0.033 [0.032]            |
++------------+-------------------------------------+-------------------------------------+--------------------------+--------------------------+
+| 1          | 0.000000004                         | 0                                   | 0.100 [0.091]            | 0.032 [0.031]            |
++------------+-------------------------------------+-------------------------------------+--------------------------+--------------------------+
 
 #### Step 3: Data Simulation
 
