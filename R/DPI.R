@@ -6,7 +6,7 @@
 
 
 #' @import ggplot2
-#' @importFrom stats var sd cor na.omit
+#' @importFrom stats nobs var sd cor na.omit plogis
 #' @importFrom stats pt pnorm rnorm rbinom quantile qnorm
 #' @importFrom stats lm model.frame update coef df.residual
 #' @importFrom glue glue glue_col
@@ -277,6 +277,35 @@ r_to_p = function(r, df) {
 }
 
 
+p_to_bf = function(p, n, log=FALSE, label=FALSE) {
+  # if(p <= 0.1) {
+  #   logBF = log(3 * p * sqrt(n))
+  # } else if(p <= 0.5) {
+  #   # BF = (4 / 3) * p ^ (2 / 3) * sqrt(n)
+  #   logBF = log(p) * (2 / 3) + log(sqrt(n) * (4 / 3))
+  # } else {
+  #   # BF = p ^ (1 / 4) * sqrt(n)
+  #   logBF = log(p) / 4 + log(sqrt(n))
+  # }
+  logBF =
+    ifelse(
+      p <= 0.1,
+      log(3 * p * sqrt(n)),
+      ifelse(
+        p <= 0.5,
+        log(p) * (2 / 3) + log(sqrt(n) * (4 / 3)),
+        log(p) / 4 + log(sqrt(n))
+      )
+    ) * -1  # log(BF10)
+  if(label)
+    names(logBF) = paste0("(p = ", p, ", n = ", n, ")")
+  if(log)
+    return(logBF)
+  else
+    return(exp(logBF))
+}
+
+
 formula_paste = function(formula) {
   paste(formula[2], formula[1], formula[3], collapse=" ")
 }
@@ -353,13 +382,16 @@ NULL
 #' - If `k.cov` > 0, the raw data (without bootstrapping) are used, with `k.cov` random variables appended, for simulation.
 #' - If `k.cov` = 0 (not suggested), bootstrap samples (resampling with replacement) are used for simulation.
 #' @param n.sim Number of simulation samples. Defaults to `1000`.
-#' @param alpha Significance level for computing the `Strength` score (0~1) based on *p* value of partial correlation between `X` and `Y`. Defaults to `0.05`.
+#' @param alpha Significance level for computing the `Significance` score (0~1) based on *p* value of partial correlation between `X` and `Y`. Defaults to `0.05`.
 #' - `Direction = R2.Y - R2.X`
-#' - `Strength = 1 - tanh(p.beta.xy/alpha/2)`
+#' - `Significance = 1 - tanh(p.beta.xy/alpha/2)`
 #' @param bonf Bonferroni correction to control for false positive rates: `alpha` is divided by, and *p* values are multiplied by, the number of comparisons.
 #' - Defaults to `FALSE`: No correction, suitable if you plan to test only one pair of variables.
 #' - `TRUE`: Using `k * (k - 1) / 2` (number of all combinations of variable pairs) where `k = length(data)`.
 #' - A user-specified number of comparisons.
+#' @param pseudoBF Use normalized pseudo Bayes factors `sigmoid(log(PseudoBF10))` alternatively as the `Significance` score (0~1). Pseudo Bayes factors are computed from *p* value of X-Y partial relationship and total sample size, using the transformation rules proposed by Wagenmakers (2022) <https://doi.org/10.31234/osf.io/egydq>.
+#'
+#' Defaults to `FALSE` because it makes less penalties for insignificant partial relationships between `X` and `Y`, see Examples in [DPI()] and [online documentation](https://psychbruce.github.io/DPI/#step-2-normalized-penalty-as-significance-score).
 #' @param seed Random seed for replicable results. Defaults to `NULL`.
 #' @param progress Show progress bar. Defaults to `FALSE` (if `n.sim` < 5000).
 #' @param file File name of saved plot (`".png"` or `".pdf"`).
@@ -368,9 +400,13 @@ NULL
 #'
 #' @return
 #' Return a data.frame of simulation results:
-#' - `DPI`
-#'   - `= Direction * Strength`
+#' - `DPI = Direction * Significance`
 #'   - `= (R2.Y - R2.X) * (1 - tanh(p.beta.xy/alpha/2))`
+#'     - if `pseudoBF=FALSE` (default, suggested)
+#'     - more conservative estimates
+#'   - `= (R2.Y - R2.X) * plogis(log(pseudo.BF.xy))`
+#'     - if `pseudoBF=TRUE`
+#'     - less conservative for insignificant X-Y relationship
 #' - `delta.R2`
 #'   - `R2.Y - R2.X`
 #' - `R2.Y`
@@ -385,6 +421,10 @@ NULL
 #'   - residual degree of freedom (df) of `t.beta.xy`
 #' - `r.partial.xy`
 #'   - partial correlation (always with the same *t* value as `t.beta.xy`) between X and Y when controlling for all other covariates
+#' - `sigmoid.p.xy`
+#'   - sigmoid *p* value as `1 - tanh(p.beta.xy/alpha/2)`
+#' - `pseudo.BF.xy`
+#'   - pseudo Bayes factors (\eqn{BF_{10}}) computed from *p* value `p.beta.xy` and sample size `nobs(model)` (see [Wagenmakers, 2022](https://doi.org/10.31234/osf.io/egydq))
 #'
 #' @seealso
 #' [S3method.dpi]
@@ -404,10 +444,22 @@ NULL
 #' DPI(model, y="Ozone", x="Wind", seed=1)     # DPI > 0
 #' DPI(model, y="Wind", x="Solar.R", seed=1)   # unrelated
 #'
-#' # input raw data, test with more random covs
-#' DPI(data=airquality, y="Ozone", x="Solar.R", k.cov=10, seed=1)
-#' DPI(data=airquality, y="Ozone", x="Wind", k.cov=10, seed=1)
-#' DPI(data=airquality, y="Wind", x="Solar.R", k.cov=10, seed=1)
+#' # or input raw data, test with more random covs
+#' DPI(data=airquality, y="Ozone", x="Solar.R",
+#'     k.cov=10, seed=1)
+#' DPI(data=airquality, y="Ozone", x="Wind",
+#'     k.cov=10, seed=1)
+#' DPI(data=airquality, y="Wind", x="Solar.R",
+#'     k.cov=10, seed=1)
+#'
+#' # or use pseudo Bayes factors for the significance score
+#' # (less conservative for insignificant X-Y relationship)
+#' DPI(data=airquality, y="Ozone", x="Solar.R", k.cov=10,
+#'     pseudoBF=TRUE, seed=1)  # DPI > 0 (true positive)
+#' DPI(data=airquality, y="Ozone", x="Wind", k.cov=10,
+#'     pseudoBF=TRUE, seed=1)  # DPI > 0 (true positive)
+#' DPI(data=airquality, y="Wind", x="Solar.R", k.cov=10,
+#'     pseudoBF=TRUE, seed=1)  # DPI > 0 (false positive!)
 #' }
 #' @export
 DPI = function(
@@ -417,6 +469,7 @@ DPI = function(
     n.sim = 1000,
     alpha = 0.05,
     bonf = FALSE,
+    pseudoBF = FALSE,
     seed = NULL,
     progress,
     file = NULL,
@@ -443,22 +496,20 @@ DPI = function(
     data = model.frame(model)  # new data.frame (na.omit)
   }
 
+  nobs = nobs(model)
   formula = formula(model)
   formula.y = update(formula, glue("{y} ~ {x} + . - {y}"))
   formula.x = update(formula, glue("{x} ~ {y} + . - {x}"))
 
-  if(is.numeric(bonf)) {
-    alpha = alpha / bonf
-  } else {
-    if(bonf) {
-      k = length(data)
-      bonf = k * (k - 1) / 2
-      alpha = alpha / bonf
-    } else {
+  k = length(data)
+  if(is.logical(bonf)) {
+    if(bonf)
+      bonf = k * (k - 1) / 2  # all combinations
+    else
       bonf = 1
-    }
   }
   bonf = as.integer(bonf)
+  alpha = alpha / bonf
 
   op = options()
   options(cli.progress_bar_style="bar")
@@ -510,7 +561,7 @@ DPI = function(
     t.xy = coef(summ1)[2, "t value"]
     p.xy = coef(summ1)[2, "Pr(>|t|)"]
     df = df.residual(model1)
-    rp.xy = t.xy / sqrt(t.xy^2 + df)  # partial r_xy
+    rp.xy = t.xy / sqrt(t.xy^2 + df)  # partial r.xy
     ## X ~ Y
     model2 = update(model, formula=glue(
       "{x} ~ {y} + . {covs} - {x}"
@@ -520,23 +571,25 @@ DPI = function(
     ## Return results from one random sample
     dpi = data.frame(
       # DPI = t.xy^2 * (R2.Y - R2.X),
-      DPI = (R2.Y - R2.X) * (1 - tanh(p.xy/alpha/2)),
-      # using plogis: 2 * (1 - plogis(p, scale=alpha))
-      # using sigmoid: 2 * ( 1 - 1 / (1 + exp(-p/alpha)) )
+      DPI = ifelse(
+        pseudoBF == FALSE,
+        (R2.Y - R2.X) * (1 - tanh(p.xy/alpha/2)),
+        (R2.Y - R2.X) * plogis(p_to_bf(p.xy, nobs, log=TRUE))
+        ),
       # plogis(): logistic distribution function, "inverse logit"
       #   - plogis() is also a rescaled hyperbolic tangent:
       #       plogis(x) = sigmoid(x) = 1 / (1 + exp(-x))
       #         = (1 + tanh(x/2)) / 2
       #       plogis(x, scale) = (1 + tanh(x/scale/2)) / 2
-      # p = seq(0, 1, 0.01)
-      # plot(p, 1 - tanh(p/0.05))
       delta.R2 = R2.Y - R2.X,
       R2.Y,
       R2.X,
       t.beta.xy = t.xy,
       p.beta.xy = p.xy,
       df.beta.xy = df,
-      r.partial.xy = rp.xy
+      r.partial.xy = rp.xy,
+      sigmoid.p.xy = 1 - tanh(p.xy/alpha/2),
+      pseudo.BF.xy = p_to_bf(p.xy, nobs)
     )
     if(progress)
       cli::cli_progress_update(.envir=parent.frame(2))
@@ -547,7 +600,7 @@ DPI = function(
   gc()
   dpi = do.call("rbind", dpi)
   class(dpi) = c("dpi", "data.frame")
-  attr(dpi, "N.valid") = nrow(data)
+  attr(dpi, "N.valid") = nobs
   attr(dpi, "df") = dpi$df.beta.xy[1]
   attr(dpi, "formula.y") = formula.y
   attr(dpi, "formula.x") = formula.x
@@ -557,6 +610,7 @@ DPI = function(
   attr(dpi, "n.sim") = n.sim
   attr(dpi, "alpha") = alpha
   attr(dpi, "bonferroni") = bonf
+  attr(dpi, "pseudoBF") = pseudoBF
   attr(dpi, "seed") = ifelse(is.null(seed), "NULL", seed)
   attr(dpi, "plot.params") = list(file = file,
                                   width = width,
@@ -569,13 +623,17 @@ DPI = function(
 #' @rdname S3method.dpi
 #' @export
 summary.dpi = function(object, ...) {
-  ## DPI
+  ## Hyperparameters
   alpha = attr(object, "alpha")
   bonf = attr(object, "bonferroni")
+
+  ## DPI
   dpi = object$DPI
+  # n.sim = length(dpi)
   mean = mean(dpi, na.rm=TRUE)
   se = sd(dpi, na.rm=TRUE)
   z = mean / se
+  if(is.nan(z)) z = 0  # all values are 0 -> z = NaN
   p.z = min(1, pnorm(abs(z), lower.tail=FALSE) * 2 * bonf)
   # CIs = quantile(dpi, probs=c(0.025, 0.975), na.rm=TRUE)
   CIs = mean + qnorm(c(alpha/2, 1-alpha/2)) * se
@@ -585,6 +643,7 @@ summary.dpi = function(object, ...) {
   dR2.mean = mean(delta.R2, na.rm=TRUE)
   dR2.se = sd(delta.R2, na.rm=TRUE)
   dR2.z = dR2.mean / dR2.se
+  if(is.nan(dR2.z)) dR2.z = 0  # all values are 0 -> z = NaN
   dR2.p.z = min(1, pnorm(abs(dR2.z), lower.tail=FALSE) * 2 * bonf)
   # dR2.CIs = quantile(delta.R2, probs=c(0.025, 0.975), na.rm=TRUE)
   dR2.CIs = dR2.mean + qnorm(c(alpha/2, 1-alpha/2)) * dR2.se
@@ -604,6 +663,7 @@ summary.dpi = function(object, ...) {
       p.z = p.z,
       Sim.LLCI = CIs[1],
       Sim.ULCI = CIs[2],
+      # PseudoBF10 = p_to_bf(p.z, n.sim),
       row.names = "DPI"
     ),
     dR2.summ = data.frame(
@@ -625,6 +685,7 @@ summary.dpi = function(object, ...) {
     dpi = object
   )
   class(dpi.summ) = "summary.dpi"
+  attr(dpi.summ, "pseudoBF") = attr(object, "pseudoBF")
   return(dpi.summ)
 }
 
@@ -633,6 +694,9 @@ summary.dpi = function(object, ...) {
 #' @export
 print.summary.dpi = function(x, digits=3, ...) {
   fmt = paste0("%.", digits, "f")
+  pseudoBF = attr(x, "pseudoBF")
+  sig.method = ifelse(pseudoBF, "Sigmoid(log(PseudoBF10.xy))",
+                      "Sigmoid(p/alpha) = 1 - tanh(p.xy/alpha/2)")
   dpi = x$dpi.summ
   res.dpi = data.frame(
     Estimate = sprintf(fmt, dpi$Estimate),
@@ -644,6 +708,7 @@ print.summary.dpi = function(x, digits=3, ...) {
       "[", sprintf(fmt, dpi$Sim.LLCI),
       ", ", sprintf(fmt, dpi$Sim.ULCI),
       "]"),
+    # Sim.PseudoBF10 = sprintf(fmt, dpi$PseudoBF10),
     row.names = "DPI"
   )
 
@@ -661,11 +726,18 @@ print.summary.dpi = function(x, digits=3, ...) {
     "{.val {attr(x$dpi, 'X')}} (X) -> {.val {attr(x$dpi, 'Y')}} (Y)")
   cli::cli_text(
     cli::col_cyan("Partial correlation: "),
-    "r(partial).XY = {cli::col_yellow({sprintf(fmt, x$r.partial.summ$Estimate)})},
+    "r.partial = {cli::col_yellow({sprintf(fmt, x$r.partial.summ$Estimate)})},
      p = {cli::col_yellow({p.trans(x$r.partial.summ$p.t, 4)})}
-     {cli::col_yellow({sig.trans(x$r.partial.summ$p.t)})}")
+     {cli::col_yellow({sig.trans(x$r.partial.summ$p.t)})}
+     (PseudoBF10 =
+     {cli::col_yellow({
+       sprintf(fmt, p_to_bf(x$r.partial.summ$p.t, attr(x$dpi, 'N.valid')))
+     })})")
   cli::cli_text(
-    cli::col_cyan("Simulation sample settings: "),
+    cli::col_cyan("Significance score method: "),
+    "{cli::col_yellow({sig.method})}")
+  cli::cli_text(
+    cli::col_cyan("Simulation sample setting: "),
     "k.random.covs = {cli::col_magenta({attr(x$dpi, 'k.cov')})},
      n.sim = {cli::col_magenta({attr(x$dpi, 'n.sim')})},
      seed = {cli::col_magenta({attr(x$dpi, 'seed')})}")
@@ -688,6 +760,7 @@ plot.dpi = function(x, file=NULL, width=6, height=4, dpi=500, ...) {
   summ.r = x.summ$r.partial.summ
   r.sig = summ.r$p.t < 0.05
   bonf = attr(x, "bonferroni")
+  pseudoBF = attr(x, "pseudoBF")
   if(is.null(file)) {
     plot.params = attr(x, "plot.params")
     file = plot.params$file
@@ -696,14 +769,26 @@ plot.dpi = function(x, file=NULL, width=6, height=4, dpi=500, ...) {
     dpi = plot.params$dpi
   }
 
-  expr.x = eval(parse(text=glue("
-    expression(
-      paste(
-        'Directed Prediction Index: ',
-        DPI[X %->% Y] == (italic(R)[italic(Y)]^2 - italic(R)[italic(X)]^2) %.% (1 - plain(tanh) * frac(italic(p)[paste(italic(XY), '|', italic(Covs))], 2 * alpha))
+  if(pseudoBF==FALSE) {
+    expr.x = eval(parse(text=glue("
+      expression(
+        paste(
+          'Directed Prediction Index: ',
+          DPI[X %->% Y] == (italic(R)[italic(Y)]^2 - italic(R)[italic(X)]^2) %.% (1 - plain(tanh) * frac(italic(p)[paste(italic(XY), '|', italic(Covs))], 2 * alpha))
+        )
       )
-    )
-  ")), envir=parent.frame())
+    ")), envir=parent.frame())
+  } else {
+    expr.x = eval(parse(text=glue("
+      expression(
+        paste(
+          'Directed Prediction Index: ',
+          DPI[X %->% Y] == (italic(R)[italic(Y)]^2 - italic(R)[italic(X)]^2) %.% sigmoid(log(italic(BF)[10]^paste(italic(XY), '|', italic(Covs))))
+        )
+      )
+    ")), envir=parent.frame())
+  }
+
 
   expr.title = eval(parse(text=glue("
     expression(
@@ -824,6 +909,7 @@ DPI_curve = function(
     n.sim = 1000,
     alpha = 0.05,
     bonf = FALSE,
+    pseudoBF = FALSE,
     seed = NULL,
     progress,
     file = NULL,
@@ -855,7 +941,7 @@ DPI_curve = function(
   dpi.curve = lapply(k.covs, function(k.cov) {
     dpi = DPI(model, y, x, data,
               k.cov, n.sim,
-              alpha, bonf,
+              alpha, bonf, pseudoBF,
               seed, progress=FALSE)
     dpi.summ = summary(dpi)[["dpi.summ"]]
     # CIs.99 = quantile(dpi$DPI, probs=c(0.005, 0.995), na.rm=TRUE)
@@ -1518,10 +1604,6 @@ bn_to_matrix = function(bn, strength=0.85, direction=0.50) {
 #' @inheritParams DPI_curve
 #' @param data A dataset with at least 3 variables.
 #' @param k.covs An integer vector (e.g., `1:10`) of number of random covariates (simulating potential omitted variables) added to each simulation sample. Defaults to `1`. For details, see [DPI()].
-#' @param bonf Bonferroni correction to control for false positive rates: `alpha` is divided by, and *p* values are multiplied by, the number of comparisons.
-#' - Defaults to `FALSE`: No correction.
-#' - `TRUE`: Using the number of all significant partial *r*s.
-#' - A user-specified number of comparisons.
 #'
 #' @return
 #' Return a data.frame (class `dpi.dag`) of DPI exploration results.
@@ -1570,6 +1652,7 @@ DPI_dag = function(
     n.sim = 1000,
     alpha = 0.05,
     bonf = FALSE,
+    pseudoBF = FALSE,
     seed = NULL,
     progress,
     file = NULL,
@@ -1585,13 +1668,29 @@ DPI_dag = function(
   }
 
   pcor = cor_net(data, "pcor", edge.width.max=1.5)
-  d.pcor = subset(pcor$cor, pval < alpha)[, 1:4]
+  d.pcor = subset(pcor$cor, pcor$cor$pval < alpha)[, 1:4]
   n.pcor = nrow(d.pcor)
 
-  if(is.logical(bonf)) bonf = ifelse(bonf, n.pcor, 1)
+  k = length(data)
+  n = nrow(na.omit(data))
+  if(is.logical(bonf)) {
+    if(bonf)
+      bonf = k * (k - 1) / 2  # all combinations
+    else
+      bonf = 1
+  }
+  bonf = as.integer(bonf)
 
+  sig.method = ifelse(pseudoBF, "Sigmoid(log(PseudoBF10.xy))",
+                      "Sigmoid(p/alpha) = 1 - tanh(p.xy/alpha/2)")
   cli::cli_text(
-    cli::col_cyan("Simulation sample settings: "),
+    cli::col_cyan("Sample size: "),
+    "N.valid = {n}")
+  cli::cli_text(
+    cli::col_cyan("Significance score method: "),
+    "{cli::col_yellow({sig.method})}")
+  cli::cli_text(
+    cli::col_cyan("Simulation sample setting: "),
     "k.covs = {cli::col_magenta({k.covs})},
      n.sim = {cli::col_magenta({n.sim})},
      seed = {cli::col_magenta({seed})}")
@@ -1611,10 +1710,14 @@ DPI_dag = function(
       "r.partial =
        {cli::col_yellow({sprintf('%.3f', r.partial)})},
        p = {cli::col_yellow({p.trans(p.rp)})}
-       {cli::col_yellow({sig.trans(p.rp)})}")
+       {cli::col_yellow({sig.trans(p.rp)})}
+       (PseudoBF10 =
+       {cli::col_yellow({
+         sprintf('%.3f', p_to_bf(p.rp, n))
+       })})")
     DPIs = DPI_curve(x=x, y=y, data=data,
                      k.covs=k.covs, n.sim=n.sim,
-                     alpha=alpha, bonf=bonf,
+                     alpha=alpha, bonf=bonf, pseudoBF=pseudoBF,
                      seed=seed, progress=progress)
     bonf = attr(DPIs, "bonferroni")
     sign = sign(DPIs[1, "z.value"])
@@ -1668,7 +1771,12 @@ plot.dpi.dag = function(
     scale = 1.2,
     ...
 ) {
-  dpi = subset(x$DPI, k.cov==k)
+  if(k %in% x$DPI$k.cov == FALSE)
+    warning(
+      "`k = ", k, "` is not in `x$DPI$k.cov`! ",
+      "Please input another `k`.\n  ",
+      "Partial correlation network, instead of a DAG, is plotted.")
+  dpi = subset(x$DPI, x$DPI$k.cov==k)
   p = x$qgraph
 
   vars = p[["Arguments"]][["labels"]]
@@ -1748,7 +1856,8 @@ print.dpi.dag = function(
   gg = plot(x, k, show.label,
             digits.dpi, color.dpi.insig, scale)
 
-  cli::cli_text("Displaying DAG with DPI algorithm (k.cov = {.val {k}})")
+  if(k %in% x$DPI$k.cov)
+    cli::cli_text("Displaying DAG with DPI algorithm (k.cov = {.val {k}})")
 
   if(is.null(file)) {
     print(gg)

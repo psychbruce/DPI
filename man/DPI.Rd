@@ -13,6 +13,7 @@ DPI(
   n.sim = 1000,
   alpha = 0.05,
   bonf = FALSE,
+  pseudoBF = FALSE,
   seed = NULL,
   progress,
   file = NULL,
@@ -39,10 +40,10 @@ DPI(
 
 \item{n.sim}{Number of simulation samples. Defaults to \code{1000}.}
 
-\item{alpha}{Significance level for computing the \code{Strength} score (0~1) based on \emph{p} value of partial correlation between \code{X} and \code{Y}. Defaults to \code{0.05}.
+\item{alpha}{Significance level for computing the \code{Significance} score (0~1) based on \emph{p} value of partial correlation between \code{X} and \code{Y}. Defaults to \code{0.05}.
 \itemize{
 \item \code{Direction = R2.Y - R2.X}
-\item \code{Strength = 1 - tanh(p.beta.xy/alpha/2)}
+\item \code{Significance = 1 - tanh(p.beta.xy/alpha/2)}
 }}
 
 \item{bonf}{Bonferroni correction to control for false positive rates: \code{alpha} is divided by, and \emph{p} values are multiplied by, the number of comparisons.
@@ -51,6 +52,10 @@ DPI(
 \item \code{TRUE}: Using \code{k * (k - 1) / 2} (number of all combinations of variable pairs) where \code{k = length(data)}.
 \item A user-specified number of comparisons.
 }}
+
+\item{pseudoBF}{Use normalized pseudo Bayes factors \code{sigmoid(log(PseudoBF10))} alternatively as the \code{Significance} score (0~1). Pseudo Bayes factors are computed from \emph{p} value of X-Y partial relationship and total sample size, using the transformation rules proposed by Wagenmakers (2022) \url{https://doi.org/10.31234/osf.io/egydq}.
+
+Defaults to \code{FALSE} because it makes less penalties for insignificant partial relationships between \code{X} and \code{Y}, see Examples in \code{\link[=DPI]{DPI()}} and \href{https://psychbruce.github.io/DPI/#step-2-normalized-penalty-as-significance-score}{online documentation}.}
 
 \item{seed}{Random seed for replicable results. Defaults to \code{NULL}.}
 
@@ -65,10 +70,18 @@ DPI(
 \value{
 Return a data.frame of simulation results:
 \itemize{
-\item \code{DPI}
+\item \code{DPI = Direction * Significance}
 \itemize{
-\item \verb{= Direction * Strength}
 \item \verb{= (R2.Y - R2.X) * (1 - tanh(p.beta.xy/alpha/2))}
+\itemize{
+\item if \code{pseudoBF=FALSE} (default, suggested)
+\item more conservative estimates
+}
+\item \verb{= (R2.Y - R2.X) * plogis(log(pseudo.BF.xy))}
+\itemize{
+\item if \code{pseudoBF=TRUE}
+\item less conservative for insignificant X-Y relationship
+}
 }
 \item \code{delta.R2}
 \itemize{
@@ -98,6 +111,14 @@ Return a data.frame of simulation results:
 \itemize{
 \item partial correlation (always with the same \emph{t} value as \code{t.beta.xy}) between X and Y when controlling for all other covariates
 }
+\item \code{sigmoid.p.xy}
+\itemize{
+\item sigmoid \emph{p} value as \code{1 - tanh(p.beta.xy/alpha/2)}
+}
+\item \code{pseudo.BF.xy}
+\itemize{
+\item pseudo Bayes factors (\eqn{BF_{10}}) computed from \emph{p} value \code{p.beta.xy} and sample size \code{nobs(model)} (see \href{https://doi.org/10.31234/osf.io/egydq}{Wagenmakers, 2022})
+}
 }
 }
 \description{
@@ -110,10 +131,22 @@ DPI(model, y="Ozone", x="Solar.R", seed=1)  # DPI > 0
 DPI(model, y="Ozone", x="Wind", seed=1)     # DPI > 0
 DPI(model, y="Wind", x="Solar.R", seed=1)   # unrelated
 
-# input raw data, test with more random covs
-DPI(data=airquality, y="Ozone", x="Solar.R", k.cov=10, seed=1)
-DPI(data=airquality, y="Ozone", x="Wind", k.cov=10, seed=1)
-DPI(data=airquality, y="Wind", x="Solar.R", k.cov=10, seed=1)
+# or input raw data, test with more random covs
+DPI(data=airquality, y="Ozone", x="Solar.R",
+    k.cov=10, seed=1)
+DPI(data=airquality, y="Ozone", x="Wind",
+    k.cov=10, seed=1)
+DPI(data=airquality, y="Wind", x="Solar.R",
+    k.cov=10, seed=1)
+
+# or use pseudo Bayes factors for the significance score
+# (less conservative for insignificant X-Y relationship)
+DPI(data=airquality, y="Ozone", x="Solar.R", k.cov=10,
+    pseudoBF=TRUE, seed=1)  # DPI > 0 (true positive)
+DPI(data=airquality, y="Ozone", x="Wind", k.cov=10,
+    pseudoBF=TRUE, seed=1)  # DPI > 0 (true positive)
+DPI(data=airquality, y="Wind", x="Solar.R", k.cov=10,
+    pseudoBF=TRUE, seed=1)  # DPI > 0 (false positive!)
 }
 }
 \seealso{
