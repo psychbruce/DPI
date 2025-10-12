@@ -44,6 +44,7 @@
 <span>  n.sim <span class="op">=</span> <span class="fl">1000</span>,</span>
 <span>  alpha <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>  bonf <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  pseudoBF <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  seed <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">progress</span>,</span>
 <span>  file <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -70,16 +71,21 @@
 
 
 <dt id="arg-alpha">alpha<a class="anchor" aria-label="anchor" href="#arg-alpha"></a></dt>
-<dd><p>Significance level for computing the <code>Strength</code> score (0~1) based on <em>p</em> value of partial correlation between <code>X</code> and <code>Y</code>. Defaults to <code>0.05</code>.</p><ul><li><p><code>Direction = R2.Y - R2.X</code></p></li>
-<li><p><code>Strength = 1 - tanh(p.beta.xy/alpha/2)</code></p></li>
+<dd><p>Significance level for computing the <code>Significance</code> score (0~1) based on <em>p</em> value of partial correlation between <code>X</code> and <code>Y</code>. Defaults to <code>0.05</code>.</p><ul><li><p><code>Direction = R2.Y - R2.X</code></p></li>
+<li><p><code>Significance = 1 - tanh(p.beta.xy/alpha/2)</code></p></li>
 </ul></dd>
 
 
 <dt id="arg-bonf">bonf<a class="anchor" aria-label="anchor" href="#arg-bonf"></a></dt>
-<dd><p>Bonferroni correction to control for false positive rates: <code>alpha</code> is divided by, and <em>p</em> values are multiplied by, the number of comparisons.</p><ul><li><p>Defaults to <code>FALSE</code>: No correction.</p></li>
-<li><p><code>TRUE</code>: Using the number of all significant partial <em>r</em>s.</p></li>
+<dd><p>Bonferroni correction to control for false positive rates: <code>alpha</code> is divided by, and <em>p</em> values are multiplied by, the number of comparisons.</p><ul><li><p>Defaults to <code>FALSE</code>: No correction, suitable if you plan to test only one pair of variables.</p></li>
+<li><p><code>TRUE</code>: Using <code>k * (k - 1) / 2</code> (number of all combinations of variable pairs) where <code>k = length(data)</code>.</p></li>
 <li><p>A user-specified number of comparisons.</p></li>
 </ul></dd>
+
+
+<dt id="arg-pseudobf">pseudoBF<a class="anchor" aria-label="anchor" href="#arg-pseudobf"></a></dt>
+<dd><p>Use normalized pseudo Bayes factors <code>sigmoid(log(PseudoBF10))</code> alternatively as the <code>Significance</code> score (0~1). Pseudo Bayes factors are computed from <em>p</em> value of X-Y partial relationship and total sample size, using the transformation rules proposed by Wagenmakers (2022) <a href="https://doi.org/10.31234/osf.io/egydq" class="external-link">https://doi.org/10.31234/osf.io/egydq</a>.</p>
+<p>Defaults to <code>FALSE</code> because it makes less penalties for insignificant partial relationships between <code>X</code> and <code>Y</code>, see Examples in <code><a href="DPI.html">DPI()</a></code> and <a href="https://psychbruce.github.io/DPI/#step-2-normalized-penalty-as-significance-score">online documentation</a>.</p></dd>
 
 
 <dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>
@@ -124,35 +130,37 @@
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># directed acyclic graphs</span></span></span>
 <span class="r-in"><span><span class="va">dpi.dag</span> <span class="op">=</span> <span class="fu">DPI_dag</span><span class="op">(</span><span class="va">airquality</span>, k.covs<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">3</span>,<span class="fl">5</span><span class="op">)</span>, seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Simulation sample settings: </span>k.covs = <span style="color: #BB00BB;">1</span>, <span style="color: #BB00BB;">3</span>, and <span style="color: #BB00BB;">5</span>, n.sim = <span style="color: #BB00BB;">1000</span>, seed = <span style="color: #BB00BB;">1</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Sample size: </span>N.valid = 111</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Significance score method: </span><span style="color: #BBBB00;">Sigmoid(p/alpha) = 1 - tanh(p.xy/alpha/2)</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Simulation sample setting: </span>k.covs = <span style="color: #BB00BB;">1</span>, <span style="color: #BB00BB;">3</span>, and <span style="color: #BB00BB;">5</span>, n.sim = <span style="color: #BB00BB;">1000</span>, seed = <span style="color: #BB00BB;">1</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">False positive rates (FPR) control: </span>Alpha = <span style="color: #BB00BB;">0.05</span> (Bonferroni correction = <span style="color: #BB00BB;">1</span>)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Exploring [1/5]:</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> r.partial = <span style="color: #BBBB00;">0.560</span>, p = <span style="color: #BBBB00;">4e-10</span> <span style="color: #BBBB00;">***</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> r.partial = <span style="color: #BBBB00;">0.560</span>, p = <span style="color: #BBBB00;">4e-10</span> <span style="color: #BBBB00;">***</span> (PseudoBF10 = <span style="color: #BBBB00;">86497933.955</span>)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> --------- DPI[<span style="color: #0000BB;">"Temp"</span>-&gt;<span style="color: #0000BB;">"Ozone"</span>](1) = <span style="color: #00BB00;">0.023</span>, p = <span style="color: #00BB00;">5e-05</span> <span style="color: #00BB00;">***</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> --------- DPI[<span style="color: #0000BB;">"Temp"</span>-&gt;<span style="color: #0000BB;">"Ozone"</span>](3) = <span style="color: #00BB00;">0.023</span>, p = <span style="color: #00BB00;">0.020</span> <span style="color: #00BB00;">*</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> --------- DPI[<span style="color: #0000BB;">"Temp"</span>-&gt;<span style="color: #0000BB;">"Ozone"</span>](5) = <span style="color: #00BB00;">0.022</span>, p = <span style="color: #00BB00;">0.085</span> <span style="color: #00BB00;">.</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Exploring [2/5]:</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> r.partial = <span style="color: #BBBB00;">0.438</span>, p = <span style="color: #BBBB00;">2e-06</span> <span style="color: #BBBB00;">***</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> r.partial = <span style="color: #BBBB00;">0.438</span>, p = <span style="color: #BBBB00;">2e-06</span> <span style="color: #BBBB00;">***</span> (PseudoBF10 = <span style="color: #BBBB00;">13070.747</span>)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> --------- DPI[<span style="color: #0000BB;">"Month"</span>-&gt;<span style="color: #0000BB;">"Temp"</span>](1) = <span style="color: #00BB00;">0.364</span>, p = <span style="color: #00BB00;">&lt;1e-99</span> <span style="color: #00BB00;">***</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> --------- DPI[<span style="color: #0000BB;">"Month"</span>-&gt;<span style="color: #0000BB;">"Temp"</span>](3) = <span style="color: #00BB00;">0.357</span>, p = <span style="color: #00BB00;">8e-87</span> <span style="color: #00BB00;">***</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> --------- DPI[<span style="color: #0000BB;">"Month"</span>-&gt;<span style="color: #0000BB;">"Temp"</span>](5) = <span style="color: #00BB00;">0.350</span>, p = <span style="color: #00BB00;">1e-52</span> <span style="color: #00BB00;">***</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Exploring [3/5]:</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> r.partial = <span style="color: #BBBB00;">0.205</span>, p = <span style="color: #BBBB00;">0.034</span> <span style="color: #BBBB00;">*</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> r.partial = <span style="color: #BBBB00;">0.205</span>, p = <span style="color: #BBBB00;">0.034</span> <span style="color: #BBBB00;">* </span> (PseudoBF10 = <span style="color: #BBBB00;">0.927</span>)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> --------- DPI[<span style="color: #0000BB;">"Solar.R"</span>-&gt;<span style="color: #0000BB;">"Ozone"</span>](1) = <span style="color: #00BB00;">0.297</span>, p = <span style="color: #00BB00;">3e-21</span> <span style="color: #00BB00;">***</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> --------- DPI[<span style="color: #0000BB;">"Solar.R"</span>-&gt;<span style="color: #0000BB;">"Ozone"</span>](3) = <span style="color: #00BB00;">0.281</span>, p = <span style="color: #00BB00;">4e-07</span> <span style="color: #00BB00;">***</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> --------- DPI[<span style="color: #0000BB;">"Solar.R"</span>-&gt;<span style="color: #0000BB;">"Ozone"</span>](5) = <span style="color: #00BB00;">0.265</span>, p = <span style="color: #00BB00;">2e-04</span> <span style="color: #00BB00;">***</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Exploring [4/5]:</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> r.partial = <span style="color: #BBBB00;">-0.192</span>, p = <span style="color: #BBBB00;">0.047</span> <span style="color: #BBBB00;">*</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> r.partial = <span style="color: #BBBB00;">-0.192</span>, p = <span style="color: #BBBB00;">0.047</span> <span style="color: #BBBB00;">* </span> (PseudoBF10 = <span style="color: #BBBB00;">0.671</span>)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> --------- DPI[<span style="color: #0000BB;">"Month"</span>-&gt;<span style="color: #0000BB;">"Ozone"</span>](1) = <span style="color: #00BB00;">0.214</span>, p = <span style="color: #00BB00;">6e-12</span> <span style="color: #00BB00;">***</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> --------- DPI[<span style="color: #0000BB;">"Month"</span>-&gt;<span style="color: #0000BB;">"Ozone"</span>](3) = <span style="color: #00BB00;">0.204</span>, p = <span style="color: #00BB00;">1e-04</span> <span style="color: #00BB00;">***</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> --------- DPI[<span style="color: #0000BB;">"Month"</span>-&gt;<span style="color: #0000BB;">"Ozone"</span>](5) = <span style="color: #00BB00;">0.193</span>, p = <span style="color: #00BB00;">0.003</span> <span style="color: #00BB00;">**</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Exploring [5/5]:</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> r.partial = <span style="color: #BBBB00;">-0.449</span>, p = <span style="color: #BBBB00;">1e-06</span> <span style="color: #BBBB00;">***</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> r.partial = <span style="color: #BBBB00;">-0.449</span>, p = <span style="color: #BBBB00;">1e-06</span> <span style="color: #BBBB00;">***</span> (PseudoBF10 = <span style="color: #BBBB00;">25695.789</span>)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> --------- DPI[<span style="color: #0000BB;">"Wind"</span>-&gt;<span style="color: #0000BB;">"Ozone"</span>](1) = <span style="color: #00BB00;">0.223</span>, p = <span style="color: #00BB00;">&lt;1e-99</span> <span style="color: #00BB00;">***</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> --------- DPI[<span style="color: #0000BB;">"Wind"</span>-&gt;<span style="color: #0000BB;">"Ozone"</span>](3) = <span style="color: #00BB00;">0.219</span>, p = <span style="color: #00BB00;">3e-50</span> <span style="color: #00BB00;">***</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> --------- DPI[<span style="color: #0000BB;">"Wind"</span>-&gt;<span style="color: #0000BB;">"Ozone"</span>](5) = <span style="color: #00BB00;">0.214</span>, p = <span style="color: #00BB00;">8e-28</span> <span style="color: #00BB00;">***</span></span>

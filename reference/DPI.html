@@ -47,6 +47,7 @@
 <span>  n.sim <span class="op">=</span> <span class="fl">1000</span>,</span>
 <span>  alpha <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>  bonf <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  pseudoBF <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  seed <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">progress</span>,</span>
 <span>  file <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -88,8 +89,8 @@
 
 
 <dt id="arg-alpha">alpha<a class="anchor" aria-label="anchor" href="#arg-alpha"></a></dt>
-<dd><p>Significance level for computing the <code>Strength</code> score (0~1) based on <em>p</em> value of partial correlation between <code>X</code> and <code>Y</code>. Defaults to <code>0.05</code>.</p><ul><li><p><code>Direction = R2.Y - R2.X</code></p></li>
-<li><p><code>Strength = 1 - tanh(p.beta.xy/alpha/2)</code></p></li>
+<dd><p>Significance level for computing the <code>Significance</code> score (0~1) based on <em>p</em> value of partial correlation between <code>X</code> and <code>Y</code>. Defaults to <code>0.05</code>.</p><ul><li><p><code>Direction = R2.Y - R2.X</code></p></li>
+<li><p><code>Significance = 1 - tanh(p.beta.xy/alpha/2)</code></p></li>
 </ul></dd>
 
 
@@ -98,6 +99,11 @@
 <li><p><code>TRUE</code>: Using <code>k * (k - 1) / 2</code> (number of all combinations of variable pairs) where <code>k = length(data)</code>.</p></li>
 <li><p>A user-specified number of comparisons.</p></li>
 </ul></dd>
+
+
+<dt id="arg-pseudobf">pseudoBF<a class="anchor" aria-label="anchor" href="#arg-pseudobf"></a></dt>
+<dd><p>Use normalized pseudo Bayes factors <code>sigmoid(log(PseudoBF10))</code> alternatively as the <code>Significance</code> score (0~1). Pseudo Bayes factors are computed from <em>p</em> value of X-Y partial relationship and total sample size, using the transformation rules proposed by Wagenmakers (2022) <a href="https://doi.org/10.31234/osf.io/egydq" class="external-link">https://doi.org/10.31234/osf.io/egydq</a>.</p>
+<p>Defaults to <code>FALSE</code> because it makes less penalties for insignificant partial relationships between <code>X</code> and <code>Y</code>, see Examples in <code>DPI()</code> and <a href="https://psychbruce.github.io/DPI/#step-2-normalized-penalty-as-significance-score">online documentation</a>.</p></dd>
 
 
 <dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>
@@ -122,8 +128,12 @@
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Return a data.frame of simulation results:</p><ul><li><p><code>DPI</code></p><ul><li><p><code>= Direction * Strength</code></p></li>
-<li><p><code>= (R2.Y - R2.X) * (1 - tanh(p.beta.xy/alpha/2))</code></p></li>
+    <p>Return a data.frame of simulation results:</p><ul><li><p><code>DPI = Direction * Significance</code></p><ul><li><p><code>= (R2.Y - R2.X) * (1 - tanh(p.beta.xy/alpha/2))</code></p><ul><li><p>if <code>pseudoBF=FALSE</code> (default, suggested)</p></li>
+<li><p>more conservative estimates</p></li>
+</ul></li>
+<li><p><code>= (R2.Y - R2.X) * plogis(log(pseudo.BF.xy))</code></p><ul><li><p>if <code>pseudoBF=TRUE</code></p></li>
+<li><p>less conservative for insignificant X-Y relationship</p></li>
+</ul></li>
 </ul></li>
 <li><p><code>delta.R2</code></p><ul><li><p><code>R2.Y - R2.X</code></p></li>
 </ul></li>
@@ -138,6 +148,10 @@
 <li><p><code>df.beta.xy</code></p><ul><li><p>residual degree of freedom (df) of <code>t.beta.xy</code></p></li>
 </ul></li>
 <li><p><code>r.partial.xy</code></p><ul><li><p>partial correlation (always with the same <em>t</em> value as <code>t.beta.xy</code>) between X and Y when controlling for all other covariates</p></li>
+</ul></li>
+<li><p><code>sigmoid.p.xy</code></p><ul><li><p>sigmoid <em>p</em> value as <code>1 - tanh(p.beta.xy/alpha/2)</code></p></li>
+</ul></li>
+<li><p><code>pseudo.BF.xy</code></p><ul><li><p>pseudo Bayes factors (\(BF_{10}\)) computed from <em>p</em> value <code>p.beta.xy</code> and sample size <code>nobs(model)</code> (see <a href="https://doi.org/10.31234/osf.io/egydq" class="external-link">Wagenmakers, 2022</a>)</p></li>
 </ul></li>
 </ul></div>
     <div class="section level2">
@@ -158,8 +172,9 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Model Y formula: </span>Ozone ~ Solar.R + Wind + Temp + Month + Day</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Model X formula: </span>Solar.R ~ Ozone + Wind + Temp + Month + Day</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Directed prediction: </span><span style="color: #0000BB;">"Solar.R"</span> (X) -&gt; <span style="color: #0000BB;">"Ozone"</span> (Y)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Partial correlation: </span>r(partial).XY = <span style="color: #BBBB00;">0.205</span>, p = <span style="color: #BBBB00;">0.0353</span> <span style="color: #BBBB00;">*</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Simulation sample settings: </span>k.random.covs = <span style="color: #BB00BB;">1</span>, n.sim = <span style="color: #BB00BB;">1000</span>, seed = <span style="color: #BB00BB;">1</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Partial correlation: </span>r.partial = <span style="color: #BBBB00;">0.205</span>, p = <span style="color: #BBBB00;">0.0353</span> <span style="color: #BBBB00;">* </span> (PseudoBF10 = <span style="color: #BBBB00;">0.897</span>)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Significance score method: </span><span style="color: #BBBB00;">Sigmoid(p/alpha) = 1 - tanh(p.xy/alpha/2)</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Simulation sample setting: </span>k.random.covs = <span style="color: #BB00BB;">1</span>, n.sim = <span style="color: #BB00BB;">1000</span>, seed = <span style="color: #BB00BB;">1</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">False positive rates (FPR) control: </span>Alpha = <span style="color: #BB00BB;">0.05</span> (Bonferroni correction = <span style="color: #BB00BB;">1</span>)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  Sim.SE z.value   p.z sig  Conf.Interval</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DPI    0.297 (0.031)   9.453 3e-21 *** [0.236, 0.359]</span>
@@ -169,8 +184,9 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Model Y formula: </span>Ozone ~ Wind + Solar.R + Temp + Month + Day</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Model X formula: </span>Wind ~ Ozone + Solar.R + Temp + Month + Day</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Directed prediction: </span><span style="color: #0000BB;">"Wind"</span> (X) -&gt; <span style="color: #0000BB;">"Ozone"</span> (Y)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Partial correlation: </span>r(partial).XY = <span style="color: #BBBB00;">-0.449</span>, p = <span style="color: #BBBB00;">1e-06</span> <span style="color: #BBBB00;">***</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Simulation sample settings: </span>k.random.covs = <span style="color: #BB00BB;">1</span>, n.sim = <span style="color: #BB00BB;">1000</span>, seed = <span style="color: #BB00BB;">1</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Partial correlation: </span>r.partial = <span style="color: #BBBB00;">-0.449</span>, p = <span style="color: #BBBB00;">1e-06</span> <span style="color: #BBBB00;">***</span> (PseudoBF10 = <span style="color: #BBBB00;">23117.101</span>)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Significance score method: </span><span style="color: #BBBB00;">Sigmoid(p/alpha) = 1 - tanh(p.xy/alpha/2)</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Simulation sample setting: </span>k.random.covs = <span style="color: #BB00BB;">1</span>, n.sim = <span style="color: #BB00BB;">1000</span>, seed = <span style="color: #BB00BB;">1</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">False positive rates (FPR) control: </span>Alpha = <span style="color: #BB00BB;">0.05</span> (Bonferroni correction = <span style="color: #BB00BB;">1</span>)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  Sim.SE z.value    p.z sig  Conf.Interval</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DPI    0.223 (0.009)  25.296 &lt;1e-99 *** [0.206, 0.240]</span>
@@ -180,47 +196,96 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Model Y formula: </span>Wind ~ Solar.R + Ozone + Temp + Month + Day</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Model X formula: </span>Solar.R ~ Wind + Ozone + Temp + Month + Day</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Directed prediction: </span><span style="color: #0000BB;">"Solar.R"</span> (X) -&gt; <span style="color: #0000BB;">"Wind"</span> (Y)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Partial correlation: </span>r(partial).XY = <span style="color: #BBBB00;">0.114</span>, p = <span style="color: #BBBB00;">0.2447</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Simulation sample settings: </span>k.random.covs = <span style="color: #BB00BB;">1</span>, n.sim = <span style="color: #BB00BB;">1000</span>, seed = <span style="color: #BB00BB;">1</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Partial correlation: </span>r.partial = <span style="color: #BBBB00;">0.114</span>, p = <span style="color: #BBBB00;">0.2447</span> <span style="color: #BBBB00;"> </span> (PseudoBF10 = <span style="color: #BBBB00;">0.182</span>)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Significance score method: </span><span style="color: #BBBB00;">Sigmoid(p/alpha) = 1 - tanh(p.xy/alpha/2)</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Simulation sample setting: </span>k.random.covs = <span style="color: #BB00BB;">1</span>, n.sim = <span style="color: #BB00BB;">1000</span>, seed = <span style="color: #BB00BB;">1</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">False positive rates (FPR) control: </span>Alpha = <span style="color: #BB00BB;">0.05</span> (Bonferroni correction = <span style="color: #BB00BB;">1</span>)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  Sim.SE z.value    p.z sig   Conf.Interval</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DPI    0.004 (0.005)   0.903 0.3666     [-0.005, 0.014]</span>
 <span class="r-plt img"><img src="DPI-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># input raw data, test with more random covs</span></span></span>
-<span class="r-in"><span><span class="fu">DPI</span><span class="op">(</span>data<span class="op">=</span><span class="va">airquality</span>, y<span class="op">=</span><span class="st">"Ozone"</span>, x<span class="op">=</span><span class="st">"Solar.R"</span>, k.cov<span class="op">=</span><span class="fl">10</span>, seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># or input raw data, test with more random covs</span></span></span>
+<span class="r-in"><span><span class="fu">DPI</span><span class="op">(</span>data<span class="op">=</span><span class="va">airquality</span>, y<span class="op">=</span><span class="st">"Ozone"</span>, x<span class="op">=</span><span class="st">"Solar.R"</span>,</span></span>
+<span class="r-in"><span>    k.cov<span class="op">=</span><span class="fl">10</span>, seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Sample size: </span>N.valid = 111</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Model Y formula: </span>Ozone ~ Solar.R + Wind + Temp + Month + Day</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Model X formula: </span>Solar.R ~ Ozone + Wind + Temp + Month + Day</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Directed prediction: </span><span style="color: #0000BB;">"Solar.R"</span> (X) -&gt; <span style="color: #0000BB;">"Ozone"</span> (Y)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Partial correlation: </span>r(partial).XY = <span style="color: #BBBB00;">0.204</span>, p = <span style="color: #BBBB00;">0.0452</span> <span style="color: #BBBB00;">*</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Simulation sample settings: </span>k.random.covs = <span style="color: #BB00BB;">10</span>, n.sim = <span style="color: #BB00BB;">1000</span>, seed = <span style="color: #BB00BB;">1</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Partial correlation: </span>r.partial = <span style="color: #BBBB00;">0.204</span>, p = <span style="color: #BBBB00;">0.0452</span> <span style="color: #BBBB00;">* </span> (PseudoBF10 = <span style="color: #BBBB00;">0.700</span>)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Significance score method: </span><span style="color: #BBBB00;">Sigmoid(p/alpha) = 1 - tanh(p.xy/alpha/2)</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Simulation sample setting: </span>k.random.covs = <span style="color: #BB00BB;">10</span>, n.sim = <span style="color: #BB00BB;">1000</span>, seed = <span style="color: #BB00BB;">1</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">False positive rates (FPR) control: </span>Alpha = <span style="color: #BB00BB;">0.05</span> (Bonferroni correction = <span style="color: #BB00BB;">1</span>)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  Sim.SE z.value    p.z sig  Conf.Interval</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DPI    0.226 (0.096)   2.342 0.0192 *   [0.037, 0.415]</span>
 <span class="r-plt img"><img src="DPI-4.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span><span class="fu">DPI</span><span class="op">(</span>data<span class="op">=</span><span class="va">airquality</span>, y<span class="op">=</span><span class="st">"Ozone"</span>, x<span class="op">=</span><span class="st">"Wind"</span>, k.cov<span class="op">=</span><span class="fl">10</span>, seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">DPI</span><span class="op">(</span>data<span class="op">=</span><span class="va">airquality</span>, y<span class="op">=</span><span class="st">"Ozone"</span>, x<span class="op">=</span><span class="st">"Wind"</span>,</span></span>
+<span class="r-in"><span>    k.cov<span class="op">=</span><span class="fl">10</span>, seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Sample size: </span>N.valid = 111</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Model Y formula: </span>Ozone ~ Wind + Solar.R + Temp + Month + Day</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Model X formula: </span>Wind ~ Ozone + Solar.R + Temp + Month + Day</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Directed prediction: </span><span style="color: #0000BB;">"Wind"</span> (X) -&gt; <span style="color: #0000BB;">"Ozone"</span> (Y)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Partial correlation: </span>r(partial).XY = <span style="color: #BBBB00;">-0.449</span>, p = <span style="color: #BBBB00;">4e-06</span> <span style="color: #BBBB00;">***</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Simulation sample settings: </span>k.random.covs = <span style="color: #BB00BB;">10</span>, n.sim = <span style="color: #BB00BB;">1000</span>, seed = <span style="color: #BB00BB;">1</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Partial correlation: </span>r.partial = <span style="color: #BBBB00;">-0.449</span>, p = <span style="color: #BBBB00;">4e-06</span> <span style="color: #BBBB00;">***</span> (PseudoBF10 = <span style="color: #BBBB00;">8372.103</span>)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Significance score method: </span><span style="color: #BBBB00;">Sigmoid(p/alpha) = 1 - tanh(p.xy/alpha/2)</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Simulation sample setting: </span>k.random.covs = <span style="color: #BB00BB;">10</span>, n.sim = <span style="color: #BB00BB;">1000</span>, seed = <span style="color: #BB00BB;">1</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">False positive rates (FPR) control: </span>Alpha = <span style="color: #BB00BB;">0.05</span> (Bonferroni correction = <span style="color: #BB00BB;">1</span>)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  Sim.SE z.value   p.z sig  Conf.Interval</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DPI    0.203 (0.027)   7.567 4e-14 *** [0.150, 0.255]</span>
 <span class="r-plt img"><img src="DPI-5.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span><span class="fu">DPI</span><span class="op">(</span>data<span class="op">=</span><span class="va">airquality</span>, y<span class="op">=</span><span class="st">"Wind"</span>, x<span class="op">=</span><span class="st">"Solar.R"</span>, k.cov<span class="op">=</span><span class="fl">10</span>, seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">DPI</span><span class="op">(</span>data<span class="op">=</span><span class="va">airquality</span>, y<span class="op">=</span><span class="st">"Wind"</span>, x<span class="op">=</span><span class="st">"Solar.R"</span>,</span></span>
+<span class="r-in"><span>    k.cov<span class="op">=</span><span class="fl">10</span>, seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Sample size: </span>N.valid = 111</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Model Y formula: </span>Wind ~ Solar.R + Ozone + Temp + Month + Day</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Model X formula: </span>Solar.R ~ Wind + Ozone + Temp + Month + Day</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Directed prediction: </span><span style="color: #0000BB;">"Solar.R"</span> (X) -&gt; <span style="color: #0000BB;">"Wind"</span> (Y)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Partial correlation: </span>r(partial).XY = <span style="color: #BBBB00;">0.111</span>, p = <span style="color: #BBBB00;">0.2765</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Simulation sample settings: </span>k.random.covs = <span style="color: #BB00BB;">10</span>, n.sim = <span style="color: #BB00BB;">1000</span>, seed = <span style="color: #BB00BB;">1</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Partial correlation: </span>r.partial = <span style="color: #BBBB00;">0.111</span>, p = <span style="color: #BBBB00;">0.2765</span> <span style="color: #BBBB00;"> </span> (PseudoBF10 = <span style="color: #BBBB00;">0.168</span>)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Significance score method: </span><span style="color: #BBBB00;">Sigmoid(p/alpha) = 1 - tanh(p.xy/alpha/2)</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Simulation sample setting: </span>k.random.covs = <span style="color: #BB00BB;">10</span>, n.sim = <span style="color: #BB00BB;">1000</span>, seed = <span style="color: #BB00BB;">1</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">False positive rates (FPR) control: </span>Alpha = <span style="color: #BB00BB;">0.05</span> (Bonferroni correction = <span style="color: #BB00BB;">1</span>)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  Sim.SE z.value    p.z sig   Conf.Interval</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DPI    0.008 (0.017)   0.492 0.6225     [-0.025, 0.041]</span>
 <span class="r-plt img"><img src="DPI-6.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># or use pseudo Bayes factors for the significance score</span></span></span>
+<span class="r-in"><span><span class="co"># (less conservative for insignificant X-Y relationship)</span></span></span>
+<span class="r-in"><span><span class="fu">DPI</span><span class="op">(</span>data<span class="op">=</span><span class="va">airquality</span>, y<span class="op">=</span><span class="st">"Ozone"</span>, x<span class="op">=</span><span class="st">"Solar.R"</span>, k.cov<span class="op">=</span><span class="fl">10</span>,</span></span>
+<span class="r-in"><span>    pseudoBF<span class="op">=</span><span class="cn">TRUE</span>, seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span>  <span class="co"># DPI &gt; 0 (true positive)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Sample size: </span>N.valid = 111</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Model Y formula: </span>Ozone ~ Solar.R + Wind + Temp + Month + Day</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Model X formula: </span>Solar.R ~ Ozone + Wind + Temp + Month + Day</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Directed prediction: </span><span style="color: #0000BB;">"Solar.R"</span> (X) -&gt; <span style="color: #0000BB;">"Ozone"</span> (Y)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Partial correlation: </span>r.partial = <span style="color: #BBBB00;">0.204</span>, p = <span style="color: #BBBB00;">0.0452</span> <span style="color: #BBBB00;">* </span> (PseudoBF10 = <span style="color: #BBBB00;">0.700</span>)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Significance score method: </span><span style="color: #BBBB00;">Sigmoid(log(PseudoBF10.xy))</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Simulation sample setting: </span>k.random.covs = <span style="color: #BB00BB;">10</span>, n.sim = <span style="color: #BB00BB;">1000</span>, seed = <span style="color: #BB00BB;">1</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">False positive rates (FPR) control: </span>Alpha = <span style="color: #BB00BB;">0.05</span> (Bonferroni correction = <span style="color: #BB00BB;">1</span>)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  Sim.SE z.value    p.z sig  Conf.Interval</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> DPI    0.178 (0.067)   2.654 0.0080 **  [0.046, 0.309]</span>
+<span class="r-plt img"><img src="DPI-7.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu">DPI</span><span class="op">(</span>data<span class="op">=</span><span class="va">airquality</span>, y<span class="op">=</span><span class="st">"Ozone"</span>, x<span class="op">=</span><span class="st">"Wind"</span>, k.cov<span class="op">=</span><span class="fl">10</span>,</span></span>
+<span class="r-in"><span>    pseudoBF<span class="op">=</span><span class="cn">TRUE</span>, seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span>  <span class="co"># DPI &gt; 0 (true positive)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Sample size: </span>N.valid = 111</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Model Y formula: </span>Ozone ~ Wind + Solar.R + Temp + Month + Day</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Model X formula: </span>Wind ~ Ozone + Solar.R + Temp + Month + Day</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Directed prediction: </span><span style="color: #0000BB;">"Wind"</span> (X) -&gt; <span style="color: #0000BB;">"Ozone"</span> (Y)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Partial correlation: </span>r.partial = <span style="color: #BBBB00;">-0.449</span>, p = <span style="color: #BBBB00;">4e-06</span> <span style="color: #BBBB00;">***</span> (PseudoBF10 = <span style="color: #BBBB00;">8372.103</span>)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Significance score method: </span><span style="color: #BBBB00;">Sigmoid(log(PseudoBF10.xy))</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Simulation sample setting: </span>k.random.covs = <span style="color: #BB00BB;">10</span>, n.sim = <span style="color: #BB00BB;">1000</span>, seed = <span style="color: #BB00BB;">1</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">False positive rates (FPR) control: </span>Alpha = <span style="color: #BB00BB;">0.05</span> (Bonferroni correction = <span style="color: #BB00BB;">1</span>)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  Sim.SE z.value   p.z sig  Conf.Interval</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> DPI    0.203 (0.027)   7.567 4e-14 *** [0.150, 0.255]</span>
+<span class="r-plt img"><img src="DPI-8.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu">DPI</span><span class="op">(</span>data<span class="op">=</span><span class="va">airquality</span>, y<span class="op">=</span><span class="st">"Wind"</span>, x<span class="op">=</span><span class="st">"Solar.R"</span>, k.cov<span class="op">=</span><span class="fl">10</span>,</span></span>
+<span class="r-in"><span>    pseudoBF<span class="op">=</span><span class="cn">TRUE</span>, seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span>  <span class="co"># DPI &gt; 0 (false positive!)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Sample size: </span>N.valid = 111</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Model Y formula: </span>Wind ~ Solar.R + Ozone + Temp + Month + Day</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Model X formula: </span>Solar.R ~ Wind + Ozone + Temp + Month + Day</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Directed prediction: </span><span style="color: #0000BB;">"Solar.R"</span> (X) -&gt; <span style="color: #0000BB;">"Wind"</span> (Y)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Partial correlation: </span>r.partial = <span style="color: #BBBB00;">0.111</span>, p = <span style="color: #BBBB00;">0.2765</span> <span style="color: #BBBB00;"> </span> (PseudoBF10 = <span style="color: #BBBB00;">0.168</span>)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Significance score method: </span><span style="color: #BBBB00;">Sigmoid(log(PseudoBF10.xy))</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Simulation sample setting: </span>k.random.covs = <span style="color: #BB00BB;">10</span>, n.sim = <span style="color: #BB00BB;">1000</span>, seed = <span style="color: #BB00BB;">1</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">False positive rates (FPR) control: </span>Alpha = <span style="color: #BB00BB;">0.05</span> (Bonferroni correction = <span style="color: #BB00BB;">1</span>)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  Sim.SE z.value    p.z sig  Conf.Interval</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> DPI    0.032 (0.012)   2.767 0.0057 **  [0.009, 0.055]</span>
+<span class="r-plt img"><img src="DPI-9.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

@@ -35,7 +35,12 @@
 <h2 class="pkg-version" data-toc-text="2025.10" id="dpi-202510">DPI 2025.10<a class="anchor" aria-label="anchor" href="#dpi-202510"></a></h2>
 <p><strong>This version contains breaking changes to function names and visualization methods.</strong></p>
 <ul><li>Added <code><a href="../reference/DPI_dag.html">DPI_dag()</a></code>: Directed acyclic graphs (DAGs) via DPI exploratory analysis (causal discovery) for all significant partial correlations.</li>
-<li>Added <code>bonf</code> parameter to <code><a href="../reference/DPI.html">DPI()</a></code>, <code><a href="../reference/DPI_curve.html">DPI_curve()</a></code>, and <code><a href="../reference/DPI_dag.html">DPI_dag()</a></code>: Bonferroni correction to control for false positive rates.</li>
+<li>Added <code>bonf</code> and <code>pseudoBF</code> parameters to <code><a href="../reference/DPI.html">DPI()</a></code>, <code><a href="../reference/DPI_curve.html">DPI_curve()</a></code>, and <code><a href="../reference/DPI_dag.html">DPI_dag()</a></code>.
+<ul><li>
+<code>bonf</code>: Bonferroni correction to control for false positive rates among multiple pairwise DPI tests.</li>
+<li>
+<code>pseudoBF</code>: Use normalized pseudo Bayes factors <code>sigmoid(log(PseudoBF10))</code> as the Significance score (0~1). Pseudo Bayes factors are computed using the transformation rules proposed by Wagenmakers (2022) <a href="https://doi.org/10.31234/osf.io/egydq" class="external-link uri">https://doi.org/10.31234/osf.io/egydq</a>.</li>
+</ul></li>
 <li>Added S3 methods <code><a href="../reference/S3method.network.html">plot.cor.net()</a></code>, <code><a href="../reference/S3method.network.html">plot.bns.dag()</a></code>, and <code><a href="../reference/S3method.network.html">plot.dpi.dag()</a></code> that can transform <code>qgraph</code> base-plot objects into <code>ggplot</code> objects for more stable and flexible visualization.</li>
 <li>Renamed <code>cor_network()</code> to <code><a href="../reference/cor_net.html">cor_net()</a></code>, <code>dag_network()</code> to <code><a href="../reference/BNs_dag.html">BNs_dag()</a></code>, and <code>matrix_cor()</code> to <code><a href="../reference/cor_matrix.html">cor_matrix()</a></code>.</li>
 <li>Fixed <code><a href="../reference/cor_net.html">cor_net()</a></code> to return the exactly correct <em>p</em> values of (partial) correlation coefficients.</li>
