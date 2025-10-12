@@ -6,8 +6,8 @@
 \usage{
 DPI_curve(
   model,
-  y,
   x,
+  y,
   data = NULL,
   k.covs = 1:10,
   n.sim = 1000,
@@ -25,9 +25,9 @@ DPI_curve(
 \arguments{
 \item{model}{Model object (\code{lm}).}
 
-\item{y}{Dependent (outcome) variable.}
-
 \item{x}{Independent (predictor) variable.}
+
+\item{y}{Dependent (outcome) variable.}
 
 \item{data}{[Optional] Defaults to \code{NULL}. If \code{data} is specified, then \code{model} will be ignored and a linear model \code{lm({y} ~ {x} + .)} will be fitted inside. This is helpful for exploring all variables in a dataset.}
 
@@ -70,7 +70,7 @@ DPI curve analysis across multiple random covariates.
 }
 \examples{
 \donttest{model = lm(Ozone ~ ., data=airquality)
-DPIs = DPI_curve(model, y="Ozone", x="Solar.R", seed=1)
+DPIs = DPI_curve(model, x="Solar.R", y="Ozone", seed=1)
 plot(DPIs)  # ggplot object
 }
 }

@@ -6,8 +6,8 @@
 \usage{
 DPI(
   model,
-  y,
   x,
+  y,
   data = NULL,
   k.cov = 1,
   n.sim = 1000,
@@ -25,9 +25,9 @@ DPI(
 \arguments{
 \item{model}{Model object (\code{lm}).}
 
-\item{y}{Dependent (outcome) variable.}
-
 \item{x}{Independent (predictor) variable.}
+
+\item{y}{Dependent (outcome) variable.}
 
 \item{data}{[Optional] Defaults to \code{NULL}. If \code{data} is specified, then \code{model} will be ignored and a linear model \code{lm({y} ~ {x} + .)} will be fitted inside. This is helpful for exploring all variables in a dataset.}
 
@@ -127,25 +127,25 @@ The Directed Prediction Index (DPI) is a quasi-causal inference method for cross
 \examples{
 \donttest{# input a fitted model
 model = lm(Ozone ~ ., data=airquality)
-DPI(model, y="Ozone", x="Solar.R", seed=1)  # DPI > 0
-DPI(model, y="Ozone", x="Wind", seed=1)     # DPI > 0
-DPI(model, y="Wind", x="Solar.R", seed=1)   # unrelated
+DPI(model, x="Solar.R", y="Ozone", seed=1)  # DPI > 0
+DPI(model, x="Wind", y="Ozone", seed=1)     # DPI > 0
+DPI(model, x="Solar.R", y="Wind", seed=1)   # unrelated
 
 # or input raw data, test with more random covs
-DPI(data=airquality, y="Ozone", x="Solar.R",
+DPI(data=airquality, x="Solar.R", y="Ozone",
     k.cov=10, seed=1)
-DPI(data=airquality, y="Ozone", x="Wind",
+DPI(data=airquality, x="Wind", y="Ozone",
     k.cov=10, seed=1)
-DPI(data=airquality, y="Wind", x="Solar.R",
+DPI(data=airquality, x="Solar.R", y="Wind",
     k.cov=10, seed=1)
 
 # or use pseudo Bayes Factors for the significance score
 # (less conservative for insignificant X-Y relationship)
-DPI(data=airquality, y="Ozone", x="Solar.R", k.cov=10,
+DPI(data=airquality, x="Solar.R", y="Ozone", k.cov=10,
     pseudoBF=TRUE, seed=1)  # DPI > 0 (true positive)
-DPI(data=airquality, y="Ozone", x="Wind", k.cov=10,
+DPI(data=airquality, x="Wind", y="Ozone", k.cov=10,
     pseudoBF=TRUE, seed=1)  # DPI > 0 (true positive)
-DPI(data=airquality, y="Wind", x="Solar.R", k.cov=10,
+DPI(data=airquality, x="Solar.R", y="Wind", k.cov=10,
     pseudoBF=TRUE, seed=1)  # DPI > 0 (false positive!)
 }
 }
