@@ -247,7 +247,7 @@ sim_data_exp = function(n, r.xy, approx=TRUE, tol=0.01, max.iter=30, verbose=FAL
 #'
 #' @references
 #' Wagenmakers, E.-J. (2022). *Approximate objective Bayes factors from p-values and sample size: The \eqn{3p\sqrt{n}} rule.* PsyArXiv.
-#' <https://doi.org/10.31234/osf.io/egydq>
+#' \doi{10.31234/osf.io/egydq}
 #'
 #' @seealso
 #' [bayestestR::p_to_bf()]
@@ -415,7 +415,7 @@ NULL
 #' - Defaults to `FALSE`: No correction, suitable if you plan to test only one pair of variables.
 #' - `TRUE`: Using `k * (k - 1) / 2` (number of all combinations of variable pairs) where `k = length(data)`.
 #' - A user-specified number of comparisons.
-#' @param pseudoBF Use normalized pseudo Bayes Factors `sigmoid(log(PseudoBF10))` alternatively as the `Significance` score (0~1). Pseudo Bayes Factors are computed from *p* value of X-Y partial relationship and total sample size, using the transformation rules proposed by Wagenmakers (2022) <https://doi.org/10.31234/osf.io/egydq>.
+#' @param pseudoBF Use normalized pseudo Bayes Factors `sigmoid(log(PseudoBF10))` alternatively as the `Significance` score (0~1). Pseudo Bayes Factors are computed from *p* value of X-Y partial relationship and total sample size, using the transformation rules proposed by Wagenmakers (2022) \doi{10.31234/osf.io/egydq}.
 #'
 #' Defaults to `FALSE` because it makes less penalties for insignificant partial relationships between `X` and `Y`, see Examples in [DPI()] and [online documentation](https://psychbruce.github.io/DPI/#step-2-normalized-penalty-as-significance-score).
 #' @param seed Random seed for replicable results. Defaults to `NULL`.
@@ -450,7 +450,7 @@ NULL
 #' - `sigmoid.p.xy`
 #'   - sigmoid *p* value as `1 - tanh(p.beta.xy/alpha/2)`
 #' - `pseudo.BF.xy`
-#'   - pseudo Bayes Factors (\eqn{BF_{10}}) computed from *p* value `p.beta.xy` and sample size `nobs(model)` (see [Wagenmakers, 2022](https://doi.org/10.31234/osf.io/egydq))
+#'   - pseudo Bayes Factors (\eqn{BF_{10}}) computed from *p* value `p.beta.xy` and sample size `nobs(model)`, see [p_to_bf()]
 #'
 #' @seealso
 #' [S3method.dpi]

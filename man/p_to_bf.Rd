@@ -30,7 +30,7 @@ p_to_bf(c(0.001, 0.01, 0.05, 0.1), 1000, label=TRUE)
 }
 \references{
 Wagenmakers, E.-J. (2022). \emph{Approximate objective Bayes factors from p-values and sample size: The \eqn{3p\sqrt{n}} rule.} PsyArXiv.
-\url{https://doi.org/10.31234/osf.io/egydq}
+\doi{10.31234/osf.io/egydq}
 }
 \seealso{
 \code{\link[bayestestR:p_to_bf]{bayestestR::p_to_bf()}}

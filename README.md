@@ -166,14 +166,17 @@ This package also includes other functions helpful for exploring variable relati
 -   Network analysis functions
 
     -   `cor_net()`: Correlation and partial correlation networks.
+
     -   `BNs_dag()`: Directed acyclic graphs (DAGs) via Bayesian networks (BNs).
 
 -   Data simulation functions
 
     -   `sim_data()`: Simulate data from a multivariate normal distribution.
+
     -   `sim_data_exp()`: Simulate experiment-like data with *independent* binary Xs.
 
 -   Miscellaneous functions
 
     -   `cor_matrix()`: Produce a symmetric correlation matrix from values.
+
     -   `p_to_bf()`: Convert *p* values to pseudo Bayes Factors ($\text{PseudoBF}_{10}$).
