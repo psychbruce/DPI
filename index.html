@@ -18,8 +18,8 @@
 <link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="The Directed Prediction Index for Causal Inference from Observational Data">
-<meta name="description" content="The Directed Prediction Index (DPI) is a quasi-causal inference (causal discovery) method for observational data designed to quantify the relative endogeneity (relative dependence) of outcome (Y) versus predictor (X) variables in regression models. By comparing the proportion of variance explained (R-squared) between the Y-as-outcome model and the X-as-outcome model while controlling for a sufficient number of possible confounders, it can suggest a plausible (admissible) direction of influence from a more exogenous variable (X) to a more endogenous variable (Y). Methodological details are provided at &lt;https://psychbruce.github.io/DPI/&gt;. This package also includes functions for data simulation and network analysis (correlation, partial correlation, and Bayesian networks).">
-<meta property="og:description" content="The Directed Prediction Index (DPI) is a quasi-causal inference (causal discovery) method for observational data designed to quantify the relative endogeneity (relative dependence) of outcome (Y) versus predictor (X) variables in regression models. By comparing the proportion of variance explained (R-squared) between the Y-as-outcome model and the X-as-outcome model while controlling for a sufficient number of possible confounders, it can suggest a plausible (admissible) direction of influence from a more exogenous variable (X) to a more endogenous variable (Y). Methodological details are provided at &lt;https://psychbruce.github.io/DPI/&gt;. This package also includes functions for data simulation and network analysis (correlation, partial correlation, and Bayesian networks).">
+<meta name="description" content="The Directed Prediction Index (DPI) is a quasi-causal inference (causal discovery) method for observational data designed to quantify the relative endogeneity (relative dependence) of outcome (Y) versus predictor (X) variables in regression models. By comparing the proportion of variance explained (R-squared) between the Y-as-outcome model and the X-as-outcome model while controlling for a sufficient number of possible confounders, it can suggest a plausible (admissible) direction of influence from a more exogenous variable (X) to a more endogenous variable (Y). Methodological details are provided at &lt;https://psychbruce.github.io/DPI/&gt;. This package also provides functions for data simulation and network analysis (correlation, partial correlation, and Bayesian networks).">
+<meta property="og:description" content="The Directed Prediction Index (DPI) is a quasi-causal inference (causal discovery) method for observational data designed to quantify the relative endogeneity (relative dependence) of outcome (Y) versus predictor (X) variables in regression models. By comparing the proportion of variance explained (R-squared) between the Y-as-outcome model and the X-as-outcome model while controlling for a sufficient number of possible confounders, it can suggest a plausible (admissible) direction of influence from a more exogenous variable (X) to a more endogenous variable (Y). Methodological details are provided at &lt;https://psychbruce.github.io/DPI/&gt;. This package also provides functions for data simulation and network analysis (correlation, partial correlation, and Bayesian networks).">
 <meta property="og:image" content="https://psychbruce.github.io/DPI/logo.png">
 </head>
 <body>
@@ -30,7 +30,7 @@
 
     <a class="navbar-brand me-2" href="index.html">DPI</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2025.10</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2025.11</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -167,28 +167,26 @@
 </h5>
 <table style="width:98%;" class="table">
 <colgroup>
-<col width="6%">
-<col width="27%">
-<col width="27%">
-<col width="18%">
-<col width="18%">
+<col width="13%">
+<col width="20%">
+<col width="20%">
+<col width="21%">
+<col width="22%">
 </colgroup>
 <thead><tr class="header">
-<th><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>p</mi><annotation encoding="application/x-tex">p</annotation></semantics></math></th>
+<th><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> value</mtext></mrow></mrow><annotation encoding="application/x-tex">p\text{ value}</annotation></semantics></math></th>
 <th>
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">Sigmoid</mtext><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><mi>p</mi><mi>α</mi></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\text{Sigmoid}(\frac{p}{\alpha})</annotation></semantics></math><br>
-(α = 0.05)</th>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">Sigmoid</mtext><mrow><mo stretchy="true" form="prefix">(</mo><mi>p</mi><mi>/</mi><mi>α</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\text{Sigmoid}(p/\alpha)</annotation></semantics></math><br>
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi><mo>=</mo><mn>0.05</mn></mrow><annotation encoding="application/x-tex">\alpha = 0.05</annotation></semantics></math>)</th>
 <th>
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">Sigmoid</mtext><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><mi>p</mi><mi>α</mi></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\text{Sigmoid}(\frac{p}{\alpha})</annotation></semantics></math><br>
-(α = 0.01)</th>
-<th>
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mtext mathvariant="normal">PseudoBF</mtext><mn>10</mn></msub><annotation encoding="application/x-tex">\text{PseudoBF}_{10}</annotation></semantics></math><br>
-(<em>n</em> = 100)<br>
-[sigmoid(logBF)]</th>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">Sigmoid</mtext><mrow><mo stretchy="true" form="prefix">(</mo><mi>p</mi><mi>/</mi><mi>α</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\text{Sigmoid}(p/\alpha)</annotation></semantics></math><br>
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi><mo>=</mo><mn>0.01</mn></mrow><annotation encoding="application/x-tex">\alpha = 0.01</annotation></semantics></math>)</th>
 <th>
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mtext mathvariant="normal">PseudoBF</mtext><mn>10</mn></msub><annotation encoding="application/x-tex">\text{PseudoBF}_{10}</annotation></semantics></math><br>
-(<em>n</em> = 1000)<br>
-[sigmoid(logBF)]</th>
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>=</mo><mn>100</mn></mrow><annotation encoding="application/x-tex">n = 100</annotation></semantics></math>) [sigmoid(logBF)]</th>
+<th>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mtext mathvariant="normal">PseudoBF</mtext><mn>10</mn></msub><annotation encoding="application/x-tex">\text{PseudoBF}_{10}</annotation></semantics></math><br>
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>=</mo><mn>1000</mn></mrow><annotation encoding="application/x-tex">n = 1000</annotation></semantics></math>) [sigmoid(logBF)]</th>
 </tr></thead>
 <tbody>
 <tr class="odd">

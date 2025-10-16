@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">DPI</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2025.10</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2025.11</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,7 +32,12 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="2025.10" id="dpi-202510">DPI 2025.10<a class="anchor" aria-label="anchor" href="#dpi-202510"></a></h2>
+<h2 class="pkg-version" data-toc-text="2025.11" id="dpi-202511">DPI 2025.11<a class="anchor" aria-label="anchor" href="#dpi-202511"></a></h2>
+<ul><li>Fixed <code><a href="../reference/DPI_curve.html">DPI_curve()</a></code> for wrong (reverse) direction of DPI caused by the change of parameter order of <code>x</code> and <code>y</code> in version 2025.10.</li>
+<li>Fixed a bug caused by <code>dpi</code> parameter-object name conflict (internally) when saving <code><a href="../reference/DPI.html">DPI()</a></code> results into a <code>file</code>.</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2025.10" id="dpi-202510">DPI 2025.10<a class="anchor" aria-label="anchor" href="#dpi-202510"></a></h2><p class="text-muted">CRAN release: 2025-10-16</p>
 <p><strong>This version contains breaking changes to function names and visualization methods.</strong></p>
 <ul><li>Added <code><a href="../reference/DPI_dag.html">DPI_dag()</a></code>: Directed acyclic graphs (DAGs) via DPI exploratory analysis (causal discovery) for all significant partial correlations.</li>
 <li>Added <code>bonf</code> and <code>pseudoBF</code> parameters to <code><a href="../reference/DPI.html">DPI()</a></code>, <code><a href="../reference/DPI_curve.html">DPI_curve()</a></code>, and <code><a href="../reference/DPI_dag.html">DPI_dag()</a></code>.
