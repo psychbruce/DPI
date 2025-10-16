@@ -511,6 +511,7 @@ DPI = function(
     else
       progress = TRUE
   }
+  dpi.plot = dpi
 
   formula.y = glue("{y} ~ {x} + .")
   formula.x = glue("{x} ~ {y} + .")
@@ -643,7 +644,7 @@ DPI = function(
   attr(dpi, "plot.params") = list(file = file,
                                   width = width,
                                   height = height,
-                                  dpi = dpi)
+                                  dpi = dpi.plot)
   return(dpi)
 }
 
@@ -960,7 +961,7 @@ DPI_curve = function(
       "simulation samples estimated in {cli::pb_elapsed}")
   )
   dpi.curve = lapply(k.covs, function(k.cov) {
-    dpi = DPI(model, y, x, data,
+    dpi = DPI(model, x, y, data,
               k.cov, n.sim,
               alpha, bonf, pseudoBF,
               seed, progress=FALSE)

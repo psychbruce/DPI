@@ -1,5 +1,10 @@
 **Please check the [latest news (change log)](https://psychbruce.github.io/DPI/news/index.html) and keep this package updated.**
 
+# DPI 2025.11
+
+-   Fixed `DPI_curve()` for wrong (reverse) direction of DPI caused by the change of parameter order of `x` and `y` in version 2025.10.
+-   Fixed a bug caused by `dpi` parameter-object name conflict (internally) when saving `DPI()` results into a `file`.
+
 # DPI 2025.10
 
 **This version contains breaking changes to function names and visualization methods.**

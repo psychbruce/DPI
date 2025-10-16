@@ -1,7 +1,7 @@
 Package: DPI
 Title: The Directed Prediction Index for Causal Inference from Observational Data
-Version: 2025.10
-Date: 2025-10-11
+Version: 2025.11
+Date: 2025-11-01
 Authors@R:
     c(person(given = "Han Wu Shuang",
              family = "Bao",
@@ -21,7 +21,7 @@ Description:
     from a more exogenous variable (X) to a more endogenous variable (Y).
     Methodological details are provided at
     <https://psychbruce.github.io/DPI/>.
-    This package also includes functions for data simulation and network
+    This package also provides functions for data simulation and network
     analysis (correlation, partial correlation, and Bayesian networks).
 License: GPL-3
 Encoding: UTF-8
