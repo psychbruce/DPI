@@ -1696,6 +1696,7 @@ DPI_dag = function(
       bonf = 1
   }
   bonf = as.integer(bonf)
+  Alpha = alpha / bonf
 
   sig.method = ifelse(pseudoBF, "Sigmoid(log(PseudoBF10.xy))",
                       "Sigmoid(p/alpha) = 1 - tanh(p.xy/alpha/2)")
@@ -1712,7 +1713,7 @@ DPI_dag = function(
      seed = {cli::col_magenta({seed})}")
   cli::cli_text(
     cli::col_cyan("False positive rates (FPR) control: "),
-    "Alpha = {cli::col_magenta({format(alpha / bonf, digits=3)})}
+    "Alpha = {cli::col_magenta({format(Alpha, digits=3)})}
      (Bonferroni correction = {cli::col_magenta({bonf})})")
 
   DPIs = lapply(seq_len(n.pcor), function(i) {
@@ -1720,6 +1721,7 @@ DPI_dag = function(
     y = d.pcor[i, 2]
     r.partial = d.pcor[i, 3]
     p.rp = d.pcor[i, 4]
+    bf = p_to_bf(p.rp, n)
     cli::cli_text(" ")
     cli::cli_text(cli::col_cyan("Exploring [{i}/{n.pcor}]:"))
     cli::cli_text(
@@ -1729,7 +1731,7 @@ DPI_dag = function(
        {cli::col_yellow({sig.trans(p.rp)})}
        (PseudoBF10 =
        {cli::col_yellow({
-         sprintf('%.3f', p_to_bf(p.rp, n))
+         sprintf(ifelse(bf < 1e+5, '%.3f', '%.3e'), bf)
        })})")
     DPIs = DPI_curve(x=x, y=y, data=data,
                      k.covs=k.covs, n.sim=n.sim,
@@ -1740,13 +1742,16 @@ DPI_dag = function(
     from = ifelse(sign > 0, x, y)
     to = ifelse(sign > 0, y, x)
     for(j in seq_along(k.covs)) {
+      p.z = DPIs[j, "p.z"]
+      sig = ifelse(Alpha == 0.05, sig.trans(p.z),
+                   ifelse(p.z < Alpha, "(sig)", ""))
       cli::cli_text("
         ---------
         DPI[{.val {from}}->{.val {to}}]({k.covs[j]}) =
         {cli::col_green({sprintf('%.3f', sign * DPIs[j, 'Estimate'])})},
         {ifelse(bonf==1, 'p', paste0('p(Bonf=', bonf, ')'))}
-        = {cli::col_green({p.trans(DPIs[j, 'p.z'])})}
-        {cli::col_green({sig.trans(DPIs[j, 'p.z'])})}")
+        = {cli::col_green({p.trans(p.z)})}
+        {cli::col_green({sig})}")
     }
     return(data.frame(
       var1 = x,
@@ -1768,6 +1773,7 @@ DPI_dag = function(
 
   dpi.dag = list(DPI=do.call("rbind", DPIs), qgraph=pcor$qgraph)
   class(dpi.dag) = c("dpi.dag")
+  attr(dpi.dag, "alpha") = Alpha  # alpha / bonf
   attr(dpi.dag, "plot.params") = list(file = file,
                                       width = width,
                                       height = height,
@@ -1794,6 +1800,7 @@ plot.dpi.dag = function(
       "Partial correlation network, instead of a DAG, is plotted.")
   dpi = subset(x$DPI, x$DPI$k.cov==k)
   p = x$qgraph
+  alpha = attr(x, "alpha")
 
   vars = p[["Arguments"]][["labels"]]
   vars.from = p[["Edgelist"]][["from"]]
@@ -1805,10 +1812,11 @@ plot.dpi.dag = function(
     reverse = var1 == dpi[i, "to"]
     DPI = dpi[i, "DPI"]
     p.z = dpi[i, "p.z"]
-    sig = p_to_sig(p.z)
+    sig = ifelse(alpha == 0.05, p_to_sig(p.z),
+                 ifelse(p.z < alpha, "(sig)", ""))
     id = which(vars[vars.from]==var1 & vars[vars.to]==var2)
 
-    if(p.z >= 0.05) {
+    if(p.z >= alpha) {
       # undirected => faded grey edge
       p[["graphAttributes"]][["Edges"]][["color"]][id] = color.dpi.insig
     } else {

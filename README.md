@@ -4,6 +4,8 @@
 
 The *Directed Prediction Index* (DPI) is a quasi-causal inference (causal discovery) method for observational data designed to quantify the *relative endogeneity* (relative dependence) of outcome (*Y*) versus predictor (*X*) variables in regression models.
 
+⚠️ *Please use version ≥ 2025.11 for correct functionality* (see [Changelog](https://psychbruce.github.io/DPI/news/index.html#dpi-202511)).
+
 <!-- badges: start -->
 
 [![CRAN-Version](https://www.r-pkg.org/badges/version/DPI?color=red)](https://CRAN.R-project.org/package=DPI) [![GitHub-Version](https://img.shields.io/github/r-package/v/psychbruce/DPI?label=GitHub&color=orange)](https://github.com/psychbruce/DPI) [![R-CMD-check](https://github.com/psychbruce/DPI/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/psychbruce/DPI/actions/workflows/R-CMD-check.yaml) [![CRAN-Downloads](https://cranlogs.r-pkg.org/badges/grand-total/DPI)](https://CRAN.R-project.org/package=DPI) [![GitHub-Stars](https://img.shields.io/github/stars/psychbruce/DPI?style=social)](https://github.com/psychbruce/DPI/stargazers)
