@@ -35,7 +35,7 @@ DPI_dag(
 \item{bonf}{Bonferroni correction to control for false positive rates: \code{alpha} is divided by, and \emph{p} values are multiplied by, the number of comparisons.
 \itemize{
 \item Defaults to \code{FALSE}: No correction, suitable if you plan to test only one pair of variables.
-\item \code{TRUE}: Using \code{k * (k - 1) / 2} (number of all combinations of variable pairs) where \code{k = length(data)}.
+\item \code{TRUE}: Using \code{k * (k - 1) / 2} (all pairs of variables) where \code{k = length(data)}.
 \item A user-specified number of comparisons.
 }}
 
@@ -69,9 +69,12 @@ print(dpi.dag, k=1)  # DAG with DPI(k=1)
 print(dpi.dag, k=3)  # DAG with DPI(k=3)
 print(dpi.dag, k=5)  # DAG with DPI(k=5)
 
+# settings of edge label and transparency
+print(dpi.dag, k=1, show.label=FALSE, faded.dpi=TRUE)
+
 # modify ggplot attributes
-gg = plot(dpi.dag, k=5, show.label=FALSE)
-gg + labs(title="DAG with DPI(k=5)")
+gg = plot(dpi.dag, k=5, show.label=FALSE, faded.dpi=TRUE)
+gg + labs(title="DAG with DPI (k=5)")
 
 # visualize DPIs of multiple paths
 ggplot(dpi.dag$DPI, aes(x=k.cov, y=DPI)) +

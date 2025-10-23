@@ -40,7 +40,7 @@ devtools::install_github("psychbruce/DPI", force=TRUE)
 
 ## Algorithm Details
 
-Define $\text{DPI} \in (-1, 1)$ as the product of $\text{Direction} \in (-1, 1)$ (relative endogeneity as direction score) and $\text{Significance} \in (0, 1)$ (normalized penalty as significance score) of the expected $X \rightarrow Y$ influence (quasi-causal) relationship:
+Define $\text{DPI} \in (-1, 1)$ as $\text{Direction} \in (-1, 1)$ (***relative endogeneity***) restricted by $\text{Significance} \in (0, 1)$ (***normalized penalty***) of the expected $X \rightarrow Y$ relationship:
 
 $$
 \begin{aligned}
@@ -72,6 +72,8 @@ $$
 $$
 
 The $\text{Delta}(R^2)$ *endogeneity score* aims to test whether $Y$ (outcome), compared to $X$ (predictor), can be *more strongly predicted* by all $m$ observable control variables (included in a given sample) and $k$ unobservable random covariates (randomly generated in simulation samples, as specified by `k.cov` in the `DPI()` function). A higher $R^2$ indicates *higher endogeneity* in a set of variables.
+
+Notably, as an expected attribute in causal inference, the $\text{Delta}(R^2)$ can also ensure the resulting Directed Acyclic Graph (DAG) structure to be both *directed* and *acyclic*, since each direction (edge) has been constrained to go from a lower-*R*² variable (node) to a higher-*R*² variable (node) within a specific set of variables. Therefore, it would be impossible to observe any unexpected cyclic structure in the DPI framework.
 
 #### Step 2: Normalized Penalty as Significance Score
 

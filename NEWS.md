@@ -2,9 +2,9 @@
 
 # DPI 2025.11
 
--   Improved `DPI_dag()`.
--   Fixed `DPI_curve()` for wrong (reverse) direction of DPI caused by the change of parameter order of `x` and `y` in version 2025.10.
--   Fixed a bug caused by `dpi` parameter-object name conflict (internally) when saving `DPI()` results into a `file`.
+-   Improved `DPI_dag()` and `plot.dpi.dag()`.
+-   (Fixed in patch version 2025.10-1) Fixed `DPI_curve()` for wrong (reverse) direction of DPI caused by the change of parameter order of `x` and `y` in version 2025.10.
+-   (Fixed in patch version 2025.10-1) Fixed a bug caused by `dpi` parameter-object name conflict (internally) when saving `DPI()` results into a `file`.
 
 # DPI 2025.10
 

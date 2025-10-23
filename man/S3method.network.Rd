@@ -32,6 +32,8 @@
   k = min(x$DPI$k.cov),
   show.label = TRUE,
   digits.dpi = 2,
+  faded.dpi = FALSE,
+  faded.dpi.limit = c(0, 0.25),
   color.dpi.insig = "#EEEEEEEE",
   scale = 1.2,
   ...
@@ -42,6 +44,8 @@
   k = min(x$DPI$k.cov),
   show.label = TRUE,
   digits.dpi = 2,
+  faded.dpi = FALSE,
+  faded.dpi.limit = c(0, 0.25),
   color.dpi.insig = "#EEEEEEEE",
   scale = 1.2,
   file = NULL,
@@ -71,6 +75,10 @@
 \item{show.label}{[For \code{dpi.dag}] Show labels of partial correlations, DPI(k), and their significance on edges. Defaults to \code{TRUE}.}
 
 \item{digits.dpi}{[For \code{dpi.dag}] Number of decimal places of DPI values displayed on DAG edges. Defaults to \code{2}.}
+
+\item{faded.dpi}{[For \code{dpi.dag}] Transparency of edges according to the value of DPI. Defaults to \code{FALSE}.}
+
+\item{faded.dpi.limit}{[For \code{dpi.dag}] Lower and upper limits of \code{abs(DPI)} for \code{"00"} and \code{"FF"} transparency of edges. Defaults to \code{c(0, 0.25)}.}
 
 \item{color.dpi.insig}{[For \code{dpi.dag}] Edge color for insignificant DPIs. Defaults to \code{"#EEEEEEEE"} (faded light grey).}
 }
