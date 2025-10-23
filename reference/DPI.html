@@ -96,7 +96,7 @@
 
 <dt id="arg-bonf">bonf<a class="anchor" aria-label="anchor" href="#arg-bonf"></a></dt>
 <dd><p>Bonferroni correction to control for false positive rates: <code>alpha</code> is divided by, and <em>p</em> values are multiplied by, the number of comparisons.</p><ul><li><p>Defaults to <code>FALSE</code>: No correction, suitable if you plan to test only one pair of variables.</p></li>
-<li><p><code>TRUE</code>: Using <code>k * (k - 1) / 2</code> (number of all combinations of variable pairs) where <code>k = length(data)</code>.</p></li>
+<li><p><code>TRUE</code>: Using <code>k * (k - 1) / 2</code> (all pairs of variables) where <code>k = length(data)</code>.</p></li>
 <li><p>A user-specified number of comparisons.</p></li>
 </ul></dd>
 
