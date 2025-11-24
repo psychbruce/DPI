@@ -1639,14 +1639,15 @@ bn_to_matrix = function(bn, strength=0.85, direction=0.50) {
 #' \donttest{# partial correlation networks (undirected)
 #' cor_net(airquality, "pcor")
 #'
-#' # directed acyclic graphs
+#' # directed acyclic graphs (grey edge = insignificant DPI)
 #' dpi.dag = DPI_dag(airquality, k.covs=c(1,3,5), seed=1)
 #' print(dpi.dag, k=1)  # DAG with DPI(k=1)
 #' print(dpi.dag, k=3)  # DAG with DPI(k=3)
 #' print(dpi.dag, k=5)  # DAG with DPI(k=5)
 #'
-#' # settings of edge label and transparency
-#' print(dpi.dag, k=1, show.label=FALSE, faded.dpi=TRUE)
+#' # set edge labels and edge transparency
+#' # (grey edge = insignificant DPI)
+#' print(dpi.dag, k=5, show.label=FALSE, faded.dpi=TRUE)
 #'
 #' # modify ggplot attributes
 #' gg = plot(dpi.dag, k=5, show.label=FALSE, faded.dpi=TRUE)
@@ -1654,11 +1655,13 @@ bn_to_matrix = function(bn, strength=0.85, direction=0.50) {
 #'
 #' # visualize DPIs of multiple paths
 #' ggplot(dpi.dag$DPI, aes(x=k.cov, y=DPI)) +
-#'   geom_ribbon(aes(ymin=Sim.LLCI, ymax=Sim.ULCI, fill=path),
-#'               alpha=0.1) +
+#'   geom_ribbon(
+#'     aes(ymin=Sim.LLCI, ymax=Sim.ULCI, fill=path),
+#'         alpha=0.1) +
 #'   geom_line(aes(color=path), linewidth=0.7) +
 #'   geom_point(aes(color=path)) +
-#'   geom_hline(yintercept=0, color="red", linetype="dashed") +
+#'   geom_hline(yintercept=0, color="red",
+#'              linetype="dashed") +
 #'   scale_y_continuous(limits=c(NA, 0.5)) +
 #'   labs(color="Directed Prediction",
 #'        fill="Directed Prediction") +
@@ -1824,18 +1827,20 @@ plot.dpi.dag = function(
                  ifelse(p.z < alpha, "(sig)", ""))
     id = which(vars[vars.from]==var1 & vars[vars.to]==var2)
 
+    # forced DAG
+    p[["Edgelist"]][["directed"]][id] = TRUE
+    if(reverse) {
+      from.id = p[["Edgelist"]][["from"]][id]
+      to.id = p[["Edgelist"]][["to"]][id]
+      p[["Edgelist"]][["from"]][id] = to.id
+      p[["Edgelist"]][["to"]][id] = from.id
+    }
+
     if(p.z >= alpha) {
       # undirected => faded grey edge
       p[["graphAttributes"]][["Edges"]][["color"]][id] = color.dpi.insig
     } else {
-      # directed
-      p[["Edgelist"]][["directed"]][id] = TRUE
-      if(reverse) {
-        from.id = p[["Edgelist"]][["from"]][id]
-        to.id = p[["Edgelist"]][["to"]][id]
-        p[["Edgelist"]][["from"]][id] = to.id
-        p[["Edgelist"]][["to"]][id] = from.id
-      }
+      # directed => colored (and faded) edge
       if(faded.dpi) {
         p[["graphAttributes"]][["Edges"]][["color"]][id] =
           gsub("FF$",

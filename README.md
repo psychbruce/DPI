@@ -24,8 +24,8 @@ Bruce H. W. S. Bao 包寒吴霜
 
 ## Citation
 
--   Bao, H. W. S. (2025). *DPI: The Directed Prediction Index for causal inference from observational data*. <https://doi.org/10.32614/CRAN.package.DPI>
--   Bao, H. W. S. (Manuscript). *The Directed Prediction Index (DPI): Quantifying relative endogeneity for causal inference from observational data*.
+-   Bao, H. W. S. (2025). *DPI: The Directed Prediction Index for causal direction inference from observational data*. <https://doi.org/10.32614/CRAN.package.DPI>
+-   Bao, H. W. S. (in preparation). *The Directed Prediction Index (DPI): Quantifying relative endogeneity for causal direction inference from observational data*. (Manuscript in preparation)
 
 ## Installation
 

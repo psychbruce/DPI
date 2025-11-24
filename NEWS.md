@@ -2,7 +2,7 @@
 
 # DPI 2025.11
 
--   Improved `DPI_dag()` and `plot.dpi.dag()`.
+-   Improved `DPI_dag()` and `plot.dpi.dag()`. Also forced the plot to strictly show a DAG while changing edge color of insignificant DPI into faded grey.
 -   (Fixed in patch version 2025.10-1) Fixed `DPI_curve()` for wrong (reverse) direction of DPI caused by the change of parameter order of `x` and `y` in version 2025.10.
 -   (Fixed in patch version 2025.10-1) Fixed a bug caused by `dpi` parameter-object name conflict (internally) when saving `DPI()` results into a `file`.
 
