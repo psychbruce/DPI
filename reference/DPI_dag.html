@@ -130,7 +130,7 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Displaying <span style="color: #0000BB;">Partial Correlation Network</span></span>
 <span class="r-plt img"><img src="DPI_dag-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># directed acyclic graphs</span></span></span>
+<span class="r-in"><span><span class="co"># directed acyclic graphs (grey edge = insignificant DPI)</span></span></span>
 <span class="r-in"><span><span class="va">dpi.dag</span> <span class="op">=</span> <span class="fu">DPI_dag</span><span class="op">(</span><span class="va">airquality</span>, k.covs<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">3</span>,<span class="fl">5</span><span class="op">)</span>, seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Sample size: </span>N.valid = 111</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Significance score method: </span><span style="color: #BBBB00;">Sigmoid(p/alpha) = 1 - tanh(p.xy/alpha/2)</span></span>
@@ -176,9 +176,10 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Displaying DAG with DPI algorithm (k.cov = <span style="color: #0000BB;">5</span>)</span>
 <span class="r-plt img"><img src="DPI_dag-4.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># settings of edge label and transparency</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">dpi.dag</span>, k<span class="op">=</span><span class="fl">1</span>, show.label<span class="op">=</span><span class="cn">FALSE</span>, faded.dpi<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Displaying DAG with DPI algorithm (k.cov = <span style="color: #0000BB;">1</span>)</span>
+<span class="r-in"><span><span class="co"># set edge labels and edge transparency</span></span></span>
+<span class="r-in"><span><span class="co"># (grey edge = insignificant DPI)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">dpi.dag</span>, k<span class="op">=</span><span class="fl">5</span>, show.label<span class="op">=</span><span class="cn">FALSE</span>, faded.dpi<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Displaying DAG with DPI algorithm (k.cov = <span style="color: #0000BB;">5</span>)</span>
 <span class="r-plt img"><img src="DPI_dag-5.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># modify ggplot attributes</span></span></span>
@@ -188,11 +189,13 @@
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># visualize DPIs of multiple paths</span></span></span>
 <span class="r-in"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">dpi.dag</span><span class="op">$</span><span class="va">DPI</span>, <span class="fu">aes</span><span class="op">(</span>x<span class="op">=</span><span class="va">k.cov</span>, y<span class="op">=</span><span class="va">DPI</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span></span>
-<span class="r-in"><span>  <span class="fu">geom_ribbon</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>ymin<span class="op">=</span><span class="va">Sim.LLCI</span>, ymax<span class="op">=</span><span class="va">Sim.ULCI</span>, fill<span class="op">=</span><span class="va">path</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>              alpha<span class="op">=</span><span class="fl">0.1</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>  <span class="fu">geom_ribbon</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="fu">aes</span><span class="op">(</span>ymin<span class="op">=</span><span class="va">Sim.LLCI</span>, ymax<span class="op">=</span><span class="va">Sim.ULCI</span>, fill<span class="op">=</span><span class="va">path</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>        alpha<span class="op">=</span><span class="fl">0.1</span><span class="op">)</span> <span class="op">+</span></span></span>
 <span class="r-in"><span>  <span class="fu">geom_line</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>color<span class="op">=</span><span class="va">path</span><span class="op">)</span>, linewidth<span class="op">=</span><span class="fl">0.7</span><span class="op">)</span> <span class="op">+</span></span></span>
 <span class="r-in"><span>  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>color<span class="op">=</span><span class="va">path</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span></span>
-<span class="r-in"><span>  <span class="fu">geom_hline</span><span class="op">(</span>yintercept<span class="op">=</span><span class="fl">0</span>, color<span class="op">=</span><span class="st">"red"</span>, linetype<span class="op">=</span><span class="st">"dashed"</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>  <span class="fu">geom_hline</span><span class="op">(</span>yintercept<span class="op">=</span><span class="fl">0</span>, color<span class="op">=</span><span class="st">"red"</span>,</span></span>
+<span class="r-in"><span>             linetype<span class="op">=</span><span class="st">"dashed"</span><span class="op">)</span> <span class="op">+</span></span></span>
 <span class="r-in"><span>  <span class="fu">scale_y_continuous</span><span class="op">(</span>limits<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span></span>
 <span class="r-in"><span>  <span class="fu">labs</span><span class="op">(</span>color<span class="op">=</span><span class="st">"Directed Prediction"</span>,</span></span>
 <span class="r-in"><span>       fill<span class="op">=</span><span class="st">"Directed Prediction"</span><span class="op">)</span> <span class="op">+</span></span></span>
@@ -210,7 +213,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>
