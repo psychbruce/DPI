@@ -6,6 +6,7 @@
 
 
 #' @import ggplot2
+#' @import qgraph
 #' @importFrom stats nobs var sd cor na.omit plogis
 #' @importFrom stats pt pnorm rnorm rbinom quantile qnorm
 #' @importFrom stats lm model.frame update coef df.residual
@@ -1243,7 +1244,7 @@ cor_net = function(
 #' @export
 plot.cor.net = function(x, scale=1.2, ...) {
   suppressWarnings({
-    grob = as_grob(~qgraph:::plot.qgraph(x$qgraph))
+    grob = as_grob(~plot(x$qgraph))
   })
   ggplot() + draw_grob(grob, scale=scale)
 }
@@ -1546,7 +1547,7 @@ plot.bns.dag = function(x, algorithm, scale=1.2, ...) {
   }
   class(x) = "qgraph"
   suppressWarnings({
-    grob = as_grob(~qgraph:::plot.qgraph(x))
+    grob = as_grob(~plot(x))
   })
   ggplot() +
     draw_grob(grob, scale=scale) +
