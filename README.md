@@ -2,7 +2,7 @@
 
 🛸 The Directed Prediction Index (DPI).
 
-The *Directed Prediction Index* (DPI) is a quasi-causal inference (causal discovery) method for observational data designed to quantify the *relative endogeneity* (relative dependence) of outcome (*Y*) versus predictor (*X*) variables in regression models.
+The *Directed Prediction Index* (DPI) is a causal discovery method for observational data designed to quantify the *relative endogeneity* of outcome (*Y*) versus predictor (*X*) variables in regression models.
 
 ⚠️ *Please use version ≥ 2025.11 for correct functionality* (see [Changelog](https://psychbruce.github.io/DPI/news/index.html#dpi-202511)).
 
@@ -25,7 +25,7 @@ Bruce H. W. S. Bao 包寒吴霜
 ## Citation
 
 -   Bao, H. W. S. (2025). *DPI: The Directed Prediction Index for causal direction inference from observational data*. <https://doi.org/10.32614/CRAN.package.DPI>
--   Bao, H. W. S. (in preparation). *The Directed Prediction Index (DPI): Quantifying relative endogeneity for causal direction inference from observational data*. (Manuscript in preparation)
+-   Bao, H. W. S. (in preparation). *The Directed Prediction Index (DPI): Causal direction inference from relative endogeneity for multivariate observational data*. (Manuscript in preparation)
 
 ## Installation
 
@@ -40,27 +40,27 @@ devtools::install_github("psychbruce/DPI", force=TRUE)
 
 ## Algorithm Details
 
-Define $\text{DPI} \in (-1, 1)$ as $\text{Direction} \in (-1, 1)$ (***relative endogeneity***) restricted by $\text{Significance} \in (0, 1)$ (***normalized penalty***) of the expected $X \rightarrow Y$ relationship:
+Define $\text{DPI} \in (-1, 1)$ as $\text{RelativeEndogeneity} \in (-1, 1)$ restricted by $\text{NormalizedPenalty} \in (0, 1)$ of the $X \rightarrow Y$ relationship:
 
 $$
 \begin{aligned}
 \text{DPI}_{X \rightarrow Y}
-& = \text{Direction}_{X \rightarrow Y} \cdot \text{Significance}_{X \rightarrow Y} \\
+& = \text{RelativeEndogeneity}_{X \rightarrow Y} \cdot \text{NormalizedPenalty}_{X \rightarrow Y} \\
 & = \text{Delta}(R^2) \cdot \text{Sigmoid}(\frac{p}{\alpha}) \\
 & = \left( R_{Y \sim X + Covs}^2 - R_{X \sim Y + Covs}^2 \right) \cdot \left( 1 - \tanh \frac{p_{XY|Covs}}{2\alpha} \right) \\
 & \in (-1, 1)
 \end{aligned}
 $$
 
-In econometrics and broader social sciences, an *exogenous* variable is assumed to have a directed (causal or quasi-causal) influence on an *endogenous* variable ($ExoVar \rightarrow EndoVar$). By quantifying the *relative endogeneity* of outcome versus predictor variables in multiple linear regression models, the DPI can suggest a plausible (admissible) direction of influence (i.e., $\text{DPI}_{X \rightarrow Y} > 0 \text{: } X \rightarrow Y$) after controlling for a sufficient number of possible confounders and simulated random covariates.
+In econometrics and broader social sciences, an *exogenous* variable is assumed to have a directed (causal or quasi-causal) influence on an *endogenous* variable ($ExoVar \rightarrow EndoVar$). By quantifying the *relative endogeneity* of outcome versus predictor variables in multiple linear regression models, the DPI can suggest a plausible (admissible) causal ($\text{DPI}_{X \rightarrow Y} > 0$ is a *necessary but insufficient* condition of $X \rightarrow Y$) after controlling for possible confounders and simulated random covariates.
 
-### Key Steps of Conceptualization and Computation
+### Conceptualization and Computation
 
 All steps have been compiled into `DPI()` and `DPI_curve()`. See their help pages for usage and illustrative examples. Below are conceptual rationales and mathematical explanations.
 
-#### Step 1: Relative Endogeneity as Direction Score
+#### Step 1: Relative Endogeneity for Plausible Causal Direction
 
-Define $\text{Direction}_{X \rightarrow Y}$ as ***relative endogeneity*** (relative dependence) of $Y$ vs. $X$ in a given variable set involving all possible confounders $Covs$:
+Define $\text{Direction}_{X \rightarrow Y}$ as ***relative endogeneity*** of $Y$ vs. $X$ in a given variable set involving all possible confounders $Covs$:
 
 $$
 \begin{aligned}
@@ -73,11 +73,11 @@ $$
 
 The $\text{Delta}(R^2)$ *endogeneity score* aims to test whether $Y$ (outcome), compared to $X$ (predictor), can be *more strongly predicted* by all $m$ observable control variables (included in a given sample) and $k$ unobservable random covariates (randomly generated in simulation samples, as specified by `k.cov` in the `DPI()` function). A higher $R^2$ indicates *higher endogeneity* in a set of variables.
 
-Notably, as an expected attribute in causal inference, the $\text{Delta}(R^2)$ can also ensure the resulting Directed Acyclic Graph (DAG) structure to be both *directed* and *acyclic*, since each direction (edge) has been constrained to go from a lower-*R*² variable (node) to a higher-*R*² variable (node) within a specific set of variables. Therefore, it would be impossible to observe any unexpected cyclic structure in the DPI framework.
+As an ideal property, the $\text{Delta}(R^2)$ can also ensure the resulting Directed Acyclic Graph (DAG) structure to be both *directed* and *acyclic*, since each direction (edge) has been constrained to go from a lower-*R*² variable (node) to a higher-*R*² variable (node) within a specific set of variables. Therefore, it would be impossible to observe any cyclic relationship in the DPI framework.
 
-#### Step 2: Normalized Penalty as Significance Score
+#### Step 2: Normalized Penalty for Insignificant Partial Correlation
 
-Define $\text{Sigmoid}(\frac{p}{\alpha})$ as ***normalized penalty*** for insignificance of the partial relationship between $X$ and $Y$ when controlling for all possible confounders $Covs$:
+Define $\text{Sigmoid}(\frac{p}{\alpha})$ as ***normalized penalty*** for insignificant partial relationship between $X$ and $Y$ when controlling for all confounders $Covs$:
 
 $$
 \begin{aligned}

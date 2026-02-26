@@ -35,11 +35,7 @@ DPI_curve(
 
 \item{n.sim}{Number of simulation samples. Defaults to \code{1000}.}
 
-\item{alpha}{Significance level for computing the \code{Significance} score (0~1) based on \emph{p} value of partial correlation between \code{X} and \code{Y}. Defaults to \code{0.05}.
-\itemize{
-\item \code{Direction = R2.Y - R2.X}
-\item \code{Significance = 1 - tanh(p.beta.xy/alpha/2)}
-}}
+\item{alpha}{Significance level for computing the \emph{Normalized Penalty} score (0~1) based on \emph{p} value of partial correlation between \code{X} and \code{Y}. Defaults to \code{0.05}.}
 
 \item{bonf}{Bonferroni correction to control for false positive rates: \code{alpha} is divided by, and \emph{p} values are multiplied by, the number of comparisons.
 \itemize{
@@ -48,9 +44,9 @@ DPI_curve(
 \item A user-specified number of comparisons.
 }}
 
-\item{pseudoBF}{Use normalized pseudo Bayes Factors \code{sigmoid(log(PseudoBF10))} alternatively as the \code{Significance} score (0~1). Pseudo Bayes Factors are computed from \emph{p} value of X-Y partial relationship and total sample size, using the transformation rules proposed by Wagenmakers (2022) \doi{10.31234/osf.io/egydq}.
+\item{pseudoBF}{Use normalized pseudo Bayes Factors \code{sigmoid(log(PseudoBF10))} alternatively as the \emph{Normalized Penalty} score (0~1). Pseudo Bayes Factors are computed from \emph{p} value of X-Y partial relationship and total sample size, using the transformation rules proposed by Wagenmakers (2022) \doi{10.31234/osf.io/egydq}.
 
-Defaults to \code{FALSE} because it makes less penalties for insignificant partial relationships between \code{X} and \code{Y}, see Examples in \code{\link[=DPI]{DPI()}} and \href{https://psychbruce.github.io/DPI/#step-2-normalized-penalty-as-significance-score}{online documentation}.}
+Defaults to \code{FALSE} because it makes less penalties for insignificant partial relationships between \code{X} and \code{Y}, see Examples in \code{\link[=DPI]{DPI()}} and \href{https://psychbruce.github.io/DPI/#step-2-normalized-penalty-for-insignificant-partial-correlation}{online documentation}.}
 
 \item{seed}{Random seed for replicable results. Defaults to \code{NULL}.}
 

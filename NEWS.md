@@ -1,5 +1,14 @@
 **Please check the [latest news (change log)](https://psychbruce.github.io/DPI/news/index.html) and keep this package updated.**
 
+To-do list:
+
+-   [ ] Allow for specification of exogenous variables in `DPI_dag()`.
+-   [ ] Support non-linear and multilevel models.
+
+# DPI 2026.2
+
+-   Minor changes and improvements.
+
 # DPI 2025.11
 
 -   Improved `DPI_dag()` and `plot.dpi.dag()`. Also forced the plot to strictly show a DAG while changing edge color of insignificant DPI into faded grey.

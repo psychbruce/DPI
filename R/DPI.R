@@ -396,7 +396,7 @@ NULL
 
 #' The Directed Prediction Index (DPI).
 #'
-#' The Directed Prediction Index (DPI) is a quasi-causal inference method for cross-sectional data designed to quantify the *relative endogeneity* (relative dependence) of outcome (*Y*) vs. predictor (*X*) variables in regression models. By comparing the proportion of variance explained (*R*-squared) between the *Y*-as-outcome model and the *X*-as-outcome model while controlling for a sufficient number of possible confounders, it can suggest a plausible (admissible) direction of influence from a more exogenous variable (*X*) to a more endogenous variable (*Y*). Methodological details are provided at <https://psychbruce.github.io/DPI/>.
+#' The Directed Prediction Index (DPI) is a causal discovery method for observational data designed to quantify the *relative endogeneity* of outcome (*Y*) vs. predictor (*X*) variables in regression models. By comparing the coefficients of determination (*R*-squared) between the *Y*-as-outcome and *X*-as-outcome models while controlling for sufficient confounders and simulating *k* random covariates, it can quantify relative endogeneity, providing a necessary but insufficient condition for causal direction from a more exogenous variable (*X*) to a more endogenous variable (*Y*). Methodological details are provided at <https://psychbruce.github.io/DPI/>.
 #'
 #' @param model Model object (`lm`).
 #' @param x Independent (predictor) variable.
@@ -408,16 +408,14 @@ NULL
 #' - If `k.cov` > 0, the raw data (without bootstrapping) are used, with `k.cov` random variables appended, for simulation.
 #' - If `k.cov` = 0 (not suggested), bootstrap samples (resampling with replacement) are used for simulation.
 #' @param n.sim Number of simulation samples. Defaults to `1000`.
-#' @param alpha Significance level for computing the `Significance` score (0~1) based on *p* value of partial correlation between `X` and `Y`. Defaults to `0.05`.
-#' - `Direction = R2.Y - R2.X`
-#' - `Significance = 1 - tanh(p.beta.xy/alpha/2)`
+#' @param alpha Significance level for computing the *Normalized Penalty* score (0~1) based on *p* value of partial correlation between `X` and `Y`. Defaults to `0.05`.
 #' @param bonf Bonferroni correction to control for false positive rates: `alpha` is divided by, and *p* values are multiplied by, the number of comparisons.
 #' - Defaults to `FALSE`: No correction, suitable if you plan to test only one pair of variables.
 #' - `TRUE`: Using `k * (k - 1) / 2` (all pairs of variables) where `k = length(data)`.
 #' - A user-specified number of comparisons.
-#' @param pseudoBF Use normalized pseudo Bayes Factors `sigmoid(log(PseudoBF10))` alternatively as the `Significance` score (0~1). Pseudo Bayes Factors are computed from *p* value of X-Y partial relationship and total sample size, using the transformation rules proposed by Wagenmakers (2022) \doi{10.31234/osf.io/egydq}.
+#' @param pseudoBF Use normalized pseudo Bayes Factors `sigmoid(log(PseudoBF10))` alternatively as the *Normalized Penalty* score (0~1). Pseudo Bayes Factors are computed from *p* value of X-Y partial relationship and total sample size, using the transformation rules proposed by Wagenmakers (2022) \doi{10.31234/osf.io/egydq}.
 #'
-#' Defaults to `FALSE` because it makes less penalties for insignificant partial relationships between `X` and `Y`, see Examples in [DPI()] and [online documentation](https://psychbruce.github.io/DPI/#step-2-normalized-penalty-as-significance-score).
+#' Defaults to `FALSE` because it makes less penalties for insignificant partial relationships between `X` and `Y`, see Examples in [DPI()] and [online documentation](https://psychbruce.github.io/DPI/#step-2-normalized-penalty-for-insignificant-partial-correlation).
 #' @param seed Random seed for replicable results. Defaults to `NULL`.
 #' @param progress Show progress bar. Defaults to `FALSE` (if `n.sim` < 5000).
 #' @param file File name of saved plot (`".png"` or `".pdf"`).
@@ -426,7 +424,7 @@ NULL
 #'
 #' @return
 #' Return a data.frame of simulation results:
-#' - `DPI = Direction * Significance`
+#' - `DPI = Relative Endogeneity * Normalized Penalty`
 #'   - `= (R2.Y - R2.X) * (1 - tanh(p.beta.xy/alpha/2))`
 #'     - if `pseudoBF=FALSE` (default, suggested)
 #'     - more conservative estimates
@@ -480,7 +478,7 @@ NULL
 #' DPI(data=airquality, x="Solar.R", y="Wind",
 #'     k.cov=10, seed=1)
 #'
-#' # or use pseudo Bayes Factors for the significance score
+#' # or use pseudo Bayes Factors for normalized penalty
 #' # (less conservative for insignificant X-Y relationship)
 #' DPI(data=airquality, x="Solar.R", y="Ozone", k.cov=10,
 #'     pseudoBF=TRUE, seed=1)  # DPI > 0 (true positive)
@@ -745,7 +743,7 @@ print.summary.dpi = function(x, digits=3, ...) {
        sprintf(fmt, p_to_bf(x$r.partial.summ$p.t, attr(x$dpi, 'N.valid')))
      })})")
   cli::cli_text(
-    cli::col_cyan("Significance score method: "),
+    cli::col_cyan("Normalized penalty method: "),
     "{cli::col_yellow({sig.method})}")
   cli::cli_text(
     cli::col_cyan("Simulation sample setting: "),
@@ -891,8 +889,8 @@ plot.dpi = function(x, file=NULL, width=6, height=4, dpi=500, ...) {
 #' @rdname S3method.dpi
 #' @export
 print.dpi = function(x, digits=3, ...) {
-  print(summary(x), digits=digits)
-  print(plot(x))
+  print(summary.dpi(x), digits=digits)
+  print(plot.dpi(x))
 }
 
 
@@ -965,7 +963,8 @@ DPI_curve = function(
               k.cov=k.cov, n.sim=n.sim,
               alpha=alpha, bonf=bonf, pseudoBF=pseudoBF,
               seed=seed, progress=FALSE)
-    dpi.summ = cbind(data.frame(k.cov), summary(dpi)[["dpi.summ"]])
+    dpi.summ = cbind(data.frame(k.cov, bonf),
+                     summary(dpi)[["dpi.summ"]])
     row.names(dpi.summ) = k.cov
     attr(dpi.summ, "bonferroni") = attr(dpi, "bonferroni")
     if(progress)
@@ -1244,7 +1243,7 @@ cor_net = function(
 #' @export
 plot.cor.net = function(x, scale=1.2, ...) {
   suppressWarnings({
-    grob = as_grob(~plot(x$qgraph))
+    grob = as_grob(~qgraph:::plot.qgraph(x$qgraph))
   })
   ggplot() + draw_grob(grob, scale=scale)
 }
@@ -1418,6 +1417,14 @@ BNs_dag = function(
     ...
 ) {
   data = as.data.frame(data)
+  if(nrow(na.omit(data)) < nrow(data))
+    cli::cli_warn("
+    Missing values (NA) found in data!
+
+    BNs results would be affected by missing values!
+
+    You may use `na.omit()` to delete missing values listwise.")
+
   vars = names(data)
   for(var in vars) {
     if(is.integer(data[[var]]))
@@ -1539,7 +1546,7 @@ plot.bns.dag = function(x, algorithm, scale=1.2, ...) {
   }
   class(x) = "qgraph"
   suppressWarnings({
-    grob = as_grob(~plot(x))
+    grob = as_grob(~qgraph:::plot.qgraph(x))
   })
   ggplot() +
     draw_grob(grob, scale=scale) +
@@ -1570,7 +1577,7 @@ print.bns.dag = function(
   gg.list = list()
 
   for(algo in algorithm) {
-    gg = plot(x=x, algorithm=algo, scale=scale)
+    gg = plot.bns.dag(x=x, algorithm=algo, scale=scale)
     gg.list = c(gg.list, list(gg))
 
     cli::cli_text("Displaying DAG with BN algorithm {.val {algo}}")
@@ -1615,6 +1622,7 @@ bn_to_matrix = function(bn, strength=0.85, direction=0.50) {
 
 #' Directed acyclic graphs (DAGs) via DPI exploratory analysis (causal discovery) for all significant partial *r*s.
 #'
+#' @inheritParams cor_net
 #' @inheritParams DPI_curve
 #' @param data A dataset with at least 3 variables.
 #' @param k.covs An integer vector (e.g., `1:10`) of number of random covariates (simulating potential omitted variables) added to each simulation sample. Defaults to `1`. For details, see [DPI()].
@@ -1676,6 +1684,7 @@ DPI_dag = function(
     bonf = FALSE,
     pseudoBF = FALSE,
     seed = NULL,
+    node.text.size = 1.2,
     progress,
     file = NULL,
     width = 6,
@@ -1689,7 +1698,8 @@ DPI_dag = function(
       progress = TRUE
   }
 
-  pcor = cor_net(data, "pcor", edge.width.max=1.5)
+  pcor = cor_net(data, "pcor", edge.width.max=1.5,
+                 node.text.size=node.text.size)
   d.pcor = subset(pcor$cor, pcor$cor$pval < alpha)[, 1:4]
   n.pcor = nrow(d.pcor)
 
@@ -1710,7 +1720,7 @@ DPI_dag = function(
     cli::col_cyan("Sample size: "),
     "N.valid = {n}")
   cli::cli_text(
-    cli::col_cyan("Significance score method: "),
+    cli::col_cyan("Normalized penalty method: "),
     "{cli::col_yellow({sig.method})}")
   cli::cli_text(
     cli::col_cyan("Simulation sample setting: "),
