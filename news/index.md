@@ -2,6 +2,8 @@
 
 ## DPI 2026.2
 
+CRAN release: 2026-02-26
+
 - Minor changes and improvements.
 
 ## DPI 2025.11

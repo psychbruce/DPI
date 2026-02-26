@@ -133,16 +133,16 @@ Return a data.frame of DPI curve results.
 ``` r
 model = lm(Ozone ~ ., data=airquality)
 DPIs = DPI_curve(model, x="Solar.R", y="Ozone", seed=1)
-#> ⠙ Simulation k.covs: 1/10 ███████████████████████████████   10% [00:00:3.6]
-#> ⠹ Simulation k.covs: 2/10 ███████████████████████████████   20% [00:00:7.6]
-#> ⠸ Simulation k.covs: 3/10 ███████████████████████████████   30% [00:00:11.5]
+#> ⠙ Simulation k.covs: 1/10 ███████████████████████████████   10% [00:00:3.8]
+#> ⠹ Simulation k.covs: 2/10 ███████████████████████████████   20% [00:00:7.5]
+#> ⠸ Simulation k.covs: 3/10 ███████████████████████████████   30% [00:00:11.4]
 #> ⠼ Simulation k.covs: 4/10 ███████████████████████████████   40% [00:00:15.5]
-#> ⠴ Simulation k.covs: 5/10 ███████████████████████████████   50% [00:00:19.7]
+#> ⠴ Simulation k.covs: 5/10 ███████████████████████████████   50% [00:00:19.6]
 #> ⠦ Simulation k.covs: 6/10 ███████████████████████████████   60% [00:00:24]
-#> ⠧ Simulation k.covs: 7/10 ███████████████████████████████   70% [00:00:28.5]
+#> ⠧ Simulation k.covs: 7/10 ███████████████████████████████   70% [00:00:28.6]
 #> ⠇ Simulation k.covs: 8/10 ███████████████████████████████   80% [00:00:33.2]
-#> ⠏ Simulation k.covs: 9/10 ███████████████████████████████   90% [00:00:38.2]
-#> ✔ 10 * 1000 simulation samples estimated in 43.1s
+#> ⠏ Simulation k.covs: 9/10 ███████████████████████████████   90% [00:00:38]
+#> ✔ 10 * 1000 simulation samples estimated in 42.9s
 #> 
 plot(DPIs)  # ggplot object
 
