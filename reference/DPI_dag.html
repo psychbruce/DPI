@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">DPI</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2025.11</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2026.02</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -46,6 +46,7 @@
 <span>  bonf <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  pseudoBF <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  seed <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  node.text.size <span class="op">=</span> <span class="fl">1.2</span>,</span>
 <span>  <span class="va">progress</span>,</span>
 <span>  file <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  width <span class="op">=</span> <span class="fl">6</span>,</span>
@@ -71,9 +72,7 @@
 
 
 <dt id="arg-alpha">alpha<a class="anchor" aria-label="anchor" href="#arg-alpha"></a></dt>
-<dd><p>Significance level for computing the <code>Significance</code> score (0~1) based on <em>p</em> value of partial correlation between <code>X</code> and <code>Y</code>. Defaults to <code>0.05</code>.</p><ul><li><p><code>Direction = R2.Y - R2.X</code></p></li>
-<li><p><code>Significance = 1 - tanh(p.beta.xy/alpha/2)</code></p></li>
-</ul></dd>
+<dd><p>Significance level for computing the <em>Normalized Penalty</em> score (0~1) based on <em>p</em> value of partial correlation between <code>X</code> and <code>Y</code>. Defaults to <code>0.05</code>.</p></dd>
 
 
 <dt id="arg-bonf">bonf<a class="anchor" aria-label="anchor" href="#arg-bonf"></a></dt>
@@ -84,13 +83,17 @@
 
 
 <dt id="arg-pseudobf">pseudoBF<a class="anchor" aria-label="anchor" href="#arg-pseudobf"></a></dt>
-<dd><p>Use normalized pseudo Bayes Factors <code>sigmoid(log(PseudoBF10))</code> alternatively as the <code>Significance</code> score (0~1). Pseudo Bayes Factors are computed from <em>p</em> value of X-Y partial relationship and total sample size, using the transformation rules proposed by Wagenmakers (2022) <a href="https://doi.org/10.31234/osf.io/egydq" class="external-link">doi:10.31234/osf.io/egydq</a>
+<dd><p>Use normalized pseudo Bayes Factors <code>sigmoid(log(PseudoBF10))</code> alternatively as the <em>Normalized Penalty</em> score (0~1). Pseudo Bayes Factors are computed from <em>p</em> value of X-Y partial relationship and total sample size, using the transformation rules proposed by Wagenmakers (2022) <a href="https://doi.org/10.31234/osf.io/egydq" class="external-link">doi:10.31234/osf.io/egydq</a>
 .</p>
-<p>Defaults to <code>FALSE</code> because it makes less penalties for insignificant partial relationships between <code>X</code> and <code>Y</code>, see Examples in <code><a href="DPI.html">DPI()</a></code> and <a href="https://psychbruce.github.io/DPI/#step-2-normalized-penalty-as-significance-score">online documentation</a>.</p></dd>
+<p>Defaults to <code>FALSE</code> because it makes less penalties for insignificant partial relationships between <code>X</code> and <code>Y</code>, see Examples in <code><a href="DPI.html">DPI()</a></code> and <a href="https://psychbruce.github.io/DPI/#step-2-normalized-penalty-for-insignificant-partial-correlation">online documentation</a>.</p></dd>
 
 
 <dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>
 <dd><p>Random seed for replicable results. Defaults to <code>NULL</code>.</p></dd>
+
+
+<dt id="arg-node-text-size">node.text.size<a class="anchor" aria-label="anchor" href="#arg-node-text-size"></a></dt>
+<dd><p>Scalar on the font size of node (variable) labels. Defaults to <code>1.2</code>.</p></dd>
 
 
 <dt id="arg-progress">progress<a class="anchor" aria-label="anchor" href="#arg-progress"></a></dt>
@@ -133,7 +136,7 @@
 <span class="r-in"><span><span class="co"># directed acyclic graphs (grey edge = insignificant DPI)</span></span></span>
 <span class="r-in"><span><span class="va">dpi.dag</span> <span class="op">=</span> <span class="fu">DPI_dag</span><span class="op">(</span><span class="va">airquality</span>, k.covs<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">3</span>,<span class="fl">5</span><span class="op">)</span>, seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Sample size: </span>N.valid = 111</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Significance score method: </span><span style="color: #BBBB00;">Sigmoid(p/alpha) = 1 - tanh(p.xy/alpha/2)</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Normalized penalty method: </span><span style="color: #BBBB00;">Sigmoid(p/alpha) = 1 - tanh(p.xy/alpha/2)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">Simulation sample setting: </span>k.covs = <span style="color: #BB00BB;">1</span>, <span style="color: #BB00BB;">3</span>, and <span style="color: #BB00BB;">5</span>, n.sim = <span style="color: #BB00BB;">1000</span>, seed = <span style="color: #BB00BB;">1</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">False positive rates (FPR) control: </span>Alpha = <span style="color: #BB00BB;">0.05</span> (Bonferroni correction = <span style="color: #BB00BB;">1</span>)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>

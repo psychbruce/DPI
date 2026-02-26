@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">DPI</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2025.11</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2026.02</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -173,6 +173,11 @@
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">bn</span> <span class="op">=</span> <span class="fu">BNs_dag</span><span class="op">(</span><span class="va">airquality</span>, seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Missing values (NA) found in data!</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> BNs results would be affected by missing values!</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> You may use `na.omit()` to delete missing values listwise.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Running BN algorithm <span style="color: #0000BB;">"pc.stable"</span> with <span style="color: #0000BB;">1000</span> bootstrap samples...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Running BN algorithm <span style="color: #0000BB;">"hc"</span> with <span style="color: #0000BB;">1000</span> bootstrap samples...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Running BN algorithm <span style="color: #0000BB;">"rsmax2"</span> with <span style="color: #0000BB;">1000</span> bootstrap samples...</span>

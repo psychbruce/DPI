@@ -1,14 +1,14 @@
 # The Directed Prediction Index (DPI).
 
-The Directed Prediction Index (DPI) is a quasi-causal inference method
-for cross-sectional data designed to quantify the *relative endogeneity*
-(relative dependence) of outcome (*Y*) vs. predictor (*X*) variables in
-regression models. By comparing the proportion of variance explained
-(*R*-squared) between the *Y*-as-outcome model and the *X*-as-outcome
-model while controlling for a sufficient number of possible confounders,
-it can suggest a plausible (admissible) direction of influence from a
-more exogenous variable (*X*) to a more endogenous variable (*Y*).
-Methodological details are provided at
+The Directed Prediction Index (DPI) is a causal discovery method for
+observational data designed to quantify the *relative endogeneity* of
+outcome (*Y*) vs. predictor (*X*) variables in regression models. By
+comparing the coefficients of determination (*R*-squared) between the
+*Y*-as-outcome and *X*-as-outcome models while controlling for
+sufficient confounders and simulating *k* random covariates, it can
+quantify relative endogeneity, providing a necessary but insufficient
+condition for causal direction from a more exogenous variable (*X*) to a
+more endogenous variable (*Y*). Methodological details are provided at
 <https://psychbruce.github.io/DPI/>.
 
 ## Usage
@@ -74,13 +74,9 @@ DPI(
 
 - alpha:
 
-  Significance level for computing the `Significance` score (0~1) based
-  on *p* value of partial correlation between `X` and `Y`. Defaults to
-  `0.05`.
-
-  - `Direction = R2.Y - R2.X`
-
-  - `Significance = 1 - tanh(p.beta.xy/alpha/2)`
+  Significance level for computing the *Normalized Penalty* score (0~1)
+  based on *p* value of partial correlation between `X` and `Y`.
+  Defaults to `0.05`.
 
 - bonf:
 
@@ -99,16 +95,16 @@ DPI(
 - pseudoBF:
 
   Use normalized pseudo Bayes Factors `sigmoid(log(PseudoBF10))`
-  alternatively as the `Significance` score (0~1). Pseudo Bayes Factors
-  are computed from *p* value of X-Y partial relationship and total
-  sample size, using the transformation rules proposed by
+  alternatively as the *Normalized Penalty* score (0~1). Pseudo Bayes
+  Factors are computed from *p* value of X-Y partial relationship and
+  total sample size, using the transformation rules proposed by
   Wagenmakers (2022)
   [doi:10.31234/osf.io/egydq](https://doi.org/10.31234/osf.io/egydq) .
 
   Defaults to `FALSE` because it makes less penalties for insignificant
   partial relationships between `X` and `Y`, see Examples in `DPI()` and
   [online
-  documentation](https://psychbruce.github.io/DPI/#step-2-normalized-penalty-as-significance-score).
+  documentation](https://psychbruce.github.io/DPI/#step-2-normalized-penalty-for-insignificant-partial-correlation).
 
 - seed:
 
@@ -134,7 +130,7 @@ DPI(
 
 Return a data.frame of simulation results:
 
-- `DPI = Direction * Significance`
+- `DPI = Relative Endogeneity * Normalized Penalty`
 
   - `= (R2.Y - R2.X) * (1 - tanh(p.beta.xy/alpha/2))`
 
@@ -218,7 +214,7 @@ DPI(model, x="Solar.R", y="Ozone", seed=1)  # DPI > 0
 #> Model X formula: Solar.R ~ Ozone + Wind + Temp + Month + Day
 #> Directed prediction: "Solar.R" (X) -> "Ozone" (Y)
 #> Partial correlation: r.partial = 0.205, p = 0.0353 *  (PseudoBF10 = 0.897)
-#> Significance score method: Sigmoid(p/alpha) = 1 - tanh(p.xy/alpha/2)
+#> Normalized penalty method: Sigmoid(p/alpha) = 1 - tanh(p.xy/alpha/2)
 #> Simulation sample setting: k.random.covs = 1, n.sim = 1000, seed = 1
 #> False positive rates (FPR) control: Alpha = 0.05 (Bonferroni correction = 1)
 #>     Estimate  Sim.SE z.value   p.z sig  Conf.Interval log.PseudoBF10
@@ -230,7 +226,7 @@ DPI(model, x="Wind", y="Ozone", seed=1)     # DPI > 0
 #> Model X formula: Wind ~ Ozone + Solar.R + Temp + Month + Day
 #> Directed prediction: "Wind" (X) -> "Ozone" (Y)
 #> Partial correlation: r.partial = -0.449, p = 1e-06 *** (PseudoBF10 = 23117.101)
-#> Significance score method: Sigmoid(p/alpha) = 1 - tanh(p.xy/alpha/2)
+#> Normalized penalty method: Sigmoid(p/alpha) = 1 - tanh(p.xy/alpha/2)
 #> Simulation sample setting: k.random.covs = 1, n.sim = 1000, seed = 1
 #> False positive rates (FPR) control: Alpha = 0.05 (Bonferroni correction = 1)
 #>     Estimate  Sim.SE z.value    p.z sig  Conf.Interval log.PseudoBF10
@@ -242,7 +238,7 @@ DPI(model, x="Solar.R", y="Wind", seed=1)   # unrelated
 #> Model X formula: Solar.R ~ Wind + Ozone + Temp + Month + Day
 #> Directed prediction: "Solar.R" (X) -> "Wind" (Y)
 #> Partial correlation: r.partial = 0.114, p = 0.2447   (PseudoBF10 = 0.182)
-#> Significance score method: Sigmoid(p/alpha) = 1 - tanh(p.xy/alpha/2)
+#> Normalized penalty method: Sigmoid(p/alpha) = 1 - tanh(p.xy/alpha/2)
 #> Simulation sample setting: k.random.covs = 1, n.sim = 1000, seed = 1
 #> False positive rates (FPR) control: Alpha = 0.05 (Bonferroni correction = 1)
 #>     Estimate  Sim.SE z.value    p.z sig   Conf.Interval log.PseudoBF10
@@ -257,7 +253,7 @@ DPI(data=airquality, x="Solar.R", y="Ozone",
 #> Model X formula: Solar.R ~ Ozone + Wind + Temp + Month + Day
 #> Directed prediction: "Solar.R" (X) -> "Ozone" (Y)
 #> Partial correlation: r.partial = 0.204, p = 0.0452 *  (PseudoBF10 = 0.700)
-#> Significance score method: Sigmoid(p/alpha) = 1 - tanh(p.xy/alpha/2)
+#> Normalized penalty method: Sigmoid(p/alpha) = 1 - tanh(p.xy/alpha/2)
 #> Simulation sample setting: k.random.covs = 10, n.sim = 1000, seed = 1
 #> False positive rates (FPR) control: Alpha = 0.05 (Bonferroni correction = 1)
 #>     Estimate  Sim.SE z.value    p.z sig  Conf.Interval log.PseudoBF10
@@ -270,7 +266,7 @@ DPI(data=airquality, x="Wind", y="Ozone",
 #> Model X formula: Wind ~ Ozone + Solar.R + Temp + Month + Day
 #> Directed prediction: "Wind" (X) -> "Ozone" (Y)
 #> Partial correlation: r.partial = -0.449, p = 4e-06 *** (PseudoBF10 = 8372.103)
-#> Significance score method: Sigmoid(p/alpha) = 1 - tanh(p.xy/alpha/2)
+#> Normalized penalty method: Sigmoid(p/alpha) = 1 - tanh(p.xy/alpha/2)
 #> Simulation sample setting: k.random.covs = 10, n.sim = 1000, seed = 1
 #> False positive rates (FPR) control: Alpha = 0.05 (Bonferroni correction = 1)
 #>     Estimate  Sim.SE z.value   p.z sig  Conf.Interval log.PseudoBF10
@@ -283,14 +279,14 @@ DPI(data=airquality, x="Solar.R", y="Wind",
 #> Model X formula: Solar.R ~ Wind + Ozone + Temp + Month + Day
 #> Directed prediction: "Solar.R" (X) -> "Wind" (Y)
 #> Partial correlation: r.partial = 0.111, p = 0.2765   (PseudoBF10 = 0.168)
-#> Significance score method: Sigmoid(p/alpha) = 1 - tanh(p.xy/alpha/2)
+#> Normalized penalty method: Sigmoid(p/alpha) = 1 - tanh(p.xy/alpha/2)
 #> Simulation sample setting: k.random.covs = 10, n.sim = 1000, seed = 1
 #> False positive rates (FPR) control: Alpha = 0.05 (Bonferroni correction = 1)
 #>     Estimate  Sim.SE z.value    p.z sig   Conf.Interval log.PseudoBF10
 #> DPI    0.008 (0.017)   0.492 0.6225     [-0.025, 0.041]         -2.236
 
 
-# or use pseudo Bayes Factors for the significance score
+# or use pseudo Bayes Factors for normalized penalty
 # (less conservative for insignificant X-Y relationship)
 DPI(data=airquality, x="Solar.R", y="Ozone", k.cov=10,
     pseudoBF=TRUE, seed=1)  # DPI > 0 (true positive)
@@ -299,7 +295,7 @@ DPI(data=airquality, x="Solar.R", y="Ozone", k.cov=10,
 #> Model X formula: Solar.R ~ Ozone + Wind + Temp + Month + Day
 #> Directed prediction: "Solar.R" (X) -> "Ozone" (Y)
 #> Partial correlation: r.partial = 0.204, p = 0.0452 *  (PseudoBF10 = 0.700)
-#> Significance score method: Sigmoid(log(PseudoBF10.xy))
+#> Normalized penalty method: Sigmoid(log(PseudoBF10.xy))
 #> Simulation sample setting: k.random.covs = 10, n.sim = 1000, seed = 1
 #> False positive rates (FPR) control: Alpha = 0.05 (Bonferroni correction = 1)
 #>     Estimate  Sim.SE z.value    p.z sig  Conf.Interval log.PseudoBF10
@@ -312,7 +308,7 @@ DPI(data=airquality, x="Wind", y="Ozone", k.cov=10,
 #> Model X formula: Wind ~ Ozone + Solar.R + Temp + Month + Day
 #> Directed prediction: "Wind" (X) -> "Ozone" (Y)
 #> Partial correlation: r.partial = -0.449, p = 4e-06 *** (PseudoBF10 = 8372.103)
-#> Significance score method: Sigmoid(log(PseudoBF10.xy))
+#> Normalized penalty method: Sigmoid(log(PseudoBF10.xy))
 #> Simulation sample setting: k.random.covs = 10, n.sim = 1000, seed = 1
 #> False positive rates (FPR) control: Alpha = 0.05 (Bonferroni correction = 1)
 #>     Estimate  Sim.SE z.value   p.z sig  Conf.Interval log.PseudoBF10
@@ -325,7 +321,7 @@ DPI(data=airquality, x="Solar.R", y="Wind", k.cov=10,
 #> Model X formula: Solar.R ~ Wind + Ozone + Temp + Month + Day
 #> Directed prediction: "Solar.R" (X) -> "Wind" (Y)
 #> Partial correlation: r.partial = 0.111, p = 0.2765   (PseudoBF10 = 0.168)
-#> Significance score method: Sigmoid(log(PseudoBF10.xy))
+#> Normalized penalty method: Sigmoid(log(PseudoBF10.xy))
 #> Simulation sample setting: k.random.covs = 10, n.sim = 1000, seed = 1
 #> False positive rates (FPR) control: Alpha = 0.05 (Bonferroni correction = 1)
 #>     Estimate  Sim.SE z.value    p.z sig  Conf.Interval log.PseudoBF10

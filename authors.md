@@ -10,14 +10,14 @@
 Source:
 [`DESCRIPTION`](https://github.com/psychbruce/DPI/blob/main/DESCRIPTION)
 
-Bao H (2025). *DPI: The Directed Prediction Index for Causal Direction
-Inference from Observational Data*. R package version 2025.11,
+Bao H (2026). *DPI: The Directed Prediction Index for Causal Direction
+Inference from Observational Data*. R package version 2026.02,
 <https://psychbruce.github.io/DPI/>.
 
     @Manual{,
       title = {DPI: The Directed Prediction Index for Causal Direction Inference from Observational Data},
       author = {Han Wu Shuang Bao},
-      year = {2025},
-      note = {R package version 2025.11},
+      year = {2026},
+      note = {R package version 2026.02},
       url = {https://psychbruce.github.io/DPI/},
     }

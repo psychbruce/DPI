@@ -14,6 +14,7 @@ DPI_dag(
   bonf = FALSE,
   pseudoBF = FALSE,
   seed = NULL,
+  node.text.size = 1.2,
   progress,
   file = NULL,
   width = 6,
@@ -41,13 +42,9 @@ DPI_dag(
 
 - alpha:
 
-  Significance level for computing the `Significance` score (0~1) based
-  on *p* value of partial correlation between `X` and `Y`. Defaults to
-  `0.05`.
-
-  - `Direction = R2.Y - R2.X`
-
-  - `Significance = 1 - tanh(p.beta.xy/alpha/2)`
+  Significance level for computing the *Normalized Penalty* score (0~1)
+  based on *p* value of partial correlation between `X` and `Y`.
+  Defaults to `0.05`.
 
 - bonf:
 
@@ -66,9 +63,9 @@ DPI_dag(
 - pseudoBF:
 
   Use normalized pseudo Bayes Factors `sigmoid(log(PseudoBF10))`
-  alternatively as the `Significance` score (0~1). Pseudo Bayes Factors
-  are computed from *p* value of X-Y partial relationship and total
-  sample size, using the transformation rules proposed by
+  alternatively as the *Normalized Penalty* score (0~1). Pseudo Bayes
+  Factors are computed from *p* value of X-Y partial relationship and
+  total sample size, using the transformation rules proposed by
   Wagenmakers (2022)
   [doi:10.31234/osf.io/egydq](https://doi.org/10.31234/osf.io/egydq) .
 
@@ -76,11 +73,15 @@ DPI_dag(
   partial relationships between `X` and `Y`, see Examples in
   [`DPI()`](https://psychbruce.github.io/DPI/reference/DPI.md) and
   [online
-  documentation](https://psychbruce.github.io/DPI/#step-2-normalized-penalty-as-significance-score).
+  documentation](https://psychbruce.github.io/DPI/#step-2-normalized-penalty-for-insignificant-partial-correlation).
 
 - seed:
 
   Random seed for replicable results. Defaults to `NULL`.
+
+- node.text.size:
+
+  Scalar on the font size of node (variable) labels. Defaults to `1.2`.
 
 - progress:
 
@@ -127,7 +128,7 @@ cor_net(airquality, "pcor")
 # directed acyclic graphs (grey edge = insignificant DPI)
 dpi.dag = DPI_dag(airquality, k.covs=c(1,3,5), seed=1)
 #> Sample size: N.valid = 111
-#> Significance score method: Sigmoid(p/alpha) = 1 - tanh(p.xy/alpha/2)
+#> Normalized penalty method: Sigmoid(p/alpha) = 1 - tanh(p.xy/alpha/2)
 #> Simulation sample setting: k.covs = 1, 3, and 5, n.sim = 1000, seed = 1
 #> False positive rates (FPR) control: Alpha = 0.05 (Bonferroni correction = 1)
 #> 

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">DPI</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2025.11</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2026.02</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -86,9 +86,7 @@
 
 
 <dt id="arg-alpha">alpha<a class="anchor" aria-label="anchor" href="#arg-alpha"></a></dt>
-<dd><p>Significance level for computing the <code>Significance</code> score (0~1) based on <em>p</em> value of partial correlation between <code>X</code> and <code>Y</code>. Defaults to <code>0.05</code>.</p><ul><li><p><code>Direction = R2.Y - R2.X</code></p></li>
-<li><p><code>Significance = 1 - tanh(p.beta.xy/alpha/2)</code></p></li>
-</ul></dd>
+<dd><p>Significance level for computing the <em>Normalized Penalty</em> score (0~1) based on <em>p</em> value of partial correlation between <code>X</code> and <code>Y</code>. Defaults to <code>0.05</code>.</p></dd>
 
 
 <dt id="arg-bonf">bonf<a class="anchor" aria-label="anchor" href="#arg-bonf"></a></dt>
@@ -99,9 +97,9 @@
 
 
 <dt id="arg-pseudobf">pseudoBF<a class="anchor" aria-label="anchor" href="#arg-pseudobf"></a></dt>
-<dd><p>Use normalized pseudo Bayes Factors <code>sigmoid(log(PseudoBF10))</code> alternatively as the <code>Significance</code> score (0~1). Pseudo Bayes Factors are computed from <em>p</em> value of X-Y partial relationship and total sample size, using the transformation rules proposed by Wagenmakers (2022) <a href="https://doi.org/10.31234/osf.io/egydq" class="external-link">doi:10.31234/osf.io/egydq</a>
+<dd><p>Use normalized pseudo Bayes Factors <code>sigmoid(log(PseudoBF10))</code> alternatively as the <em>Normalized Penalty</em> score (0~1). Pseudo Bayes Factors are computed from <em>p</em> value of X-Y partial relationship and total sample size, using the transformation rules proposed by Wagenmakers (2022) <a href="https://doi.org/10.31234/osf.io/egydq" class="external-link">doi:10.31234/osf.io/egydq</a>
 .</p>
-<p>Defaults to <code>FALSE</code> because it makes less penalties for insignificant partial relationships between <code>X</code> and <code>Y</code>, see Examples in <code><a href="DPI.html">DPI()</a></code> and <a href="https://psychbruce.github.io/DPI/#step-2-normalized-penalty-as-significance-score">online documentation</a>.</p></dd>
+<p>Defaults to <code>FALSE</code> because it makes less penalties for insignificant partial relationships between <code>X</code> and <code>Y</code>, see Examples in <code><a href="DPI.html">DPI()</a></code> and <a href="https://psychbruce.github.io/DPI/#step-2-normalized-penalty-for-insignificant-partial-correlation">online documentation</a>.</p></dd>
 
 
 <dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>
@@ -142,16 +140,16 @@
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">model</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">Ozone</span> <span class="op">~</span> <span class="va">.</span>, data<span class="op">=</span><span class="va">airquality</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">DPIs</span> <span class="op">=</span> <span class="fu">DPI_curve</span><span class="op">(</span><span class="va">model</span>, x<span class="op">=</span><span class="st">"Solar.R"</span>, y<span class="op">=</span><span class="st">"Ozone"</span>, seed<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ⠙ Simulation k.covs: 1/10 <span style="color: #00BB00;">████</span><span style="color: #555555;">███████████████████████████</span><span style="color: #00BB00;"> </span>  10% [00:00:5.2]</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ⠹ Simulation k.covs: 2/10 <span style="color: #00BB00;">███████</span><span style="color: #555555;">████████████████████████</span><span style="color: #00BB00;"> </span>  20% [00:00:10.7]</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ⠸ Simulation k.covs: 3/10 <span style="color: #00BB00;">██████████</span><span style="color: #555555;">█████████████████████</span><span style="color: #00BB00;"> </span>  30% [00:00:16.7]</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ⠼ Simulation k.covs: 4/10 <span style="color: #00BB00;">█████████████</span><span style="color: #555555;">██████████████████</span><span style="color: #00BB00;"> </span>  40% [00:00:22.7]</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ⠴ Simulation k.covs: 5/10 <span style="color: #00BB00;">████████████████</span><span style="color: #555555;">███████████████</span><span style="color: #00BB00;"> </span>  50% [00:00:28.9]</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ⠦ Simulation k.covs: 6/10 <span style="color: #00BB00;">███████████████████</span><span style="color: #555555;">████████████</span><span style="color: #00BB00;"> </span>  60% [00:00:35.4]</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ⠧ Simulation k.covs: 7/10 <span style="color: #00BB00;">██████████████████████</span><span style="color: #555555;">█████████</span><span style="color: #00BB00;"> </span>  70% [00:00:42.1]</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ⠇ Simulation k.covs: 8/10 <span style="color: #00BB00;">█████████████████████████</span><span style="color: #555555;">██████</span><span style="color: #00BB00;"> </span>  80% [00:00:49]</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ⠏ Simulation k.covs: 9/10 <span style="color: #00BB00;">████████████████████████████</span><span style="color: #555555;">███</span><span style="color: #00BB00;"> </span>  90% [00:00:56.2]</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 10 * 1000 simulation samples estimated in 1m 3.8s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ⠙ Simulation k.covs: 1/10 <span style="color: #00BB00;">████</span><span style="color: #555555;">███████████████████████████</span><span style="color: #00BB00;"> </span>  10% [00:00:3.6]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ⠹ Simulation k.covs: 2/10 <span style="color: #00BB00;">███████</span><span style="color: #555555;">████████████████████████</span><span style="color: #00BB00;"> </span>  20% [00:00:7.6]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ⠸ Simulation k.covs: 3/10 <span style="color: #00BB00;">██████████</span><span style="color: #555555;">█████████████████████</span><span style="color: #00BB00;"> </span>  30% [00:00:11.5]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ⠼ Simulation k.covs: 4/10 <span style="color: #00BB00;">█████████████</span><span style="color: #555555;">██████████████████</span><span style="color: #00BB00;"> </span>  40% [00:00:15.5]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ⠴ Simulation k.covs: 5/10 <span style="color: #00BB00;">████████████████</span><span style="color: #555555;">███████████████</span><span style="color: #00BB00;"> </span>  50% [00:00:19.7]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ⠦ Simulation k.covs: 6/10 <span style="color: #00BB00;">███████████████████</span><span style="color: #555555;">████████████</span><span style="color: #00BB00;"> </span>  60% [00:00:24]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ⠧ Simulation k.covs: 7/10 <span style="color: #00BB00;">██████████████████████</span><span style="color: #555555;">█████████</span><span style="color: #00BB00;"> </span>  70% [00:00:28.5]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ⠇ Simulation k.covs: 8/10 <span style="color: #00BB00;">█████████████████████████</span><span style="color: #555555;">██████</span><span style="color: #00BB00;"> </span>  80% [00:00:33.2]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ⠏ Simulation k.covs: 9/10 <span style="color: #00BB00;">████████████████████████████</span><span style="color: #555555;">███</span><span style="color: #00BB00;"> </span>  90% [00:00:38.2]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 10 * 1000 simulation samples estimated in 43.1s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">DPIs</span><span class="op">)</span>  <span class="co"># ggplot object</span></span></span>
 <span class="r-plt img"><img src="DPI_curve-1.png" alt="" width="700" height="433"></span>

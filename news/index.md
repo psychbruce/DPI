@@ -1,5 +1,9 @@
 # Changelog
 
+## DPI 2026.2
+
+- Minor changes and improvements.
+
 ## DPI 2025.11
 
 CRAN release: 2025-11-24

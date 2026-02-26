@@ -57,13 +57,9 @@ DPI_curve(
 
 - alpha:
 
-  Significance level for computing the `Significance` score (0~1) based
-  on *p* value of partial correlation between `X` and `Y`. Defaults to
-  `0.05`.
-
-  - `Direction = R2.Y - R2.X`
-
-  - `Significance = 1 - tanh(p.beta.xy/alpha/2)`
+  Significance level for computing the *Normalized Penalty* score (0~1)
+  based on *p* value of partial correlation between `X` and `Y`.
+  Defaults to `0.05`.
 
 - bonf:
 
@@ -82,9 +78,9 @@ DPI_curve(
 - pseudoBF:
 
   Use normalized pseudo Bayes Factors `sigmoid(log(PseudoBF10))`
-  alternatively as the `Significance` score (0~1). Pseudo Bayes Factors
-  are computed from *p* value of X-Y partial relationship and total
-  sample size, using the transformation rules proposed by
+  alternatively as the *Normalized Penalty* score (0~1). Pseudo Bayes
+  Factors are computed from *p* value of X-Y partial relationship and
+  total sample size, using the transformation rules proposed by
   Wagenmakers (2022)
   [doi:10.31234/osf.io/egydq](https://doi.org/10.31234/osf.io/egydq) .
 
@@ -92,7 +88,7 @@ DPI_curve(
   partial relationships between `X` and `Y`, see Examples in
   [`DPI()`](https://psychbruce.github.io/DPI/reference/DPI.md) and
   [online
-  documentation](https://psychbruce.github.io/DPI/#step-2-normalized-penalty-as-significance-score).
+  documentation](https://psychbruce.github.io/DPI/#step-2-normalized-penalty-for-insignificant-partial-correlation).
 
 - seed:
 
@@ -137,16 +133,16 @@ Return a data.frame of DPI curve results.
 ``` r
 model = lm(Ozone ~ ., data=airquality)
 DPIs = DPI_curve(model, x="Solar.R", y="Ozone", seed=1)
-#> ⠙ Simulation k.covs: 1/10 ███████████████████████████████   10% [00:00:5.2]
-#> ⠹ Simulation k.covs: 2/10 ███████████████████████████████   20% [00:00:10.7]
-#> ⠸ Simulation k.covs: 3/10 ███████████████████████████████   30% [00:00:16.7]
-#> ⠼ Simulation k.covs: 4/10 ███████████████████████████████   40% [00:00:22.7]
-#> ⠴ Simulation k.covs: 5/10 ███████████████████████████████   50% [00:00:28.9]
-#> ⠦ Simulation k.covs: 6/10 ███████████████████████████████   60% [00:00:35.4]
-#> ⠧ Simulation k.covs: 7/10 ███████████████████████████████   70% [00:00:42.1]
-#> ⠇ Simulation k.covs: 8/10 ███████████████████████████████   80% [00:00:49]
-#> ⠏ Simulation k.covs: 9/10 ███████████████████████████████   90% [00:00:56.2]
-#> ✔ 10 * 1000 simulation samples estimated in 1m 3.8s
+#> ⠙ Simulation k.covs: 1/10 ███████████████████████████████   10% [00:00:3.6]
+#> ⠹ Simulation k.covs: 2/10 ███████████████████████████████   20% [00:00:7.6]
+#> ⠸ Simulation k.covs: 3/10 ███████████████████████████████   30% [00:00:11.5]
+#> ⠼ Simulation k.covs: 4/10 ███████████████████████████████   40% [00:00:15.5]
+#> ⠴ Simulation k.covs: 5/10 ███████████████████████████████   50% [00:00:19.7]
+#> ⠦ Simulation k.covs: 6/10 ███████████████████████████████   60% [00:00:24]
+#> ⠧ Simulation k.covs: 7/10 ███████████████████████████████   70% [00:00:28.5]
+#> ⠇ Simulation k.covs: 8/10 ███████████████████████████████   80% [00:00:33.2]
+#> ⠏ Simulation k.covs: 9/10 ███████████████████████████████   90% [00:00:38.2]
+#> ✔ 10 * 1000 simulation samples estimated in 43.1s
 #> 
 plot(DPIs)  # ggplot object
 

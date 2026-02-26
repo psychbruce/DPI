@@ -210,6 +210,11 @@ R* (2nd ed.). Chapman and Hall/CRC.
 
 ``` r
 bn = BNs_dag(airquality, seed=1)
+#> Warning: Missing values (NA) found in data!
+#> 
+#> BNs results would be affected by missing values!
+#> 
+#> You may use `na.omit()` to delete missing values listwise.
 #> Running BN algorithm "pc.stable" with 1000 bootstrap samples...
 #> Running BN algorithm "hc" with 1000 bootstrap samples...
 #> Running BN algorithm "rsmax2" with 1000 bootstrap samples...
